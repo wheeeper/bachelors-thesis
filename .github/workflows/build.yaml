@@ -1,0 +1,34 @@
+name: Build
+
+on: [push]
+
+jobs:
+  build:
+    name: Build LaTeX
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up Git Repository
+        uses: actions/checkout@v2
+
+      - name: Set up Enviroment
+        run: |
+          sudo apt install texlive texlive-xetex texlive-extra-utils texlive-lang-czechslovak texlive-bibtex-extra
+          sudo apt install biber
+      - name: Run Arara -- Thesis
+        run: arara thesis
+
+      - name: Rename PDF
+        run: mv thesis.pdf BP_Stepanek_Martin.pdf
+
+      - name: Upload Data as Artifact
+        uses: actions/upload-artifact@master
+        with:
+          name: bp-pdf
+          path: ./*.pdf
+
+      - name: Cat Log
+        if: failure()
+        run: |
+          cat main.log
+          ls -la
