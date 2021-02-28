@@ -16,6 +16,7 @@ jobs:
           sudo apt install texlive texlive-xetex texlive-extra-utils texlive-lang-czechslovak texlive-bibtex-extra
           sudo apt install biber
 
+          sudo timedatectl set-timezone Europe/Prague
           echo "RUN_TAG=$(date +'%Y-%m-%d_%H-%M')" >> $GITHUB_ENV
       - name: Run Arara -- Thesis
         run: arara thesis
@@ -26,7 +27,7 @@ jobs:
       - name: Upload Data as Artifact
         uses: actions/upload-artifact@master
         with:
-          name: bp_${{ env.RUN_TAG }}
+          name: BP_${{ env.RUN_TAG }}
           path: BP_Stepanek_Martin.pdf
 
       - name: Cat Log
