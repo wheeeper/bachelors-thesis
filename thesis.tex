@@ -1,3 +1,7 @@
+% arara: xelatex: { shell : yes }
+% arara: xelatex: { shell : yes }
+% arara: xelatex: { shell : yes }
+
 % Template for theses recommended at Czech Technical University, Faculty of Information Technology
 % inspired by lipics-v2019 documentclass
 % Questions and help: <ondrej.guth@fit.cvut.cz>
@@ -6,13 +10,13 @@
 \documentclass[a4paper,czech,unicode,twoside]{book}[2019/12/20]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% FILL IN THIS INFORMATION
+% FILL IN THIS INFORMATION  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newcommand{\thesistitle}{Název této příkladné závěrečné práce}
+\newcommand{\thesistitle}{Návrh a implementace knihovny pro automatizaci testů verifikace průmyslové komunikace}
 \newcommand{\thesistype}{Bakalářská práce}
-\newcommand{\thesisauthor}{Jiří Nebozíz}
-\newcommand{\supervisor}{doc.\,Ing.\,Damien Zlo,\,Ph.D.}
-\newcommand{\department}{Katedra teoretické informatiky}
+\newcommand{\thesisauthor}{Martin Štěpánek}
+\newcommand{\supervisor}{Ing.\,Miroslav Dušek}
+\newcommand{\department}{Katedra softwarového inženýrství}
 \newcommand{\yearofdefence}{2021}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % END FILL IN
@@ -203,10 +207,10 @@
 
 % title page
 \renewcommand{\maketitle}{\begin{titlepage}%
-\newgeometry{left=67mm,top=80mm,right=40mm}%\thispagestyle{empty}%
+\newgeometry{left=60mm,top=80mm,right=40mm}%\thispagestyle{empty}%
 \noindent{\large\headfont\noindent\thesistype}
 \vskip 3mm
-\noindent{\noindent\huge\headfont\bfseries\color{black}\begin{onehalfspace}\MakeUppercase{\thesistitle}\end{onehalfspace}}
+\noindent{\noindent\huge\headfont\bfseries\color{black}\begin{onehalfspace}\thesistitle\end{onehalfspace}}
 \vskip 35mm
 \noindent{\large \headfont \bfseries \thesisauthor}
 
@@ -238,6 +242,8 @@ Vedoucí: \supervisor\\
   {{\frontchapterfont\begin{flushright}{\color{heading}Prohlášení}\end{flushright}}}%
   \bigskip
   \noindent\ignorespaces}
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % TEMPLATE SETTINGS END
@@ -313,7 +319,7 @@ Vedoucí: \supervisor\\
 	{\small
 			\noindent České vysoké učení technické v Praze \\
 		\noindent Fakulta informačních technologií \\
-	\noindent \textcopyright{} 2020 \thesisauthor. Všechna práva vyhrazena.\\
+	\noindent \textcopyright{} \yearofdefence \space \thesisauthor. Všechna práva vyhrazena.\\
 		\noindent \textit{Tato práce vznikla jako školní díla na Českém vysokém učení technické v Praze, Fakultě informačních technologií. Práce je chráněna právními předpisy a mezinárodními úmluvami o právu autorském a právech souvisejících s právem autorským. K jejímu užití, s výjimkou bez uplatněných zákonných licencí nad rámec oprávnění uvedených v Prohlášení je nezbytný souhlas autora.}
 	
 	\vspace{1em}
@@ -368,7 +374,7 @@ Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Curabitur sagittis hen
 Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Curabitur sagittis hendrerit ante. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Cras pede libero, dapibus nec, pretium sit amet, tempor quis. Sed vel lectus. Donec odio tempus molestie, porttitor ut, iaculis quis, sem. Suspendisse sagittis ultrices augue. Donec ipsum massa, ullamcorper in, auctor et, scelerisque sed, est. In sem justo, commodo ut, suscipit at, pharetra vitae, orci. Pellentesque pretium lectus id turpis.
 \vskip 1cm
 \noindent
-V Praze dne 10.\;května 2020 \hspace{.3\textwidth} \dotfill
+V Praze dne \today \hspace{.3\textwidth} \dotfill
 \end{prohlaseni}
 %%%%%%%%%%%%%%%%%%%
 % DECLARATION END
@@ -400,42 +406,6 @@ V Praze dne 10.\;května 2020 \hspace{.3\textwidth} \dotfill
 {\noindent\color{heading}\bfseries\headfont Keywords\hspace{1em}}{lorem, ipsum dolor, sit amet}
 %%%%%%%%%%%%%%%%%%%
 % ABSTRACT END
-%%%%%%%%%%%%%%%%%%%
-
-%%%%%%%%%%%%%%%%%%%
-% SUMMARY
-% FILL IN / MODIFY
-% OR REMOVE ENTIRELY (upon agreement with your supervisor)
-% (apropriate to remove in most theses)
-%%%%%%%%%%%%%%%%%%%
-\chapter{Shrnutí}
-\setlength{\columnsep}{1cm}
-\begin{multicols}{2}
-{\small
-
-\section*{Motivace}
-
-\lipsum[1][1-8]
-
-\section*{Cíl práce}
-
-\lipsum[2][1-6]
-
-\section*{Postup}
-
-\lipsum[3]
-
-\section*{Výsledky práce}
-
-\lipsum[2]
-
-\section*{Závěr}
-
-\lipsum[1][1-8] Lorem lorem lorem.
-}
-\end{multicols}
-%%%%%%%%%%%%%%%%%%%
-% SUMMARY END
 %%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%
