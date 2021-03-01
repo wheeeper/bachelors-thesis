@@ -36,5 +36,8 @@ jobs:
       - name: Cat Log
         if: failure()
         run: |
-          cat main.log
-          ls -la
+          for x in $(ls | grep .log);
+          do
+            echo ********** $x **********
+            cat $x
+          done
