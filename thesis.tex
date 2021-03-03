@@ -2,10 +2,7 @@
 % arara: xelatex: { shell : yes }
 % arara: xelatex: { shell : yes }
 
-% Template for theses recommended at Czech Technical University, Faculty of Information Technology
-% inspired by lipics-v2019 documentclass
-% Questions and help: <ondrej.guth@fit.cvut.cz>
-% 2021: work in progress
+% Bachelor's thesis by Martin Štěpánek 
 
 \documentclass[a4paper,czech,unicode,twoside]{book}[2019/12/20]
 
@@ -15,7 +12,7 @@
 \newcommand{\thesistitle}{Návrh a implementace knihovny pro automatizaci testů verifikace průmyslové komunikace}
 \newcommand{\thesistype}{Bakalářská práce}
 \newcommand{\thesisauthor}{Martin Štěpánek}
-\newcommand{\supervisor}{Ing.\,Miroslav Dušek}
+\newcommand{\supervisor}{Ing.\,{}Miroslav Dušek}
 \newcommand{\department}{Katedra softwarového inženýrství}
 \newcommand{\yearofdefence}{2021}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -126,7 +123,7 @@
 \def\frontsubsubsectionfont{\bfseries}
 % frontmatter headings end
 
-% frontmatter pseudochapters: named part without printing actual chapter heading
+% frontmatter pseudo chapters: named part without printing actual chapter heading
 \makeatletter
 \newcommand{\frontchapternotprinted}[1]{%
   \begingroup
@@ -136,7 +133,7 @@
   \endgroup
 }
 \makeatother
-% frontmatter pseudochapters end
+% frontmatter pseudo chapters end
 
 % theorems, proofs, definitions, etc. end
 \makeatletter
@@ -271,7 +268,7 @@ Vedoucí: \supervisor\\
 % [display] % shape
 {} % format
 {} % label
-{} % sep
+{} % separator
 {\color{heading}\frontchapterfont \raggedleft} % before-code
 [\vskip -2em] % after-code
 
@@ -367,7 +364,7 @@ Vedoucí: \supervisor\\
 \vfill
 % INSTRUCTIONS
 % ENG: choose one of approved texts of the declaration. DO NOT CREATE YOUR OWN. Find the approved texts at https://courses.fit.cvut.cz/SFE/download/index.html#_documents (document Declaration for FT in English)
-% CZE/SLO: Vyberte jedno z fakultou schvalenych prohlaseni. NEVKLADEJTE VLASTNI TEXT. Schvalena prohlaseni najdete zde: https://courses.fit.cvut.cz/SZZ/dokumenty/index.html#_dokumenty (prohlášení do ZP)
+% CZE/SLO: Vyberte jedno z fakultou schválených prohlášení. NEVKLADEJTE VLASTNI TEXT. Schválená prohlášení najdete zde: https://courses.fit.cvut.cz/SZZ/dokumenty/index.html#_dokumenty (prohlášení do ZP)
 \begin{prohlaseni}
 Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Curabitur sagittis hendrerit ante. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Cras pede libero, dapibus nec, pretium sit amet, tempor quis. Sed vel lectus. Donec odio tempus molestie, porttitor ut, iaculis quis, sem. Suspendisse sagittis ultrices augue. Donec ipsum massa, ullamcorper in, auctor et, scelerisque sed, est. In sem justo, commodo ut, suscipit at, pharetra vitae, orci. Pellentesque pretium lectus id turpis.
 
@@ -447,7 +444,7 @@ W3C & World Wide Web Consortium
 [display] % shape
 {\headfont \LARGE \bfseries \raggedleft} % format
 { \textcolor{headbackgroundgray}{{\titlerule*[1pc]{\rule{0.25em}{0.25em}}}} \hspace{0.5ex} \color{black} Kapitola \thechapter } % label
-{-0.3cm} % sep
+{-0.3cm} % separator
 {\color{heading} \Huge \vskip 0.5cm} % before-code
 [\vskip 1cm] % after-code
 
