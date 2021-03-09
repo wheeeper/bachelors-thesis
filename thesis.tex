@@ -1,4 +1,5 @@
 % arara: xelatex: { shell : yes }
+% arara: biber
 % arara: xelatex: { shell : yes }
 % arara: xelatex: { shell : yes }
 
@@ -18,6 +19,9 @@
 \usepackage{lipsum}
 \usepackage{xevlna}
 \usepackage{pdfpages}
+
+\usepackage[style=iso-numeric]{biblatex}
+\addbibresource{ref.bib}
 
 \input{macros/custom_macros.tex}
 
@@ -45,8 +49,7 @@
 
 \input{text.tex}
 
-\bibliographystyle{template/csn690}
-\bibliography{mybibliographyfile}
+\printbibliography
 
 \appendix
 \input{assets/appendix/abbreviations.tex}
