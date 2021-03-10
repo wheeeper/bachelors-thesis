@@ -1,26 +1,11 @@
 \begin{introduction}
-Testování softwaru (v případě této práce primárně firmwaru) je velmi důležitá součást vývoje softwaru,
-stejně jako například její samotný návrh a implementace. V této fázi vývoje je primárním cílem ověřit
-funkcionalitu řešení a objevit chyby (tzv. bugy), které většinou vzniknou na základě lidské chyby a mohou
-tím změnit požadované vlastnosti vyvíjeného softwaru. Automatizace testů poté umožňuje opakovatelnost 
-pravidelného testovaní, standardizuje jednotlivé testy a snižuje možnost vzniku lidské chyby při 
-manuálním testování. Některé aspekty softwaru ani bez automatizace není možné testovat. Tato práce se 
-věnuje vývoji knihovny, která umožní automaticky testovat a verifikovat komunikaci na základě 
-průmyslových protokolů. Tato testovací knihovna je vyvíjena pro firmu Siemens, s.r.o. \todo{Dodat co 
-obsahují jednotlivé kapitoly}
+Po industriální revoluci, která uvolnila dělníky z těžké manuální práce, je využití automatizace ve výrobě dalším velkým krokem ve vývoji průmyslu. 
+Mezi výhody automatizace patří zefektivnění výroby, zrychlení výroby nebo snížení nákladů. Podstatným faktorem k ovládání zařízení, které se starají o automatizaci výroby, je spolehlivá komunikace. Toto zapříčinilo vznik průmyslových komunikačních sítí, z důvodu nedostatečnosti tehdy dostupných možností komunikace.
+Tyto sítě --- v angličtině je jedna síť nazývána tzv. \textit{fieldbus} --- byli s postupem času standardizovány.
 
-\section{Cíl práce}
-Cílem této práce je navrhnout a implementovat knihovnu, která umožní automatizovat testy verifikace průmyslové komunikace. 
-Součástí této knihovny má být:
-\begin{itemize}
-    \item služba, která bude řídit testovací běh,
-    \item rozhraní, které umožní implementaci knihovny na testovaném zařízení,
-    \item protokol, který bude definovat komunikaci mezi službou a testovanými zařízeními.
-\end{itemize}
-Vytvořená knihovna poté má být propojena s Azure DevOps serverem tak, aby Azure DevOps server mohl 
-následně automaticky spouštět testy. Dalším cílem je provést výzkum dostupných open-source knihoven pro 
-průmyslové protokoly ModbusTCP a Ethernet/IP a vybrat vhodné kandidáty na implementaci do této knihovny. 
-Součástí této práce má též být sada ukázkových testů pro jeden z průmyslových protokolů, na kterých bude 
-vidět demonstrace funkcionality vyvinutého řešení. V neposlední řadě je cílem zhodnotit výsledné řešení z 
-pohledu projektového řízení.
+Při vývoji těchto zařízení, které se podílí na automatizaci výroby, je stejně důležité jako například jejich návrh také jejich testování. Hlavním úkolem této fáze je odhalení nedostatků produktu, které se liší od dané specifikace produktu. Testováním je tedy produkt kontrolován a z výsledků testů lze odvodit stav a kvalitu produktu. V dnešních době se u testování snaží využít výhod automatizace testování. Automatizace testů umožňuje jednoduchou opakovatelnost pravidelného testovaní, standardizuje jednotlivé testy a snižuje možnost vzniku lidské chyby při manuálním testování. V určitých případech zároveň umožnuje testovat případy, které nelze manuálně testovat.
+
+Tato práce si stanovuje jako cíl vytvoření knihovny na automatizaci testů, které verifikují průmyslovou komunikaci. Hlavní motivací k vytvoření této knihovny je standardizace testování, zjednodušení, zrychlení vytváření testů a tím ušetření času testera. Tato knihovna je vytvářena pro společnost Siemens, s.r.o.
+
+\todo{Dodat co obsahují jednotlivé kapitoly}
 \end{introduction}
