@@ -60,7 +60,9 @@
         "*.synctex.gz",
         "*.nav",
         "*.lol",
-        "*.xdv"
+        "*.xdv",
+        "*.bcf",
+        "*.run.xml"
     ],
     "latex-workshop.latex.recipes": [
         {
