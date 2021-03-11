@@ -1,24 +1,29 @@
 % arara: xelatex: { shell : yes }
+% arara: biber
 % arara: xelatex: { shell : yes }
 % arara: xelatex: { shell : yes }
 
 % options:
 % thesis=B bachelor's thesis
 % thesis=M master's thesis
-% czech thesis in Czech language
-% slovak thesis in Slovak language
-% english thesis in English language
-% hidelinks remove colour boxes around hyperlinks
+% Czech thesis in Czech language
+% Slovak thesis in Slovak language
+% English thesis in English language
+% hide links remove color boxes around hyperlinks
 
 \documentclass[thesis=B,czech]{template/FITthesis}[2019/12/23]
 
 \usepackage[utf8]{inputenc} % LaTeX source encoded as UTF-8
-\usepackage{dirtree} %directory tree visualisation
+\usepackage{dirtree} %directory tree visualization
 
 \usepackage{lipsum}
 \usepackage{xevlna}
 \usepackage{pdfpages}
 
+\usepackage[style=iso-numeric]{biblatex}
+\addbibresource{ref.bib}
+
+\input{macros/custom_macros.tex}
 
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
 % ODTUD DAL VSE ZMENTE
@@ -32,24 +37,22 @@
 \author{\authorWithDegrees} %jméno autora bez akademických titulů
 \supervisor{Ing.\,{}Miroslav Dušek}
 \acknowledgements{Doplňte, máte-li komu a za co děkovat. V~opačném případě úplně odstraňte tento příkaz.}
-\abstractCS{V~několika větách shrňte obsah a přínos této práce v~češtině. Po přečtení abstraktu by se čtenář měl mít čtenář dost informací pro rozhodnutí, zda chce Vaši práci číst.}
-\abstractEN{Sem doplňte ekvivalent abstraktu Vaší práce v~angličtině.}
+\abstractCS{Tato bakalářská práce se zabývá návrhem a implementací knihovny pro automatizaci testů verifikace komunikace průmyslové komunikace. Knihovna funguje nad testovacím frameworkem MSTest. Práce také zkoumá existující open-source knihovny pro protokoly ModbusTCP a Ethernet/IP a jejich vhodnost implementace do knihovny. Na závěr práce zhodnocuje výsledné řešení z pohledu projektového řízení.}
+\abstractEN{This bachelor's thesis is focused on design and implementation of test automation library for verification of industry fieldbus communication. This library works as add-in to testing framework MSTest, which enables connection with Azure DevOps. Azure DevOps then handles the automation of the tests. This thesis also researches existing open-source libraries for fieldbuses ModbusTCP and Ethernet/IP and evaluates their suitability for implementation into the library. Lastly the thesis also evaluates the solution from the project managment view.}
 \placeForDeclarationOfAuthenticity{V~Praze}
 \declarationOfAuthenticityOption{4} %volba Prohlášení (číslo 1-6)
-\keywordsCS{Nahraďte seznamem klíčových slov v češtině oddělených čárkou.}
-\keywordsEN{Nahraďte seznamem klíčových slov v angličtině oddělených čárkou.}
+\keywordsCS{automatizace testů, knihovna, ModbusTCP, průmyslová komunikace}
+\keywordsEN{test automation, library, ModbusTCP, fieldbus communication}
 % \website{http://site.example/thesis} %volitelná URL práce, objeví se v tiráži - úplně odstraňte, nemáte-li URL práce
 
 \begin{document}
 
 \input{text.tex}
 
-\bibliographystyle{template/csn690}
-\bibliography{mybibliographyfile}
+\printbibliography
 
 \appendix
-\input{assets/appendix/abbreviations.tex}
 
-\input{assets/appendix/medium.tex}
+\input{assets/appendix/appendix.tex}
 
 \end{document}
