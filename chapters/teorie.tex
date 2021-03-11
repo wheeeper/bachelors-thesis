@@ -1,20 +1,18 @@
 \chapter{Teoretická část} % Je to vhodný název kapitoly?
 
-\dummytext{1}
-
 \section{Testování}
 
-% Warning: Trochu sekundární citace {test_automation}
+Testování je podstatnou součástí vývoje softwaru. Cílem testování není pouze odhalení chyb v softwaru, ale také verifikace a validace softwaru \cite{singh2012software}. Při testování se snažíme vytvářet situace, ve kterých můžeme ověřit, že se software chová dle zadané specifikace.
 
-Testování softwaru je jednou z velmi důležitých součástí vývoje softwaru. Podílí se na 30--60 \% z celkových nákladů vývoje, v závislosti na komplexitě a kritičnosti produktu.
-Hlavním úkolem testování je odhalit chyby, které mohou vzniknout během vývoje softwaru, a to co nejdříve od vzniku chyby \cite{test_automation}. Od testování softwaru se také odvodit kvalita softwaru. Kvalitu softwaru se dá určit tím, jak moc vytvořený software odpovídá zadaným specifikacím \cite{software_quality}. Testování softwaru je tedy přímo propojeno se softwarovou kvalitou a ve fázi testování měříme, jak moc se software blíží k jeho specifikacím \cite{KUMAR20168}. Vytváření jednotlivých testů je též balancování několika faktorů:
-\begin{itemize}
-    \item jak nákladné je vytvoření testů,
-    \item jak náročné je analyzování výsledku testu,
-    \item jak je test rigidní na průběžné změny vyvíjeného softwaru \cite{fewster1999software}.
-\end{itemize}
-
+Testování softwaru je zároveň dovednost \cite{fewster1999software}. Při testování člověk musí vybrat z nekonečného množství možných testů nějaký konečný počet, který nejlépe reprezentuje danou problematiku a pokrývá co největší možnou množinu všech možných případů. Zároveň musí vzít v potaz náročnost na vytvoření testu a na rigidnost vytvořeného testu proti změnám v softwaru. Tyto faktory poté ovlivňují i náklady na testování. Od testování softwaru se také odvodit kvalita softwaru. Kvalitu softwaru se dá určit tím, jak moc vytvořený software odpovídá zadaným specifikacím \cite{software_quality}. Tyto informace jsou velmi důležité pro managment a pro další plánování vývoje. 
 
 \section{Automatizace testování}
 
+Automatizace testování je odlišná od samotného testování. Automatizace testu neurčuje samotnou kvalitu testu. Automatizováním testu, který nic nového nepřinese, dostaneme toto nic pouze rychleji \cite{fewster1999software}. Automatizování je ale přesto v mnoha ohledech v dnešní době standardem při testování, a to především díky jeho výhodám. Díky automatizaci jsme při vývoji schopni provádět opakované testy za frakci ceny, než kdyby byli prováděny manuálně. Toto zároveň uvolňuje testery ke směřování své snahy k rozšiřování množiny testů a tím pokrytí co nejvíce případů.
 
+
+\section{Průmyslová komunikace}
+
+Při řešení průmyslové komunikace se často objevuje slovo \textit{fieldbus}. Běžný význam tohoto slova je \uv{Síť, která propojuje průmyslová zařízení jako kontrolery, PLC, regulátory atd.} \cite{fieldbus_thomesse}. Vznik těchto sítí je úzce spojený s historií vývoje informačních technologií. V době, kdy začali tyto sítě vznikat, nebyli dostupné komunikační technologie, jako dnes. Dostupné informační a telekomunikační sítě té doby nemohli uspokojit potřeby průmyslových sítí na deterministickou, spolehlivou a efektivní komunikaci \cite{future_of_ind_com}. 
+
+V dnešní době jsou tyto průmyslové sítě mezinárodně standardizovaný. Jako příklad protokolů můžeme uvést ModbusTCP, nebo Ethernet/IP, které už využívají výhod Ethernet připojení a zároveň satisfakují průmyslové potřeby. 
