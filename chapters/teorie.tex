@@ -4,13 +4,44 @@
 
 Testování je podstatnou součástí vývoje softwaru. Cílem testování není pouze odhalení chyb v softwaru, ale také verifikace a validace softwaru \cite{singh2012software}. Při testování se snažíme vytvářet situace, ve kterých můžeme ověřit, že se software chová dle zadané specifikace.
 
-Testování softwaru je zároveň dovednost \cite{fewster1999software}. Při testování člověk musí vybrat z nekonečného množství možných testů nějaký konečný počet, který nejlépe reprezentuje danou problematiku a pokrývá co největší možnou množinu všech možných případů. Zároveň musí vzít v potaz náročnost na vytvoření testu a na rigidnost vytvořeného testu proti změnám v softwaru. Tyto faktory poté ovlivňují i náklady na testování. Od testování softwaru se také odvodit kvalita softwaru. Kvalitu softwaru se dá určit tím, jak moc vytvořený software odpovídá zadaným specifikacím \cite{software_quality}. Tyto informace jsou velmi důležité pro managment a pro další plánování vývoje. 
+Testování softwaru je zároveň dovednost \cite{fewster1999software}. Při testování člověk musí vybrat z nekonečného množství možných testů nějaký konečný počet, který nejlépe reprezentuje danou problematiku a pokrývá co největší možnou množinu všech možných případů. Zároveň musí vzít v potaz náročnost na vytvoření testu a na rigidnost vytvořeného testu proti změnám v softwaru. Tyto faktory poté ovlivňují i náklady na testování. Od testování softwaru se také odvodit kvalita softwaru. Kvalitu softwaru se dá určit tím, jak moc vytvořený software odpovídá zadaným specifikacím \cite{software_quality}. Tyto informace jsou poté velmi důležité pro managment a pro další plánování vývoje. 
 
-\todo{Přidat typy testů}
+I když cíl testování je jednotný, přístupů k testování je několik. Vhodnost jednotlivých přístupů se mění na základě testované komponenty. Tyto přístupy se dají rozdělit do několika kategorií \cite{luo2001software}.
+
+\subsection{Podle znalosti komponenty}
+
+Testování se dá rozdělit podle přístupu k informacím, které o komponentách softwaru/systému víme. Tyto typy jsou:
+
+\begin{description}
+    \item[Black box testování] Nazýváno taktéž funkční testování. Na software se pohlíží jako na tzv. černou skříňku. O komponentě nebo celku nic nevíme a testujeme na základě funkcionálních požadavků a návrhu. 
+    \item[White box testování] Se znalostí implementace testované části se snažíme vytvořit takové testy, které způsobí spouštění určitých částí testované komponenty. Cílem je co největší pokrytí testování dané komponenty.
+    \item[Grey box testování] Kombinace Black box a White box testování. Při testování máme nějakou znalost implementace komponenty, ale je nižší, než při White box testování \cite{khan2010different}.
+\end{description}
+
+\subsection{Podle částí vývoje}
+
+Testování podle částí vývoje se přibližuje vývojovému cyklu. Tyto kategorie jsou:  
+
+\begin{description}
+    \item[Testování částí] V angličtině nazýváno známým pojmem \uv{Unit testing}. Je to nejnižší úroveň testování. Testuje jednotlivé komponenty systému samostatně.
+    \item[Integrační testování] Testování dvou a více komponent, které spolu vytváří nějaký větší celek softwaru. Často také využíván při testování částí, které nelze samostatně testovat.
+    \item[Systémové testování] Testování softwaru jako celku. Testování se směřuje na testování funkčních požadavků. Zároveň je možno vyhodnocovat další požadavky na systém, jako spolehlivost, bezpečnost, atd.
+    \item[Akceptační testování] U toho testování se systém dostane do rukou zákazníkovi/uživatelům. Cílem je otestování produktu u potencionálních uživatelů softwaru a získání jejich zpětné vazby. 
+\end{description}
+
+\subsection{Analýza softwaru}
+Součástí testování je i analýza softwaru. Tato analýza se dá rozdělit podle toho, zda je potřeba daný vyvíjený software vůbec spouštět. Tyto kategorie jsou:
+
+\begin{description}
+    \item[Statická analýza] Tato analýza je prováděno bez spuštění softwaru. Analýza je prováděna na napsaný kód. Vyhodnocovány jsou obecné vlastnosti napsaného kódu bez znalosti kontextu použití.
+    \item[Dynamická analýza] Testování je provedeno spuštěním softwaru a použitím reálných metod systému s reálnými daty v simulovaných situacích. 
+\end{description}
 
 \section{Automatizace testování}
 
 Automatizace testování je odlišná od samotného testování. Automatizace testu neurčuje samotnou kvalitu testu. Automatizováním testu, který nic nového nepřinese, dostaneme toto nic pouze rychleji \cite{fewster1999software}. Automatizování je ale přesto v mnoha ohledech v dnešní době standardem při testování, a to především díky jeho výhodám. Díky automatizaci jsme při vývoji schopni provádět opakované testy za frakci ceny, než kdyby byli prováděny manuálně. Toto zároveň uvolňuje testery ke směřování své snahy k rozšiřování množiny testů a tím pokrytí co nejvíce případů.
+
+\todo{Rozšíření textu o automatizaci}
 
 
 \section{Průmyslová komunikace}
