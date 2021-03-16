@@ -4,11 +4,19 @@
 
 Testování je podstatnou součástí vývoje softwaru. Cílem testování není pouze odhalení chyb v softwaru, ale také verifikace a validace softwaru \cite{singh2012software}. Při testování se snažíme vytvářet situace, ve kterých můžeme ověřit, že se software chová dle zadané specifikace.
 
-Testování softwaru je zároveň dovednost \cite{fewster1999software}. Při testování člověk musí vybrat z nekonečného množství možných testů nějaký konečný počet, který nejlépe reprezentuje danou problematiku a pokrývá co největší možnou množinu všech možných případů. Zároveň musí vzít v potaz náročnost na vytvoření testu a na rigidnost vytvořeného testu proti změnám v softwaru. Tyto faktory poté ovlivňují i náklady na testování. Od testování softwaru se také odvodit kvalita softwaru. Kvalitu softwaru se dá určit tím, jak moc vytvořený software odpovídá zadaným specifikacím \cite{software_quality}. Tyto informace jsou poté velmi důležité pro managment a pro další plánování vývoje. 
+Testování softwaru je zároveň dovednost \cite{fewster1999software}. Při testování musí tester vybrat z nekonečného množství možných testů nějaký konečný počet, který nejlépe reprezentuje danou problematiku a pokrývá co největší možnou množinu všech možných případů. Zároveň musí vzít v potaz náročnost na vytvoření testu a na rigidnost vytvořeného testu proti změnám v softwaru. Tyto faktory poté ovlivňují i náklady na testování. 
+
+Od testování softwaru se také odvodit kvalita softwaru. Kvalitu softwaru se dá určit tím, jak moc vytvořený software odpovídá zadaným specifikacím \cite{software_quality}. Tyto informace jsou poté velmi důležité pro managment. Díky nim může vyhodnocovat současný stav vývoje a upravovat plán na vývoj. 
+
+Testování zároveň zvyšuje důvěru ve vyvíjený softwaru. Každý dobře navržený test snižuje šanci, že v softwaru existuje nepodchycená chyba. S každým rozsáhlým testováním se tato důvěra zvyšuje \cite{fewster1999software}.
+
+
+
+\subsection{Rozdělní testů}
 
 I když cíl testování je jednotný, přístupů k testování je několik. Vhodnost jednotlivých přístupů se mění na základě testované komponenty. Tyto přístupy se dají rozdělit do několika kategorií \cite{luo2001software}.
 
-\subsection{Podle znalosti komponenty}
+\subsubsection{Podle znalosti komponenty}
 
 Testování se dá rozdělit podle přístupu k informacím, které o komponentách softwaru/systému víme. Tyto typy jsou:
 
@@ -18,7 +26,7 @@ Testování se dá rozdělit podle přístupu k informacím, které o komponent�
     \item[Grey box testování] Kombinace Black box a White box testování. Při testování máme nějakou znalost implementace komponenty, ale je nižší, než při White box testování \cite{khan2010different}.
 \end{description}
 
-\subsection{Podle částí vývoje}
+\subsubsection{Podle částí vývoje}
 
 Testování podle částí vývoje se přibližuje vývojovému cyklu. Tyto kategorie jsou:  
 
@@ -29,7 +37,18 @@ Testování podle částí vývoje se přibližuje vývojovému cyklu. Tyto kate
     \item[Akceptační testování] U toho testování se systém dostane do rukou zákazníkovi/uživatelům. Cílem je otestování produktu u potencionálních uživatelů softwaru a získání jejich zpětné vazby. 
 \end{description}
 
-\subsection{Analýza softwaru}
+Propojení testů a vývojového cyklu je dobře znázorněno na tzv. V-modelu, který můžeme vidět na obrázku \ref{fig:vmodel}. Na tomto modelu, nazývaném podle svého tvaru, můžeme vidět jednotlivé typy stádia vývoje a korespondující jejich ověřování v závislosti na čase.
+
+\begin{figure}[htbp]
+    \centering 
+    \includegraphics[width=0.9\textwidth]{assets/img/vmodel.pdf}
+    \caption{V-model \question{Je potřeba citovat}}
+    \label{fig:vmodel}
+\end{figure}
+
+
+
+\subsubsection{Analýza softwaru}
 Součástí testování je i analýza softwaru. Tato analýza se dá rozdělit podle toho, zda je potřeba daný vyvíjený software vůbec spouštět. Tyto kategorie jsou:
 
 \begin{description}
@@ -39,7 +58,19 @@ Součástí testování je i analýza softwaru. Tato analýza se dá rozdělit p
 
 \section{Automatizace testování}
 
-Automatizace testování je odlišná od samotného testování. Automatizace testu neurčuje samotnou kvalitu testu. Automatizováním testu, který nic nového nepřinese, dostaneme toto nic pouze rychleji \cite{fewster1999software}. Automatizování je ale přesto v mnoha ohledech v dnešní době standardem při testování, a to především díky jeho výhodám. Díky automatizaci jsme při vývoji schopni provádět opakované testy za frakci ceny, než kdyby byli prováděny manuálně. Toto zároveň uvolňuje testery ke směřování své snahy k rozšiřování množiny testů a tím pokrytí co nejvíce případů.
+Automatizace testování je odlišná od samotného testování. Automatizace testu neurčuje samotnou kvalitu testu. Pokud automatizujeme test, který nic nového nepřinese, dostaneme toto nic pouze rychleji \cite{fewster1999software}. Automatizování je ale přesto v mnoha ohledech v dnešní době standardem při testování, a to především díky jeho výhodám. Mezi tyto výhody podle \cite{fewster1999software} patří:
+
+\begin{description}
+    \item[Častější testování] S automatizací jsme schopni testovat software mnohem častěji, než při manuálním testování. Software může být testován například při každé jeho změně. Toto manuálně je velmi náročné, už jenom kvůli vysokému požadavku na lidské zdroje.  
+    \item[Možnost testovat nové věci] Automatizace umožňuje testovat takové aspekty, které se nedají manuálně testovat, nebo jejich manuální testování je velice náročné. Tím se zvyšuje pokrytí testování.
+    \item[Lepší využití zdrojů] Tester je vysoce kvalifikovaný člověk a jeho využití na opakované vkládání vstupů a ověřování výstupů je v některých případech plýtvání jeho drahocenným časem. Díky automatizaci se tester může zaměřit na jiné přínosnější činnosti, jako například vytváření nových testů, kterými pokryje nové případy.
+    \item[Konzistence] Při automatizaci testování každý běh testu proběhne naprosto identicky. Stejně jako ve vývoji, i v testování může dojít k lidské chybě. Díky automatizaci se šance lidské chyby snižuje. Toto zvyšuje konzistenci testování, než kdybych testy prováděli manuálně.
+    \item[Snížení doby testování] Jednou automatizované testy můžou být provedeny mnohem rychleji a efektivněji, než při jejich manuálním spuštění. Toto způsobuje snížení potřebné doby na testování.
+\end{description}
+
+
+
+% Díky automatizaci jsme při vývoji schopni provádět opakované testy za frakci ceny, než kdyby byli prováděny manuálně. Toto zároveň uvolňuje testery ke směřování své snahy k rozšiřování množiny testů a tím pokrytí co nejvíce případů. 
 
 \todo{Rozšíření textu o automatizaci}
 
