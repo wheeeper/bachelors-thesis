@@ -1,3 +1,60 @@
 \chapter{Implementace}
 
-\dummytext{1-10}
+\todo{Tohle je ještě hodně v počátečním stavu, stačí se kouknout velký chyby}
+
+Tato kapitola se věnuje samotné implementaci všech komponent, které umožní funkčnost testovací knihovny.
+
+\section{Komunikace}
+Testovací knihovna má jasně definovanou komunikaci. Strukturu jedné zprávy zajišťuje třída \inlinecode{Message}. \todo{Popis třídy Message}
+
+\section{Nastavení knihovny}
+Ke správnému fungovaní knihovny je zapotřebí určitá konfigurace. Tato konfigurace se dá rozdělit na tři části:
+\begin{enumerate}
+    \item Konfigurace služby
+    \item Konfigurace frameworku MSTest s testovací knihovnou
+    \item Konfigurace propojení se serverem Azure DevOps
+\end{enumerate}
+
+V této části se budeme věnovat pouze konfiguraci služby. Ostatní konfigurace budou probrány v dalších částích. Konfigurace je uložena v souboru \inlinecode{config.xml}. Ukázku tohoto souboru můžeme vidět na obrázku \ref{listing:configxml}. Tento soubor obsahuje tři hodnoty pro nastavení:
+
+\begin{description}
+    \item[IP] Adresa, na které bude služba poslouchat příchozí připojení. Všechna zařízení se budou připojovat na tuto adresu.
+    \item[Port] Síťový port, skrz který služba provádí komunikaci
+    \item[Participants] Počet fyzických participantů, které se připojí ke službě.   
+\end{description}
+
+\begin{listing}
+    \begin{minted}{xml}
+        <?xml version="1.0" encoding="UTF-8" ?>
+        <configuration>
+          <!-- IP of the service-->
+          <ip>192.168.4.100</ip>
+          <!-- Port of the service -->
+          <port>1337</port>
+          <!-- Number of non-virtualized participants-->
+          <participants>1</participants>
+        </configuration>
+    \end{minted}
+    \caption{Ukázka konfiguračního souboru}
+    \label{listing:configxml}
+\end{listing}
+
+
+\section{Služba}
+Jak jsem již zmínil, testování je řízeno testovací služba. V naší implementaci je tento celek rozdělen na dvě třídy. Třída \inlinecode{csharp}{TestService} obstarává jednotlivé úkony služby. Třída po konstrukci inicializuje vnitřní proměnné, ale neprovádí žádné úkony. Metodou \inlinecode{bool Init(int InitTimeout)} třída inicializuje běh služby. Proměnná \inlinecode{InitTimeout} určuje dobu, kdy služba čeká na příchozí komunikaci. 
+
+Metoda z konfigurace zjistí IP adresu a port, na kterém má služba běžet. Následně začne na této IP adrese a portu poslouchat příchozí komunikaci. V této fázi se připojují pouze fyzická zařízení. Z nastavení služba ví, kolik participantů má očekávat. 
+
+O přidávání participantů se stará metoda \inlinecode{int AddClient(int timeout)}. Při příchozí komunikaci je zavolána tato metoda, která přijme zařízení a vytvoří s ním připojení. Zároveň přijme identifikační zprávu od participanta. Tato zpráva má typ zprávy OK a v datech zprávy obsahuje MAC adresu participanta. Metoda odešle participantovi potvrzovací zprávu s typem zprávy OK, bez dat. Po úspěšném připojení metoda uloží vytvořeného klienta a jeho MAC adresu do seznamu připojených participantů. Metoda zároveň rozezná připojení virtuálního participanta. Tento participant má MAC adresu DE:AD:BE:EF:00:00. Nakonec metoda vrací tři hodnoty
+\begin{description}
+    \item[0] pokud připojování participanta vyústilo v neúspěch, ať už kvůli překročení časového limitu, nebo kvůli nedodržení stanovené komunikace.
+    \item[1] pokud služba úspěšně přijme fyzického participanta
+    \item[2] pokud služba úspěšně přijme virtuálního participanta
+\end{description}
+
+Služba úspěšně ukončuje inicializační fázi poté co se úspěšně připojí stejný počet participantů, jako bylo určeno v konfiguraci. V případě nepřipojení se očekávaného počtu zařízení v definovaném čase, obdržení špatné nebo žádné zprávy služba vyhodnocuje inicializační fázi jako neúspěšnou. Připojení virtualizovaného participanta v této fázi vyústí též v neúspěch inicializace.
+
+Další metodou této třídy je metoda \inlinecode{bool AddVirtualParticipant(int timeout)}. Tato metoda může přijmout virtuálního participanta v průběhu běhu. Metoda volá stejně jako inicializační metoda metodu \inlinecode{AddClient}, které zajišťuje a ověřuje úspěšné připojení. Metoda vrací úspěch při úspěšném připojení virtuálního participanta. V případě nějaké chyby nebo připojené fyzického participanta, metoda vrací neúspěch. 
+
+Metoda \inlinecode{TestResult RunTest<T>(T testEnum, int timeout)} zajištuje spuštění jednotlivých testů. 
+
