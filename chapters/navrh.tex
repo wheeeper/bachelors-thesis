@@ -13,7 +13,7 @@ V rámci knihovny a testovacího běhu se bude vyskytovat několik účastníků
 
 Hlavním cílem je testovat vyvíjený produkt. V kontextu této knihovny ho budeme nazývat fyzický participant. Do této kategorie avšak také bude patřit jakékoliv zařízení, které běží mimo zařízení, které řídí testování. Tato zařízení budou k zařízení, které řídí testovaní, připojena za pomoci Ethernet připojení.
 
-Knihovna zároveň bude obsahovat tzv. virtuálního participanta. Toto zařízení bude sloužit k simulaci protistrany u testování fyzického zařízení. Je to volitelný participant. Zároveň může být během testu připojeno více virtuálních participantů. Simulováním participanta snižujeme hardwarové nároky na testování, což vede ke snížení ekonomických nákladů na testování. Tito participanti se budou připojovat před započnutím určitého testu a po skončení testu zaniknou.
+Knihovna zároveň bude obsahovat tzv. virtuálního participanta. Toto zařízení bude sloužit k simulaci protistrany u testování fyzického zařízení. Je to volitelný participant. Zároveň může být během testu připojeno více virtuálních participantů. Simulováním participanta snižujeme hardwarové nároky na testování, což vede ke snížení ekonomických nákladů na testování. Tito participanti se budou připojovat před započnutím určitého testu a po skončení tohoto jednoho testu zaniknou.
 
 Testovací služba poběží na samostatném zařízení. Toto zařízení bude běžet na operačním systému Windows. Toto zařízení bude v rámci infrastruktury serveru Azure DevOps tzv. agent. Agent je výpočetní infrastruktura s nainstalovaným softwarem agenta, který pracuje na jedné určité úloze \cite{agent_docs}. Na agentovi bude server Azure DevOps spouštět testovací běh.
 
