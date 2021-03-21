@@ -1,33 +1,18 @@
 \chapter{Implementace}
 
-Tato kapitola se věnuje samotné implementaci všech komponent, které umožní funkčnost testovací knihovny.
+Tato kapitola se věnuje implementační části všech navrhnutých komponent, které umožní automatizaci testování.
 
-\section{Sdílené enumerátory}
-V rámci knihovny existuje několik typových výčtů, které jsou používány skrz celou knihovnu. Enumerátory jsou zároveň využívány v implementacích na testovaných zařízeních. Tyto enumerátory se nachází v jmenném prostoru \inlinecode{TestLibEnums} v souboru \inlinecode{SharedEnums.cs}. Za pomocí preprocesorových direktiv je tento soubor vytvořen tak, aby mohl být použit jak pro implementaci v jazyku C\# a C++. 
+% \section{Sdílené enumerátory}
+% V rámci knihovny existuje několik typových výčtů, které jsou používány skrz celou knihovnu. Enumerátory jsou zároveň využívány v implementacích na testovaných zařízeních. Tyto enumerátory se nachází v jmenném prostoru \inlinecode{TestLibEnums} v souboru \inlinecode{SharedEnums.cs}. Za pomocí preprocesorových direktiv je tento soubor vytvořen tak, aby mohl být použit jak pro implementaci v jazyku \inlinecode{C\#}, tak při implementaci v jazyku \inlinecode{C++}. 
 
-\subsection{MessageType}
-Tento enumerátor určuje typ zprávy. Obsahuje pět výčtů:
+% \subsection{TestStateE}
+% Enumerátor \inlinecode{TestStateE} rozlišuje synchronizační stádia testování. Jeho výčet je přímo úměrný rozhraní pro jednotlivé testy. Obsahuje tedy tři výčty:
 
-\begin{itemize}
-    \item \inlinecode{MSG\_FAIL} -- zpráva o neúspěchu
-    \item \inlinecode{MSG\_OK} -- zpráva o úspěchu nebo potvrzení
-    \item \inlinecode{MSG\_RUNTEST} -- pokyn k započnutí testu
-    \item \inlinecode{MSG\_STOP} -- pokyn k ukončení testování
-    \item \inlinecode{MSG\_EXCEPTION} -- chybná zpráva, slouží pro rozpoznání neplatné zprávy
-\end{itemize}
-
-\subsection{TestStateE}
-Enumerátor \inlinecode{TestStateE} rozlišuje synchronizační stádia testování. Jeho výčet je přímo úměrný rozhraní pro jednotlivé testy. Obsahuje tedy tři výčty:
-
-\begin{itemize}
-    \item \inlinecode{TEST\_STARTUP} -- příprava na testování
-    \item \inlinecode{TEST\_RUN} -- spuštění testu
-    \item \inlinecode{TEST\_TEARDOW} -- úklid po testu
-\end{itemize}
-
-\section{Komunikace}
-Testovací knihovna má jasně definovanou komunikaci. Strukturu jedné zprávy zajišťuje třída \inlinecode{Message}. Dle návrhu má jedna odeslaná zpráva definované tři atributy -- délku zprávy, typ zpráva a data zprávy. Třída \inlinecode{Message} si drží dva z těchto atributů, třetí -- délka zprávy -- je na základě ostatních dvou vypočítána. Typ zprávy je určen enumerátorem \inlinecode{MessageType}. Data zprávy jsou uložena v dynamickém poli. \todo{Doplnit}
-
+% \begin{itemize}
+%     \item \inlinecode{TEST\_STARTUP} -- příprava na testování
+%     \item \inlinecode{TEST\_RUN} -- spuštění testu
+%     \item \inlinecode{TEST\_TEARDOW} -- úklid po testu
+% \end{itemize}
 
 \section{Nastavení knihovny}
 Ke správnému fungovaní knihovny je zapotřebí určitá konfigurace. Tato konfigurace se dá rozdělit na tři části:
@@ -64,9 +49,24 @@ Ukázku tohoto souboru můžeme vidět na obrázku \ref{listing:configxml}. V kn
     \label{listing:configxml}
 \end{listing}
 
+\section{Komunikace}
+Testovací knihovna má jasně definovanou komunikaci. Strukturu jedné zprávy zajišťuje třída \inlinecode{Message}. Dle návrhu má jedna odeslaná zpráva definované tři atributy -- délku zprávy, typ zpráva a data zprávy. Třída \inlinecode{Message} si drží dva z těchto atributů, třetí -- délka zprávy -- je na základě ostatních dvou vypočítána. Typ zprávy je určen enumerátorem \inlinecode{MessageType}. Tento enumerátor obsahuje výčty:
 
-\section{Služba}
-Jak jsem již zmínil, testování je řízeno testovací službou. V naší implementaci je tento celek rozdělen na dvě třídy. Třída \inlinecode{TestService} obstarává jednotlivé úkony služby. Třída po konstrukci inicializuje vnitřní proměnné, ale neprovádí žádné úkony. 
+\begin{itemize} 
+    \item \inlinecode{MSG\_FAIL} -- zpráva o neúspěchu
+    \item \inlinecode{MSG\_OK} -- zpráva o úspěchu nebo potvrzení
+    \item \inlinecode{MSG\_RUNTEST} -- pokyn k započnutí testu
+    \item \inlinecode{MSG\_STOP} -- pokyn k ukončení testování
+    \item \inlinecode{MSG\_EXCEPTION} -- chybná zpráva, slouží pro rozpoznání neplatné zprávy
+\end{itemize}
+
+Data zprávy jsou uložena v dynamickém poli. \todo{Doplnit}
+
+
+\section{Testovací služba}
+Jak již bylo zmíněno, jádrem ovládání testování je testovací služba. V implementaci je tento celek rozdělen na dvě hlavní třídy. Třída \inlinecode{TestService} obstarává jednotlivé úkony služby, následně třída \inlinecode{ServiceRunner} obstarává běh a logiky služby a provázaných komponent, jako je například konfigurace. 
+
+Třída \inlinecode{TestService} po konstrukci inicializuje vnitřní proměnné, ale neprovádí žádné úkony. 
 
 O komunikaci s participanty se stará několik metod. Základem jsou metody \inlinecode{void SendMessage(TcpClient client, Message msg)} a \inlinecode{bool RcvMessage(TcpClient client, out Message msg)}. Tyto metody zajišťují přijímaní a odesílání zpráv jednomu určitému klientovy, určeného argumentem \inlinecode{client}. Následně jsou zde dvě metody, které pracují se více než jedním participantem. Metoda \inlinecode{SendParticipantsMessage(Message msg)} odešle všem participantům stejnou zprávu. Následně metoda \inlinecode{TestResult CheckParticipantsResponse(MessageType expectedResponse, int timeout)} je využívána při ověřování zpráv po jednotlivých stádiích testování. V argumentu metoda obdrží očekávaný typ zprávy a maximální dobu čekání na odpověď. Všechny časové hodnoty jsou v celém programu v milisekundách. Metoda vrací jeden z výčtů enumerátoru \inlinecode{TestResult}. Jednotlivě:
 
