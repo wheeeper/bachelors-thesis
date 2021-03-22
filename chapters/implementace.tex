@@ -26,14 +26,15 @@ Jak již bylo zmíněno, jádrem k ovládání testování je testovací služba
 Konfigurace služby je uložena v souboru \inlinecode{config.xml}. Tento soubor obsahuje tři hodnoty pro nastavení:
 
 \begin{itemize}
-    \item \inlinecode{IP} -- Adresa, na které bude služba poslouchat příchozí připojení. Všechna zařízení se budou připojovat na tuto adresu.
-    \item \inlinecode{Port} -- Síťový port, skrz který služba provádí komunikaci
-    \item \inlinecode{Participants} -- Počet fyzických participantů, které se připojí ke službě.   
+    \item \inlinecode{ip} -- Adresa, na které bude služba poslouchat příchozí připojení. Všechna zařízení se budou připojovat na tuto adresu.
+    \item \inlinecode{port} -- Síťový port, skrz který služba provádí komunikaci
+    \item \inlinecode{participants} -- Počet fyzických participantů, které se připojí ke službě.   
 \end{itemize}
 
-Ukázku tohoto souboru můžeme vidět na obrázku \ref{listing:configxml}. V knihovně se o konfiguraci stará třída \inlinecode{Configuration}. Tato třída existuje v jmenném prostoru \inlinecode{GlobalVar}. Tento jmenný prostor simuluje globální proměnnou. Kvůli tomu jsou ale všechny třídy, které jsou odsud používány, konstruovány tak, aby primárně fungovaly jen ke čtení. Při vytvoření instance třída získá konfiguraci z konfiguračního souboru a uloží je do vnitřních proměnných třídy. Tyto proměnné jsou určeny pouze ke čtení, nelze je upravovat. Stav konfigurace určuje proměnná \inlinecode{bool IsValid}. V případě chyby je tato proměnná nastavená na hodnotu \inlinecode{false} a v proměnné \inlinecode{Exception} je uložen důvod neúspěchu. V opačném případě je tato proměnná nastavena na hodnotu \inlinecode{true}.
+Ukázku tohoto souboru můžeme vidět na výpisu \ref{listing:configxml}. V knihovně se o konfiguraci stará třída \inlinecode{Configuration}. Tato třída existuje v jmenném prostoru \inlinecode{GlobalVar}. Tento jmenný prostor simuluje globální proměnnou. Kvůli tomu jsou ale všechny třídy, které jsou odsud používány, konstruovány tak, aby primárně fungovaly jen ke čtení. Při vytvoření instance třída získá konfiguraci z konfiguračního souboru a uloží je do vnitřních proměnných třídy. Tyto proměnné jsou určeny pouze ke čtení, nelze je upravovat. Stav konfigurace určuje proměnná \inlinecode{bool IsValid}. V případě chyby je tato proměnná nastavená na hodnotu \inlinecode{false} a v proměnné \inlinecode{Exception} je uložen důvod neúspěchu. V opačném případě je tato proměnná nastavena na hodnotu \inlinecode{true}.
 
 \begin{listing}[htbp]
+    \centering
     \begin{minted}{xml}
         <?xml version="1.0" encoding="UTF-8" ?>
         <configuration>
@@ -147,3 +148,37 @@ Tato informace je uložena ve vlastní proměnné \inlinecode{State}. Následný
     \item \inlinecode{void Stop()} \\ Metoda předá informaci o ukončení testovacího běhu.
 \end{itemize}
 
+
+\section{Virtuální participant}
+
+\todo{Doplnit}
+
+
+\section{Propojení s frameworkem MSTest}
+
+Podstatnou součástí implementace je propojení služby s testovacím frameworkem MSTest. O toto se stará třída \inlinecode{API}. Jako jediná třída využívá nástroje tohoto frameworku. Třída je koncipovaná jako statická třída, i když je závislá na jím vytvořené instanci třídy \inlinecode{ServiceRunner}. Toto je uděláno z důvodu designového omezení frameworku MSTest. 
+
+Při spuštění jednotlivých testů je nutné brát v potaz, že testovací služba neví jaké testy budou kdy spuštěny. Testovací služba se tedy musí používat nezávisle na těchto testech. K tomuto využijeme dvě funkce frameworku MSTest -- \inlinecode{AssemblyInitialize} a \inlinecode{AssemblyCleanup}. Tyto dvě funkce jsou spuštěny ještě před započnutím a po skončení testovaní. V třídě \inlinecode{API} jejím implementacím odpovídají metody \inlinecode{AssemblyInit} a \inlinecode{AssemblyCleanup}. Metoda \inlinecode{AssemblyInit} přijímá dva argumenty:
+
+\begin{itemize}
+    \item \inlinecode{Assembly assembly} -- odkaz na runtime blok, který reprezentuje spuštěný blok programu mimo knihovnu
+    \item \inlinecode{int InitTimeout} -- časový limit na inicializační fázi služby (tedy časový limit, který je využíván v metodě \inlinecode{TestService.Init}), pokud je ponechán prázdný, je použit defaultní časový limit z třídy \inlinecode{ServiceRunner}.
+\end{itemize}
+
+Předání runtime bloku -- neboli assembly -- je sice dobrovolným krokem, ale podstatným. Při odesílání testů služba odesílá pouze číselnou reprezentaci enumerátoru, který test identifikuje. Tento enumerátor ale nemusí být stejného typu. Proto zde může vzniknout kolize.
+
+Framework MSTest využívá pro rozlišení testovacích součástí tzv. atributy. Atributy přidávají metadata k třídám, typům, metodám atd. \cite{attribute_docs}. Framework MSTest využívá například tyto atributy:
+
+\begin{itemize}
+    \item \inlinecode{AssemblyInitialize} -- identifikuje inicializační funkci
+    \item \inlinecode{AssemblyCleanup} -- identifikuje funkci která bude spuštěna po skončení všech testů
+    \item \inlinecode{TestClass} -- identifikuje třídu, která obsahuje testy
+    \item \inlinecode{TestMethod} -- identifikuje metody, které reprezentují jednotlivé testy
+\end{itemize}
+
+Testovací knihovna tuto sadu atributů rozšiřuje o atribut \inlinecode{TestEnum}. Tento atribut říká, že enumerátor s atributem \inlinecode{TestEnum} reprezentuje nějaké testy. Proto metoda \inlinecode{AssemblyInit} prostřednictvím argumentu \inlinecode{assembly} zjistí, které enumerátory mají tento atribut. Následně zkontroluje, zdali tyto enumerátory nemají mezi sebou kolize. V případě nalezení kolize je vyhozena výjimka. Tato kontrola se dá přeskočit předáním hodnoty \inlinecode{null} v argumentu \inlinecode{assembly}.
+
+Metoda \inlinecode{AssemblyCleanup} symetricky ukončuje běh testovací služby. V určitých případech tato funkce nemusí být zavolána \question{Je zde potřeba citace}. Při zjištění chyby v běhu, která vyústí v ukončení testovacího běhu, je tato funkce volána manuálně.
+
+Pro spuštění testování je použita metoda \inlinecode{Run}. Tato metoda přijímá stejné argumenty jako metoda \inlinecode{RunTest} třídy \inlinecode{ServiceRunner}. Metoda zkontroluje, že argument identifikující test je typem enumerátor a obsahuje atribut \inlinecode{TestEnum}. V případě že se testovací služba nenachází v chybném stavu, tak metoda předá testovací službě direktivu k započnutí testu. Následně vyhodnotí úspěšnost testu. V případě, že služba je v chybném stavu, metoda vyhodnotí test jako bezvýsledný. 
+ 
