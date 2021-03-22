@@ -503,6 +503,8 @@ sp\^ osobom, ktor\'y nezni\v zuje hodnotu Diela (vr\'atane komer\v cn\'eho vyu\v
 	\fi
 }
 
+
+
 \AfterEndPreamble{
 % fix the memoir bug generating structured numbers (e.g., a figure number) without dot
 \renewcommand{\counterwithin}{\@ifstar{\@csinstar}{\@csin}}
@@ -524,15 +526,21 @@ sp\^ osobom, ktor\'y nezni\v zuje hodnotu Diela (vr\'atane komer\v cn\'eho vyu\v
 	\imprintpage
 
 	\abstractpage
-
 	\cleardoublepage
+
 	\tableofcontents*
-
+	
 	\cleardoublepage
+	
+	\renewcommand{\listingscaption}{Výpis}
+	\renewcommand{\listoflistingscaption}{Seznam výpisů}
+
+	\listoflistings
+	\clearpage
 	\listoffigures*
-
-	\cleardoublepage
+	\clearpage
 	\listoftablescond
+	\cleardoublepage
 
 	\pagestyle{ruled}
 	\mainmatter
