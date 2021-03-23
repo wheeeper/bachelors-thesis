@@ -149,8 +149,49 @@ Tato informace je uložena ve vlastní proměnné \inlinecode{State}. Následný
 \end{itemize}
 
 
-\section{Virtuální participant}
+\section{Rozhraní pro testovaná zařízení}
 
+Rozhraní pro testovaná zařízení umožňuje propojení s testovací službou. Jeho cílem je být co nejjednodušší pro co nejrychlejší implementaci. Definici rozhraní pro jazyk \inlinecode{C++} můžeme vidět na výpisu \ref{listing:dev_if}.
+
+\begin{listing}[htbp]
+    \begin{minted}[breaklines]{cpp}
+    class DeviceIf
+    {
+    public:
+
+        virtual ~DeviceIf() {}
+
+        virtual bool createConnection(const char * ipAddress, uint16_t port) = 0;
+
+        virtual bool sendMessage(const Message& msg) = 0;
+
+        virtual bool rcvMessage(Message& msg) = 0;
+
+        virtual TestCaseIf * getTest(uint32_t test) = 0;
+
+        virtual bool getMacAddress(uint8_t** macAddr, uint32_t* size) = 0;
+    };
+    \end{minted}
+\caption{Ukázka definice rozhraní}
+\label{listing:dev_if}
+\end{listing}
+
+\todo{Dopsat}
+
+
+\section{Virtuální participant}
+Implementace virtuálního participanta přímo kopíruje navrhnuté rozhraní pro testované zařízení. Logika virtuálního participanta je obsažena ve třídě \inlinecode{VirtualClient}. Tato třída tři možné konstruktory:
+
+\begin{itemize} 
+    \item \inlinecode{VirtualClient(ITestClient device)} \\
+    Konstruktor dostane v argumentu odkaz na implementaci rozhraní zařízení
+    \item \inlinecode{VirtualClient (ITestCase testCase)} \\
+    Konstruktor dostane v argumentu odkaz na implementaci jednoho testu, který je odvozený z rozhraní pro test.
+    \item \inlinecode{VirtualClient (Func<UInt32, ITestCase> getTest)} \\
+    Argumentem konstruktoru je funkce, která obsahuje seznam testů. Funkce v argumentu dostane číselnou reprezentaci testu a vrací instanci testu, který je odvozený z rozhraní testu.
+\end{itemize}
+
+Třída následně vytvoří instanci implementace rozhraní klienta. Tato implementace je obsažena ve třídě \inlinecode{TestClientDefault}. Testovací běh virtuálního participanta funguje na stejném principu jako běh ostatních testovaných zařízení. Rozdílem je, že třída \inlinecode{VirtualClient} vytvoří nové vlákno, na kterém běží tento virtuální participant. Vytvořené vlákno (a s ním i virtuální participant) je poté spuštěno metodou \inlinecode{Start}. Následně metoda \inlinecode{Stop} ukončuje běh virtuálního participanta. Metoda nejdříve čeká, zda se participant a vlákno ukončí standardním způsobem. Pokud se virtuální participant neukončí ve stanoveném časovém limitu, tak ho metoda ukončí ukončením běžícího vlákna.
 \todo{Doplnit}
 
 
