@@ -1,21 +1,24 @@
 \chapter{Implementace}
 
-Tato kapitola se věnuje implementační části všech navrhnutých komponent, které umožnují automatizaci testování.
+Tato kapitola se věnuje implementaci všech navrhnutých komponent, které umožnují automatizaci testování.
 
 \section{Komunikace}
-Testovací knihovna má jasně definovanou komunikaci. Strukturu jedné zprávy zajišťuje třída \inlinecode{Message}. Dle návrhu má jedna odeslaná zpráva definované tři atributy -- délku zprávy, typ zpráva a data zprávy. Třída \inlinecode{Message} si drží dva z těchto atributů, třetí -- délka zprávy -- je na základě ostatních dvou vypočítána. Typ zprávy je určen enumerátorem \inlinecode{MessageType}. Tento enumerátor obsahuje výčty:
+Testovací knihovna má mezi testovací službou a participanty jasně definovanou komunikaci. Strukturu jedné zprávy zajišťuje třída \inlinecode{Message}. Dle návrhu má jedna odeslaná zpráva definované tři atributy -- délku zprávy, typ zpráva a data zprávy. Třída \inlinecode{Message} si drží dva z těchto atributů, třetí -- délka zprávy -- je na základě ostatních dvou vypočítána. Typ zprávy je určen enumerátorem \inlinecode{MessageType}. Tento enumerátor obsahuje výčty:
 
 \begin{itemize} 
     \item \inlinecode{MSG\_FAIL} -- zpráva o neúspěchu
-    \item \inlinecode{MSG\_OK} -- zpráva o úspěchu nebo potvrzení
+    \item \inlinecode{MSG\_OK} -- zpráva o úspěchu/potvrzení
     \item \inlinecode{MSG\_RUNTEST} -- pokyn k započnutí testu
     \item \inlinecode{MSG\_STOP} -- pokyn k ukončení testování
     \item \inlinecode{MSG\_EXCEPTION} -- chybná zpráva, slouží pro rozpoznání neplatné zprávy
 \end{itemize}
 
-Data zprávy jsou uložena v dynamickém poli. 
+Data zprávy jsou uložena v dynamickém poli. Třída zároveň podporuje vytvoření zprávy, bez žádných dat. K odesílání a přijímání zpráv je využíván protokol TCP/IP. Implementace tohoto protokolu využívá k reprezentaci dat bajtové pole. Proto je podstatné aby třída \inlinecode{Message} uměla převádět mezi instancí třídy Message a bajtovým polem. K tomu slouží tyto metody:
 
-\todo{Doplnit}
+\begin{itemize}
+    \item \inlinecode{byte[] GetByteStream()} \\ Metoda vrací reprezentaci instanci třídy Message v bajtovém poli dle návrhu.
+    \item \inlinecode{static Message GetMessageFromStream(byte[] streamData)} \\ Statická metoda, které v argumentu dostane bajtové pole a vrátí instanci třídy \inlinecode{Message}.
+\end{itemize}
 
 
 \section{Testovací služba}
@@ -56,16 +59,24 @@ Ukázku tohoto souboru můžeme vidět na výpisu \ref{listing:configxml}. V kni
 Jak jsem již zmínil, jednotlivé úkony služby jsou implementovány v třídě \inlinecode{TestService}. Třída po své konstrukci inicializuje vnitřní proměnné, ale neprovádí žádné úkony. 
 
 \subsubsection{Odesílání a přijímání zpráv}
-Struktura jedné zprávy je již známým faktem. O jednotlivá připojení se avšak stará třída \inlinecode{TestService}. Třída má dvě hlavní statické metody pro odesílání a přijímání jednotlivých zpráv. Tyto metody jsou:
+Struktura jedné zprávy je již známým faktem. O jednotlivá připojení za použití protokolu TPC/IP se avšak stará třída \inlinecode{TestService}. Třída má dvě hlavní statické metody pro odesílání a přijímání jednotlivých zpráv. Tyto metody jsou:
 
 \begin{itemize}
     \item \inlinecode{static void SendMessage(TcpClient client, Message msg)} \\
-    Metoda pro odeslání zprávy jednomu klientovi
+    Metoda pro odeslání jedné zprávy jednomu klientovi.
     \item \inlinecode{static bool RcvMessage(TcpClient client, out Message msg)} \\
-    Metoda pro přijmutí zprávy od jednoho klienta
+    Metoda pro přijmutí zprávy od jednoho klienta.
 \end{itemize}
 
-Všechny zprávy jsou následně odesílány a přijímány za pomoci těchto dvou metod. Rozšířením těchto metod jsou metody \inlinecode{SendParticipantsMessage} a \inlinecode{CheckParticipantsResponse}. Obě metody pracují se všemi participanty připojenými ke službě. Metoda \inlinecode{SendParticipantsMessage} odešle všem participantům jednu zprávu, naopak metoda \inlinecode{CheckParticipantsResponse} zprávu od všech participantů přijme a zkontroluje, zda se všechny typy zprávy shodují s očekávaným typem zprávy. Očekávaný typ zprávy je předán v argumentu metody. \todo{CheckParticipantsResponse co vrací}
+Všechny zprávy jsou následně odesílány a přijímány za pomoci těchto dvou metod. Rozšířením těchto metod jsou metody \inlinecode{SendParticipantsMessage} a \inlinecode{CheckParticipantsResponse}. Obě metody pracují se všemi participanty připojenými ke službě. Metoda \inlinecode{SendParticipantsMessage} odešle všem participantům jednu zprávu, naopak metoda \inlinecode{CheckParticipantsResponse} zprávu od všech participantů přijme a zkontroluje, zda se všechny typy zprávy shodují s očekávaným typem zprávy. Očekávaný typ zprávy je předán v argumentu metody. Metoda \inlinecode{CheckParticipantsResponse} využívá jako návratovou hodnotu enumerátor \inlinecode{LibState}. Tento enumerátor má tyto výčty:
+
+\begin{itemize}
+    \item \inlinecode{STATE\_OK} - označuje úspěch
+    \item \inlinecode{STATE\_FAIL} - označuje neúspěch
+    \item \inlinecode{STATE\_ERROR} - označuje neúspěch, jehož důvodem je nějaká chyba
+\end{itemize}
+
+Tento enumerátor je hojně využíván skrz knihovnu k reprezentaci stavu. U metody \inlinecode{CheckParticipantsResponse} určuje, zda metoda úspěšně zkontrolovala všechny participanty a výsledek této kontroly. V případě vzniku chyby vrací hodnotu \inlinecode{STATE\_ERROR}.
 
 \subsubsection{Inicializace}
 
@@ -73,7 +84,7 @@ Metodou \inlinecode{bool Init(int InitTimeout)} třída \inlinecode{TestService}
 
 Metoda z konfigurace zjistí IP adresu a port, na kterém má služba běžet. Následně začne na této IP adrese a portu poslouchat příchozí komunikaci. V této fázi se připojují pouze fyzická zařízení. Z nastavení služba ví, kolik participantů má očekávat. 
 
-V případě příchozí komunikace je poté zavolána metoda \inlinecode{AddClient}. Tato metoda vytvoří klienta a přijme identifikační zprávu od participanta. Tato zpráva má typ zprávy \inlinecode{MSG\_OK} a v datech zprávy obsahuje MAC adresu participanta. Metoda odešle participantovi potvrzovací zprávu s typem zprávy \inlinecode{MSG\_OK}, bez dat. 
+V případě příchozí komunikace je poté zavolána metoda \inlinecode{AddClient}. Tato metoda vytvoří připojení s klientem a přijme identifikační zprávu od participanta. Tato zpráva má typ zprávy \inlinecode{MSG\_OK} a v datech zprávy obsahuje MAC adresu participanta. Metoda odešle participantovi potvrzovací zprávu s typem zprávy \inlinecode{MSG\_OK}, bez dat. 
 
 Po úspěšném ověření připojení metoda uloží vytvořeného klienta a jeho MAC adresu do seznamu připojených participantů. Metoda zároveň rozezná připojení virtuálního participanta. Tento participant má MAC adresu \inlinecode{DE:AD:BE:EF:00:00}. Nakonec metoda vrací tři hodnoty typu integer:
 \begin{itemize}
@@ -96,7 +107,7 @@ Nejpodstatnější operací je spuštění jednotlivých testů. O toto se star�
 Pro započnutí testu na testovaném zařízení služba odešle zprávu, s typem zprávy \inlinecode{MSG\_RUNTEST}. Data této zprávy obsahují:
 
 \begin{enumerate}
-    \item Číselnou reprezentaci enumerátoru \inlinecode{testEnum}. Ten je uložen v prvních 4 bytech dat zprávy.
+    \item Číselnou reprezentaci enumerátoru \inlinecode{testEnum}. Ten je uložen v prvních 4 bajtech dat zprávy.
     \item Číselnou reprezentaci enumerátoru \inlinecode{TestStateE}, určující stádium testování. Uložen je ve dvou bajtech dat zprávy hned za identifikátorem testu.
 \end{enumerate}
 
@@ -110,16 +121,9 @@ Tato metoda postupně spouští všechny stádia testování. Tyto stádia jsou 
 
 Po spuštění jednotlivých stádií testování metoda čeká na odpověď od všech participantů. Participant odesílá službě zprávu s typem \inlinecode{MSG\_OK} pro úspěch, a nebo s typem \inlinecode{MSG\_FAIL} pro neúspěch. Obě zprávy neobsahují žádné data.
 
-Doba čekání je určena argumentem \inlinecode{timeout}. Tento čas je vázaný na jednotlivá stádia testování. Tedy pokud metoda má časový limit 30 sekund, tak poté bude po každém stádiu testování čekat 30 sekund na odpověď od participanta. V případě že vyprší časový limit, tak je participant považován jako v chybném stavu. Taktéž je participant považován jako v chybném stavu, pokud vrátí neúspěch u přípravy na testování nebo u úklidu po testu.
+Doba čekání je určena argumentem \inlinecode{timeout}. Tento čas je vázaný na jednotlivá stádia testování. Tedy pokud metoda má časový limit 30 sekund, tak poté bude po každém stádiu testování čekat 30 sekund na odpověď od participanta. V případě, že vyprší časový limit, tak je participant považován jako v chybném stavu. Taktéž je participant považován jako v chybném stavu, pokud vrátí neúspěch u přípravy na testování nebo u úklidu po testu.
 
-Metoda následně vrací jednotu z hodnot enumerátoru \inlinecode{TestResult}. Tyto hodnoty jsou:
-
-\begin{itemize}
-    \item \inlinecode{TEST\_SUCCESS} -- test proběhl úspěšně
-    \item \inlinecode{TEST\_FAIL} -- test proběhl neúspěšně
-    \item \inlinecode{TEST\_ERROR} -- v průběhu testování se vyskytla chyba a další testování není možné   
-\end{itemize}
-
+Metoda následně vrací jednotu z hodnot enumerátoru \inlinecode{LibState}. Pokud v průběhu testování došlo k nějaké chybě, tak je testovací běh ukončen a všechny následující testy jsou přeskočeny. 
 
 \subsubsection{Ukončení testování}
 
@@ -132,14 +136,7 @@ Jelikož každý test může obsahovat různý počet virtuálních participant�
 \subsection{Propojení s ostatními komponentami}
 
 O propojení třídy \inlinecode{TestService} s ostatními komponentami knihovny se stará třída \inlinecode{ServiceRunner}.
-Tato třída ve svém konstruktoru inicializuje konfiguraci služby a zjistí, zda je validní. Tento konstruktor přijímá jeden argument -- časový limit na inicializaci. V případě nezadání tohoto parametru třída využije defaultní časový limit definovaný ve třídě na 60 sekund. Následně konstruktor vytvoří instanci třídy \inlinecode{TestService} a zavolá metodu \inlinecode{Init}. V případě jakékoliv chyby je služba vyhodnocena jako v chybovém stavu. Toto určuje enumerátor \inlinecode{RunnerState}, který má dvě možné hodnoty: 
-
-\begin{itemize}
-    \item \inlinecode{ERROR} -- služba je v chybovém stavu
-    \item \inlinecode{OK}  -- služba je v pořádku  
-\end{itemize}
-
-Tato informace je uložena ve vlastní proměnné \inlinecode{State}. Následný důvod vyhodnocení chyby je uloženo v proměnné \inlinecode{Exception}. Třída následně má další metody, skrz které umožňuje ovládání instance třídy \inlinecode{TestService}. Tyto metody jsou:
+Tato třída ve svém konstruktoru inicializuje konfiguraci služby a zjistí, zda je validní. Tento konstruktor přijímá jeden argument -- časový limit na inicializaci. V případě nezadání tohoto parametru třída využije defaultní časový limit definovaný ve třídě na 60 sekund. Následně konstruktor vytvoří instanci třídy \inlinecode{TestService} a zavolá metodu \inlinecode{Init}. V případě jakékoliv chyby je služba vyhodnocena jako v chybovém stavu. Toto určuje enumerátor \inlinecode{LibState} v proměnné \inlinecode{State}. Třída využívá pouze hodnoty \inlinecode{STATE\_OK} a \inlinecode{STATE\_ERROR}. Následný důvod vyhodnocení chyby je uloženo v proměnné \inlinecode{Exception}. Třída následně má další metody, skrz které umožňuje ovládání instance třídy \inlinecode{TestService}. Tyto metody jsou:
 
 \begin{itemize}
     \item \inlinecode{bool RunTest<T>(T test, int timeout = DefaultTimeout)} \\ Metoda předá instrukci pro spuštění testu. Očekává stejné parametry jako metoda \inlinecode{RunTest} třídy \inlinecode{TestService}. Jedinou změnou je, že pokud časový limit nebude zadán, tak bude použit defaultní časový limit.
@@ -155,6 +152,7 @@ Rozhraní pro testovaná zařízení umožňuje propojení s testovací službou
 
 \begin{listing}[htbp]
     \begin{minted}[breaklines]{cpp}
+    //TODO: Rename
     class DeviceIf
     {
     public:
@@ -176,15 +174,23 @@ Rozhraní pro testovaná zařízení umožňuje propojení s testovací službou
 \label{listing:dev_if}
 \end{listing}
 
-\todo{Dopsat}
+Toto rozhraní je následně využito ve třídě \inlinecode{TestRunner}. Tato třída zajištuje běh jednotlivých participantů. Třída má tyto metody:
 
+\begin{itemize}
+    \item \inlinecode{Start()} \\ Metoda vytvoří připojení s testovací službou.
+    \item \inlinecode{HandleInstruction()} \\ Metoda přijímá instrukce od testovací služby a na základě nich provádí úkony.
+    \item \inlinecode{RunTest(uint32\_t test\_enum, TestStateE test\_state)} \\ Metoda spouští jednotlivé části testů. 
+    \item \inlinecode{Stop()} \\ Metoda ukončuje testovací běh.
+\end{itemize}
+
+Bližší vysvětlení si zaslouží metoda \inlinecode{RunTest}. Tato metoda je volána z metody \inlinecode{HandleInstruction}. K udržení stádia testu si třída mezi jednotlivými stádii drží instanci jednotlivých testů. Ve fázi přípravy na testování metoda zkontroluje že instance testu je nastavena na hodnotu \inlinecode{null}. Jiná hodnota by značila chybu během předchozího testování. Ve fázi úklidu po dokončení testu je odkaz na instanci testu nastaven na zpátky hodnotu null.
 
 \section{Virtuální participant}
-Implementace virtuálního participanta přímo kopíruje navrhnuté rozhraní pro testované zařízení. Logika virtuálního participanta je obsažena ve třídě \inlinecode{VirtualClient}. Tato třída tři možné konstruktory:
+Implementace virtuálního participanta přímo kopíruje navrhnuté rozhraní pro testované zařízení. Logika virtuálního participanta je obsažena ve třídě \inlinecode{VirtualClient}. Tato třída má tři možné konstruktory:
 
 \begin{itemize} 
     \item \inlinecode{VirtualClient(ITestClient device)} \\
-    Konstruktor dostane v argumentu odkaz na implementaci rozhraní zařízení
+    Konstruktor dostane v argumentu odkaz na implementaci rozhraní zařízení.
     \item \inlinecode{VirtualClient (ITestCase testCase)} \\
     Konstruktor dostane v argumentu odkaz na implementaci jednoho testu, který je odvozený z rozhraní pro test.
     \item \inlinecode{VirtualClient (Func<UInt32, ITestCase> getTest)} \\
@@ -192,8 +198,6 @@ Implementace virtuálního participanta přímo kopíruje navrhnuté rozhraní p
 \end{itemize}
 
 Třída následně vytvoří instanci implementace rozhraní klienta. Tato implementace je obsažena ve třídě \inlinecode{TestClientDefault}. Testovací běh virtuálního participanta funguje na stejném principu jako běh ostatních testovaných zařízení. Rozdílem je, že třída \inlinecode{VirtualClient} vytvoří nové vlákno, na kterém běží tento virtuální participant. Vytvořené vlákno (a s ním i virtuální participant) je poté spuštěno metodou \inlinecode{Start}. Následně metoda \inlinecode{Stop} ukončuje běh virtuálního participanta. Metoda nejdříve čeká, zda se participant a vlákno ukončí standardním způsobem. Pokud se virtuální participant neukončí ve stanoveném časovém limitu, tak ho metoda ukončí ukončením běžícího vlákna.
-\todo{Doplnit}
-
 
 \section{Propojení s frameworkem MSTest}
 
