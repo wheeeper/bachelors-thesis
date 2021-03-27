@@ -107,7 +107,8 @@
     ],
     "spellright.ignoreRegExpsByClass": {
         "latex" : [ 
-            "/\\\\@ifpackagelater{.+}/g"
+            "/\\\\@ifpackagelater{.+}/g",
+            "/\\\\begin{minted}[^]*?\\\\end{minted}/gm"
         ]
     },
     "spellright.notificationClass": "warning"
