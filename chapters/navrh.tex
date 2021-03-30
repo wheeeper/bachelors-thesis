@@ -19,11 +19,25 @@ Testovací služba poběží na samostatném zařízení. Toto zařízení bude 
 
 Testovací knihovna a virtuální participant budou vyvinuti v jazyce \inlinecode{C\#}. Jazyk byl vybrán kvůli dobrému rozsahu již implementovaných komponent a kvůli dobré interoperabilitě se serverem Azure DevOps, díky tomu že obě části jsou vyvíjeny společností Microsoft. Rozhraní pro vyvíjený produkt bude vytvořeno v jazyce \inlinecode{C++}, jelikož tento produkt je v tomto jazyce vyvíjen.
 
+\begin{figure}[htbp]
+    \centering 
+    \includegraphics[width=0.95\textwidth]{assets/img/deploymentmodel.pdf}
+    \caption{Deployment model}
+    \label{fig:deploymodel}
+\end{figure}
+
 
 \section{Komunikace}
 Komunikace mezi participanty bude fungovat na principu TCP/IP připojení. Zároveň zprávy, které budou mezi službou a participanty vyměňovány, budou mít stanovenou strukturu. Jedna zpráva bude obsahovat délku zprávy, typ zprávy a poté data zprávy. Data zprávy se budou odvíjet od typu zprávy. Existují i situace, kdy zpráva žádná data obsahovat nebude, k přenesení informace tedy bude stačit pouze typ zprávy. 
 
-Složení zprávy lze vidět na obrázku \ref{fig:message}. Všechny hodnoty budou ukládány v kladné (anglicky tzv. unsigned) podobě. Z diagramu lze vidět, že jedna zpráva bude mít maximální délku rovna číslu, které se vejde do dvou bajtů, tedy maximální délka jedné zprávy je 65~535 bajtů. Tato délka je ale více než dostatečná pro navrhované použití.  
+Složení zprávy lze vidět na obrázku \ref{fig:message}. Všechny hodnoty budou ukládány v kladné (anglicky tzv. unsigned) podobě. Z diagramu lze vidět, že jedna zpráva bude mít maximální délku rovna číslu, které se vejde do dvou bajtů, tedy maximální délka jedné zprávy je 65~535 bajtů. Tato délka je ale více než dostatečná pro navrhované použití. Testovací knihovna bude primárně definovat a přijímat tyto typy zpráv:
+
+\begin{itemize}
+    \item Zpráva o úspěchu
+    \item Zpráva o neúspěchu
+    \item Direktiva ke spuštění testu
+    \item Direktiva k ukončení testování
+\end{itemize}
 
 \begin{figure}[htbp]
     \centering 
@@ -33,23 +47,38 @@ Složení zprávy lze vidět na obrázku \ref{fig:message}. Všechny hodnoty bud
 \end{figure}
 
 
-\section{Testovací služba}
-Ve vyvíjené knihovně bude jádrem k řízení testování služba, která se bude starat o běh testování. Služba v počáteční fázi vytvoří připojení se všemi fyzickými participanty testu. Po připojení určitého počtu očekávaných participantů započne samotné testování. Služba bude spouštět testy a během testu bude synchronizovat stádia testování mezi všemi participanty testu. Následně po běhu testu vyhodnotí úspěšnost testu na základě dat, které obdrží od participantů. 
-
 
 \section{Rozhraní pro testování}
 Součástí knihovny taktéž bude rozhraní, pro implementaci zařízení, které bude testováno. Toto rozhraní bude mít jasně definovanou  strukturu, ale zároveň bude co nejjednodušší pro co nejrychlejší implementaci na nově testovaném zařízení. Toto rozhraní bude potom využito pro řízení běhu testu na testovaném zařízení. 
 
 Další součástí bude i rozhraní pro jednotlivé testy. To bude obsahovat jednotlivá stádia testování, která budou mezi všemi zařízeními synchronizovány. Tyto stádia budou, v tom pořadí:
 \begin{enumerate}
-    \item Příprava na testování
-    \item Samotné testování
-    \item Úklid po testu
+    \item Příprava na testování -- definování potřebných struktur, inicializace
+    \item Testování -- provedení samotného testu
+    \item Úklid po testu -- uvolnění využitých zdrojů
 \end{enumerate}
+
+\section{Testovací služba}
+Ve vyvíjené knihovně bude jádrem k řízení testování služba, která se bude starat o běh testování. Interakci služby s účastníky testovaní můžeme vidět v sekvenčním diagramu, který je na obrázku \ref{fig:seqdiag}. Obsah tohoto diagramu bude rozebrán v následujících částech.
+
+\begin{figure}[htbp]
+    \centering 
+    \includegraphics[width=0.95\textwidth]{assets/img/sequencediagram.pdf}
+    \caption{Sekvenční diagram znázorňující běh služby}
+    \label{fig:seqdiag}
+\end{figure}
+
+\subsection{Inicializace služby}
+\todo{Doplnit}
+
+
 
 \section{Proces testování}
 
-Ze předchozí definice testování vyplývá, že knihovna je mířena na automatizaci funkčního testování. Každý testovací běh se bude moc skládat z libovolného počtu registrovaných testů. Na obrázku \ref{fig:act_diag_device} můžeme vidět diagram aktivit testovaného zařízení. Samotné kontrolování správnosti testu bude prací jednotlivých testerů. Knihovna pouze dostane informaci o úspěchu nebo neúspěchu jednotlivých synchronizačních částí testovaní, definovaných rozhraním pro testování. Pokud ve fázi přípravy na testování nebo úklidu po testu zařízení vrátí neúspěch, bude toto zařízení považováno jako v chybném stavu. Další testy poté nebudou provedeny. 
+Ze předchozí definice testování vyplývá, že knihovna je mířena na automatizaci funkčního testování. Každý testovací běh se bude moct skládat z libovolného počtu registrovaných testů. Na obrázku \ref{fig:act_diag_device} můžeme vidět diagram aktivit testovaného zařízení. Tento diagram ukazuje běh testovaného zařízení. Jeho běh se odvíjí na základě instrukcí, které obdrží od testovací služby. Zařízení nejdříve projde inicializační fázi, ve které se připojí k testovací službě. 
+
+
+Samotné kontrolování správnosti testu bude prací jednotlivých testerů. Knihovna pouze dostane informaci o úspěchu nebo neúspěchu jednotlivých synchronizačních částí testovaní, definovaných rozhraním pro testování. Pokud ve fázi přípravy na testování nebo úklidu po testu zařízení vrátí neúspěch, bude toto zařízení považováno jako v chybném stavu. Další testy poté nebudou provedeny. 
 
 \begin{figure}
     \centering 
