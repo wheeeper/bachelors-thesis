@@ -8,7 +8,13 @@ V dobách vzniku těchto komunikačních protokolů bylo pro fyzické připojen�
 
 Hlavním cílem naší práce je vytvoření testovací knihovny pro ET 200SP I/O systém, vyvíjený společností Siemens,~s.\,{}r.\,{}o. Toto zařízení využívá tzv. \textit{Multifieldbus technologie}. Tato technologie umožňuje zařízení komunikovat na základě několika průmyslových protokolů. V rámci této práce budeme využívat protokoly ModbusTCP a Ethernet/IP. Oba tyto protokoly, jak již z jejich názvů plyne, využívají Ethernetový standard.  
 
-\question{Je potřeba rozšířit}
+% MiDu: udělal bych dvě krátké podkapitolky jednu na Ethernet / IP a druhou na Modbus TCP a v krátkosti bych je popsal -> taková stručná charakteristika... nesel bych do historie nepopisoval bych vznik ale technicky bych je popsal v krátkosti jak funguji co využívají a třeba nějaké charakteristiky... na netu se toho da vygooglit spousta
+
+\subsection{ModbusTCP}
+\todo{Doplnit}
+
+\subsection{Ethernet/IP}
+\todo{Doplnit}
 
 \section{Testování}
 
@@ -52,18 +58,19 @@ Propojení testů a vývojového cyklu je dobře znázorněno na tzv. V-modelu, 
 \begin{figure}[htbp]
     \centering 
     \includegraphics[width=0.9\textwidth]{assets/img/vmodel.pdf}
-    \caption{V-model \question{Je potřeba citovat}}
+    \caption{V-model}
+    \source{Doplnit}
     \label{fig:vmodel}
 \end{figure}
 
 
 \section{Automatizace testování}
 
-Automatizace testování je odlišná od samotného testování. Automatizace testu neurčuje samotnou kvalitu testu. Pokud automatizujeme test, který nic nového nepřinese, dostaneme toto nic pouze rychleji \cite{fewster1999software}. Automatizování je ale přesto v mnoha ohledech v dnešní době standardem při testování, a to především díky jeho výhodám. Mezi tyto výhody podle \cite{fewster1999software} patří:
+Automatizace testování je odlišná od samotného testování. Automatizace testu neurčuje samotnou kvalitu testu. \highlight{Pokud automatizujeme test, který nic nového nepřinese, dostaneme toto nic pouze rychleji} \cite{fewster1999software}. Automatizování je ale přesto v mnoha ohledech v dnešní době standardem při testování, a to především díky jeho výhodám. Mezi tyto výhody podle \cite{fewster1999software} patří:
 
 \begin{description}
     \item[Častější testování] S automatizací jsme schopni testovat software mnohem častěji, než při manuálním testování. Software může být testován například při každé jeho změně. Toto manuálně je velmi náročné, už jenom kvůli vysokému požadavku na lidské zdroje.  
-    \item[Možnost testovat nové věci] Automatizace umožňuje testovat takové aspekty, které se nedají manuálně testovat, nebo jejich manuální testování je velice náročné. Tím se zvyšuje pokrytí testování.
+    \item[Možnost testovat \highlight{nové} věci] Automatizace umožňuje testovat takové aspekty, které se nedají manuálně testovat, nebo jejich manuální testování je velice náročné. Tím se zvyšuje pokrytí testování.
     \item[Lepší využití zdrojů] Tester je vysoce kvalifikovaný člověk a jeho využití na opakované vkládání vstupů a ověřování výstupů je v některých případech plýtvání jeho drahocenným časem. Díky automatizaci se tester může zaměřit na jiné přínosnější činnosti, jako například vytváření nových testů, kterými pokryje nové případy.
     \item[Konzistence] Při automatizaci testování každý běh testu proběhne naprosto identicky. Stejně jako ve vývoji, i v testování může dojít k lidské chybě. Díky automatizaci se šance lidské chyby snižuje. Toto zvyšuje konzistenci testování, než když se testy provádějí manuálně.
     \item[Snížení doby testování] Jednou automatizované testy můžou být provedeny mnohem rychleji a efektivněji, než při jejich manuálním spuštění. Toto způsobuje snížení potřebné doby na testování.
