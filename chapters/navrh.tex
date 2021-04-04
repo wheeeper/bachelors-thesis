@@ -17,20 +17,10 @@ Hlavním cílem je testovat vyvíjený produkt. Toto zařízení v rámci knihov
 
 Součástí knihovny zároveň bude také tzv. virtuální zařízení. Toto zařízení bude primárně sloužit k simulaci nějaké činnosti, kterou by jinak muselo provádět nějaké z testovaných zařízení. Simulováním testovaných zařízení snižujeme hardwarové nároky na testování, což vede ke snížení ekonomických nákladů na testování. Tato zařízení se budou připojovat v závislosti na jednotlivých testech. Následně po skončení testu budou tato zařízení odpojena.
 
-% Testovací knihovna a virtuální participant budou vyvinuti v jazyce \inlinecode{C\#}. Jazyk byl vybrán kvůli dobrému rozsahu již implementovaných komponent a kvůli dobré interoperabilitě se serverem Azure DevOps, díky tomu že obě části jsou vyvíjeny společností Microsoft. Rozhraní pro vyvíjený produkt bude vytvořeno v jazyce \inlinecode{C++}, jelikož tento produkt je v tomto jazyce vyvíjen.
-
-\begin{figure}[htbp]
-    \centering 
-    \includegraphics[width=0.95\textwidth]{assets/img/deploymentmodel.pdf}
-    \caption{Deployment model}
-    \label{fig:deploymodel}
-\end{figure}
-
-
 \section{Komunikace}
 Komunikace mezi všemi účastníky testování bude fungovat na principu TCP/IP připojení. Zařízení, na kterém poběží testovací služba, bude sloužit jako server a všichni účastnící testovaní budou klienti, kteří se budou k tomuto zařízení připojovat. 
 
-Jednotlivé zprávy, které budou mezi testovací službou a všemi účastníky testování vyměňovány, budou mít jasně stanovenou strukturu. Složení zprávy lze vidět na obrázku \ref{fig:message}. Jedna zpráva bude obsahovat povinně hlavičku zprávy. Tato hlavička bude obsahovat typ zprávy a délku dat. Data zprávy budou nepovinnou součástí zprávy. 
+Jednotlivé zprávy, které budou mezi testovací službou a všemi účastníky testování vyměňovány, budou mít jasně stanovenou strukturu. Diagram složení zprávy lze vidět na obrázku \ref{fig:message}. Na tomto obrázku můžeme vidět, že jedna zpráva lze rozdělit na dvě části -- hlavičku zprávy a data zprávy. Zároveň jak můžeme vidět, jedna buňka v diagramu odpovídá jednomu bajtu. 
 
 \begin{figure}[htbp]
     \centering 
@@ -39,7 +29,7 @@ Jednotlivé zprávy, které budou mezi testovací službou a všemi účastníky
     \label{fig:message}
 \end{figure}
 
-Všechny hodnoty zprávy budou ukládány v kladné (anglicky tzv. unsigned) podobě. Z diagramu zprávy lze vidět, že hlavička zprávy bude o velikosti 4 bajty. Zároveň lze odvodit, že maximální délka dat zprávy bude rovna číslu, které se vejde do dvou bajtů, tedy maximální délka dat zprávy je 65~535 bajtů. Knihovna bude podporovat tyto typy zprávy:
+Zpráva bude obsahovat povinně hlavičku zprávy. Tato hlavička bude obsahovat typ zprávy a délku dat zprávy. Jak můžeme vidět na diagramu, každý z těchto údajů bude mít velikost dva bajty. Celkově tedy hlavička bude o velikosti 4 bajty. Knihovna bude podporovat tyto typy zpráv:
 
 \begin{enumerate}
     \item Zpráva o úspěchu/potvrzení
@@ -47,6 +37,8 @@ Všechny hodnoty zprávy budou ukládány v kladné (anglicky tzv. unsigned) pod
     \item Direktiva ke spuštění testu
     \item Direktiva k ukončení testování
 \end{enumerate}
+
+Za hlavičkou zprávy následně budou moct být uložena data zprávy. Tyto data avšak budou nepovinná. V těchto případech bude pro přenesení informace postačovat pouze typ zprávy a v hlavičce bude uvedena nulová hodnota jako délka dat zprávy. Zároveň lze odvodit, že maximální délka dat zprávy bude rovna číslu, které se vejde do dvou bajtů, tedy maximální délka dat zprávy je 65~535 bajtů. Všechny hodnoty zprávy budou ukládány v kladné (anglicky tzv. unsigned) podobě.
 
 Samotná zpráva nebude obsahovat žádné kontrolní data, který by fungovali k detekci možných chyb v komunikaci. Protokol TCP/IP avšak sám obsahuje jednoduchou detekci chyb. V tomto případě bude tato detekce považována jako dostatečná.
 
@@ -74,7 +66,7 @@ Po skončení testování služba odesílá všem účastníkům testování zpr
 Jak jsem již zmínil, testovací služba bude jádrem celého testování. Tato služba bude řídit celý testovací běh a předávat všem účastníkům testování pokyny. Zároveň bude synchronizovat testovací běh mezi všemi účastníky testování. 
 
 \subsection{Inicializace služby}
-Testovací služba započíná běh inicializační fází. Služba v inicializační fázi vytvoří připojení se všemi testovanými zařízeními, dle nadefinované komunikace. Z konfigurace služba bude vědět, kolik testovaných zařízení má očekávat. Inicializační fáze zároveň bude mít definovaný časový limit, který v základu bude 60 sekund, ale bude nastavitelný uživatelem. Testovací služba vyhodnotí inicializační fázi jako úspěšnou, pokud se úspěšně připojí definovaný počet testovaných zařízení. Služba vyhodnocuje neúspěch inicializační fáze v případě že nastanou tyto situace:
+Testovací služba započíná běh inicializační fází. Služba v inicializační fázi vytvoří připojení se všemi testovanými zařízeními, dle nadefinované komunikace. Z konfigurace služba bude vědět, kolik testovaných zařízení má očekávat. Inicializační fáze zároveň bude mít definovaný časový limit, který ve výchozí konfiguraci bude 60 sekund. Zároveň ale bude nastavitelný uživatelem. Testovací služba vyhodnotí inicializační fázi jako úspěšnou, pokud se úspěšně připojí definovaný počet testovaných zařízení. Služba vyhodnocuje neúspěch inicializační fáze v případě že nastanou tyto situace:
 
 \begin{itemize}
     \item vypršení časového limitu na inicializační fázi
@@ -83,67 +75,146 @@ Testovací služba započíná běh inicializační fází. Služba v inicializa
     \item připojení virtuálního zařízení
 \end{itemize}
 
-V případě neúspěchu inicializační fáze služba nastavuje stav služby jako chybný. Testy nebudou provedeny.
+V případě neúspěchu inicializační fáze služba nastavuje stav služby jako chybný. Testy poté nebudou provedeny.
 
 \subsection{Spravování virtuálních zařízení}
-Jak již bylo nastíněno služba bude podporovat připojení virtuálních zařízení. Toto připojení bude probíhat před započnutím jednotlivých testů. Testovací služba obdrží direktivu k očekávaní připojení virtuálního zařízení. Toto zařízení projde stejnou inicializační fází jako ostatní testovaná zařízení. Služba vyhodnocuje neúspěch připojení virtualizovaného zařízení v těchto případech:
+Jak již bylo nastíněno, služba bude podporovat připojení virtuálních zařízení. Tato zařízení se budou připojovat před spuštěním jednotlivých testů. Testovací služba obdrží direktivu k očekávaní připojení virtuálního zařízení. Toto zařízení projde stejnou inicializační fází jako ostatní testovaná zařízení. Služba vyhodnocuje neúspěch připojení virtualizovaného zařízení v těchto případech:
 
 \begin{itemize}
-    \item připojení jiného než virtualizovaného zařízení (tedy zařízení ve své zprávě odešle jinou MAC adresu, než je očekávána)
+    \item připojení jiného než virtualizovaného zařízení (tedy zařízení ve své zprávě odešle jinou MAC adresu, než je MAC adresa virtuálního zařízení)
     \item vypršení časového limitu na připojení
     \item chyba v komunikaci
 \end{itemize}
 
-V opačném případě služba vyhodnocuje úspěch. Služba následně po testu dokončení testu vysílá všem virtualizovaným zařízením direktivu k ukončení testování a ukončuje spojení s nimi.  
+V opačném případě služba vyhodnocuje úspěch. Po dokončení testu služba vysílá všem připojeným virtualizovaným zařízením direktivu k ukončení testování a ukončuje spojení s nimi.
 
 \subsection{Testovací běh}\label{test_run}
-Po úspěšné inicializační fázi služba čeká na direktivu ke spuštění testu. Po obdržení této direktivy s identifikátorem testu služba odesílá všem účastníkům testování zprávu k započnutí první fáze testu. Tuto fázi budeme označovat jako přípravu na testování. V této fázi účastníci testovaní připraví všechny potřebné prostředky pro provedení testu. Účastníci následně odesílají zprávu o úspěchu/neúspěchu této fáze. Služba vyhodnocuje fázi jako úspěšnou pokud od všech účastníků obdrží zprávu o úspěchu. V opačném případě vyhodnocuje fázi jako neúspěšnou.
+Po úspěšné inicializační fázi a případném připojení virtualizovaných zařízení služba čeká na direktivu ke spuštění testu. Po obdržení této direktivy s identifikátorem testu služba odesílá všem účastníkům testování zprávu k zahájení první fáze testu. Tuto fázi budeme označovat jako přípravu na testování. V této fázi účastníci testovaní připraví všechny potřebné prostředky pro provedení testu. Účastníci následně odesílají zprávu o úspěchu/neúspěchu této fáze. Služba vyhodnocuje fázi jako úspěšnou pokud od všech účastníků obdrží zprávu o úspěchu. V opačném případě vyhodnocuje fázi jako neúspěšnou.
 
-Služba po vyhodnocení úspěchu první fáze přechází do fáze druhé. V této fázi proběhne samotné testování. Služba odešle všem účastníkům zprávu k započnutí této fáze. Následně očekává odpověď od všech účastníků. Služba, stejně jako v přechozí fázi, vyhodnocuje fázi jako úspěšnou, pokud obdrží zprávu o úspěchu od všech účastníků testování. V opačném případě je neúspěšná.
+Služba po vyhodnocení úspěchu první fáze přechází do fáze druhé. V této fázi proběhne samotné testování. Služba odešle všem účastníkům zprávu ke spuštění této fáze. Následně očekává odpověď od všech účastníků. Služba, stejně jako v předchozí fázi, vyhodnocuje fázi jako úspěšnou, pokud obdrží zprávu o úspěchu od všech účastníků testování. V opačném případě je neúspěšná.
 
-Poslední fází jednotlivého testu je úklid po testu. V této fázi služba opět vyšle zprávu k započnutí fáze. Účastníci testování v této fázi uvádějí zařízení do stavu, ve kterém byl před započnutím testu. Následně zařízení odešlou zprávu o úspěchu/neúspěchu. Vyhodnocení úspěchu/neúspěchu je stejné jako v předchozích fázích.
+Poslední fází jednotlivého testu je úklid po testu. V této fázi služba opět vyšle zprávu k započetí fáze. Účastníci testování v této fázi uvádějí zařízení do stavu, ve kterém bylo před zahájením testu. Následně účastníci odešlou zprávu o úspěchu/neúspěchu. Vyhodnocení úspěchu/neúspěchu je stejné jako v předchozích fázích.
 
-Testovaná zařízení se v době běhu testu mohou dostat do chybového stavu, ve kterém nebude možné pokračovat testování. Testovací služba bude pro tyto účely předpokládat tyto situace:
+Po odeslání zprávy s direktivou k spuštění fáze testu služba čeká, než obdrží odpověď od všech účastníků testu. Tyto body, kdy služba čeká na odpověď od všech účastníků testu, budeme nazývat synchronizační body. Účastníci, kteří dokončili svojí fázi testu, čekají na direktivu od testovací služby. Tímto se běh synchronizuje mezi všemi účastníky testu. Jednoduše lze odvodit, že během jednoho testu nastávají tři synchronizační body. 
+
+Tyto synchronizační body budou mít definovaný časový limit. Při spuštění testu tester bude moct zadat vlastní časový limit, který bude použit po každé z fází. Tedy tester bude zadávat předpokládaný maximální časový limit nejdelší fáze testování. Zároveň je ale potřeba vzít v úvahu, že časový limit je spuštěn ihned po odeslání všech zpráv. Tento časový limit bude ve výchozí konfiguraci opět 60 sekund. 
+
+Testovaná zařízení se v době běhu testu mohou dostat do chybového stavu, ve kterém nebude možné pokračovat v testování. Testovací služba tedy bude předpokládat tyto chybné stavy:
+
 
 \begin{description}
-    \item[Neúspěšná fáze] Pro konzistenci testů testovací služba vyžaduje, aby před každým testem a po každém testu testované zařízení bylo ve stejném stavu. Pokud účastník testu odešle neúspěch ve fázi přípravy na test, nebo ve fázi úklidu po testu, tak poté bude tento účastník považován jako chybném stavu. V případě že chyba nastane ve fázi přípravy na test, služba neprovádí fázi testování a přechází do fáze úklidu po testu. 
-    \item[Vypršení časového limitu] Testovací služba bude mít definovaný časový limit testu. Tento limit bude definovat dobu, po kterou bude služba po každé fázi testu čekat na odpověď od účastníků testování. V případě vypršení tohoto limitu služba bude předpokládat účastníka opět jako v chybném stavu.
-    \item[Chybná komunikace] Stejně jako v inicializační fázi komunikace, která nebude dle definované struktury, vyústí v předpoklad, že testované zařízení je v chybovém stavu. 
+    \item[Nezajištění konzistence testování] Pro konzistenci testů testovací služba vyžaduje, aby po každém testu testované zařízení bylo ve stejném stavu jako bylo před začátkem testu. Pokud účastník testu odešle neúspěch ve fázi přípravy na test, nebo ve fázi úklidu po testu, tak poté bude tento účastník považován jako chybném stavu. V případě že chyba nastane ve fázi přípravy na test, služba neprovádí fázi testování a přechází do fáze úklidu po testu. 
+    \item[Vypršení časového limitu] Vypršení časového limitu primárně znamená, že služba ve stanové době neobdržela odpověď od účastníka testování, ale tento účastník je stále připojen k testovací službě. Toto vede k závěru, že tento účastník je v chybovém stavu a další testování není možné. 
+    \item[Chyba v komunikaci] Pokud během testu zařízení odpoví jinak, než dle stanovené komunikace, tak poté bude toto zařízení považováno jako v chybném stavu. Zároveň bude za chybu považováno odpojení zařízení od služby.  
 \end{description}
 
 Služba vyhodnocuje test jako úspěšný, pokud všechny fáze testu byli úspěšné. Obráceně služba vyhodnocuje test jako neúspěšný pokud jedna z fází byla neúspěšná. V případě nastání chyby, kde testované zařízení je předpokládáno jako v chybovém stavu, testovací služba nastavuje svůj stav jako chybový. Následující testy nebudou provedeny.
 
 
 \subsection{Ukončení testování}
-Testovací služba po obdržení direktivy k ukončení služby odesílá všem účastníkům zprávu k ukončení testovacího běhu. V případě vzniklé chyby testovací služba odesílá tuto direktivu všem zařízením, které považuje jako v nechybovém stavu.
+Testovací služba po obdržení direktivy k ukončení služby odesílá všem připojeným účastníkům testování zprávu k ukončení testovacího běhu. I když služba může některého z účastníků považovat jako v chybném stavu, pokud je tento účastník stále ke službě připojen, tak poté mu služba odešle tuto ukončovací zprávu. Toto se děje s cílem úspěšně ukončit co nejvíce zařízení.
 
 
 \section{Rozhraní pro testování}
-Součástí knihovny taktéž bude rozhraní, pro implementaci zařízení, které bude testováno. Toto rozhraní bude mít jasně definovanou  strukturu, ale zároveň bude co nejjednodušší pro co nejrychlejší implementaci na nově testovaném zařízení. Toto rozhraní bude potom využito pro řízení běhu testu na testovaném zařízení. 
+Důležitou součástí knihovny budou rozhraní, které umožní implementaci propojení s testovací službou a tím samotné testování. Knihovna bude obsahovat dvě důležitá rozhraní. 
 
-Další součástí bude i rozhraní pro jednotlivé testy. To bude obsahovat jednotlivá stádia testování, která budou mezi všemi zařízeními synchronizovány. Tyto stádia budou, v tom pořadí:
+\subsection{Rozhraní testu}
+Jak jsem již popsal v sekci \ref{test_run}, jednotlivé testy budou mít tři fáze testování:
+
 \begin{enumerate}
     \item Příprava na testování -- definování potřebných struktur, inicializace
     \item Testování -- provedení samotného testu
     \item Úklid po testu -- uvolnění využitých zdrojů
 \end{enumerate}
 
+Testovací knihovna tedy bude definovat rozhraní, které bude vyžadovat, aby tyto tři fáze testu byli pro každý test definované. Návrh rozhraní můžeme vidět na výpisu \ref{listing:test_if}. Na tomto výpisu můžeme vidět, že každé fázi odpovídá jedna metoda. Tyto metody následně vrací jednoduchou informaci o úspěchu/neúspěchu. To znamená, že vyhodnocení jednotlivých fází bude na jednotlivých testerech a jejich implementaci. Jednotlivé komponenty knihovny pouze obdrží informaci o výsledku fáze.
+
+\begin{listing}[htbp]
+    \begin{minted}[breaklines]{text}
+    TestCase 
+    {
+        bool StartUp()
+
+        bool Test()
+
+        bool TearDown()
+    }
+    \end{minted}
+\caption{Návrh rozhraní pro jeden test}
+\label{listing:test_if}
+\end{listing}
 
 
-% \section{Proces testování}
 
-% Ze předchozí definice testování vyplývá, že knihovna je mířena na automatizaci funkčního testování. Každý testovací běh se bude moct skládat z libovolného počtu registrovaných testů. Na obrázku \ref{fig:act_diag_device} můžeme vidět diagram aktivit testovaného zařízení. Tento diagram ukazuje běh testovaného zařízení. Jeho běh se odvíjí na základě instrukcí, které obdrží od testovací služby. Zařízení nejdříve projde inicializační fázi, ve které se připojí k testovací službě. 
+\subsection{Rozhraní pro účastníka testování}
+
+Dalším důležitým rozhraním bude rozhraní pro účastníka testování. Toto rozhraní bude definovat metody, které bude potřeba definovat na každém testovaném zařízení. Cílem je, aby toto rozhraní bylo co nejjednodušší pro co nejrychlejší implementaci na nově testovaném zařízení.
+
+Návrh tohoto rozhraní můžeme vidět na výpisu \ref{listing:dev_if_abstract}. Jak můžeme z výpisu vidět vidět, první tři metody se starají o propojení s testovací službou. Metoda \inlinecode{createConnection} bude implementovat vytvoření propojení s testovací službou. Metoda pouze vytvoří propojení s testovací službou na základě TCP/IP protokolu a následně vrátí informaci o úspěšnosti. Cíl připojení, tedy IP adresu a port na kterém poběží testovací služba, metoda obdrží v argumentech.
+
+O samotné odesílání, resp. přijímání jednotlivých zpráv se bude starat metoda \inlinecode{sendMessage}, resp. \inlinecode{rcvMessage}. Metoda \inlinecode{sendMessage} po svém zavolání převede objekt zprávy, obdržený v argumentu metody, na bajtové pole, které následně odešle testovací službě. Metoda \inlinecode{rcvMessage} symetricky zprávu od testovací služby přijme a převede ji na objekt jedné zprávy. Následně odkaz na tuto zprávu uloží do argumentu, který je výstupní. Obě tyto metody vrací informaci o úspěchu/neúspěchu.
+
+Metoda \inlinecode{getTest} bude určena k získání jednotlivých instancí testů. Testy, které bude tato metoda vracet, musí být dle dříve zadefinovaného rozhraní pro jednotlivé testy. Metoda obdrží číselnou reprezentaci testu a na základě toho poté vrátí správnou instanci testu. 
+
+Metoda \inlinecode{getMacAddress} bude, jak již z názvu vyplývá, vracet MAC adresu zařízení. V neposlední řadě metoda \inlinecode{print} bude sloužit k výpisu průběhu běhu. Tento výpis by měl hlavně posloužit k náhledu na průběh testovacího běhu, pokud se během běhu vyskytnou například nějaké chyby.
+
+\begin{listing}[htbp]
+    \begin{minted}[breaklines]{text}
+    TestClient 
+    {
+
+        bool createConnection(ipAddress, port)
+
+        bool sendMessage(message)
+
+        bool rcvMessage(message)
+
+        TestCase getTest(test)
+
+        void print(toPrint)
+
+        bool getMacAddress(macAddr)
+    
+    }
+    \end{minted}
+\caption{Ukázka definice rozhraní}
+\label{listing:dev_if_abstract}
+\end{listing}
+
+\section{Virtualizovaná zařízení}
+\todo{Doplnit}
 
 
-% Samotné kontrolování správnosti testu bude prací jednotlivých testerů. Knihovna pouze dostane informaci o úspěchu nebo neúspěchu jednotlivých synchronizačních částí testovaní, definovaných rozhraním pro testování. Pokud ve fázi přípravy na testování nebo úklidu po testu zařízení vrátí neúspěch, bude toto zařízení považováno jako v chybném stavu. Další testy poté nebudou provedeny. 
+\section{Testovací běh účastníka testování}
 
-% \begin{figure}
-%     \centering 
-%     \includegraphics[width=\textwidth]{assets/img/activitydiagramdevice.pdf}
-%     \caption{Diagram aktivit testované zařízení}
-%     \label{fig:act_diag_device}
-% \end{figure}
+O samotný běh jednotlivého účastníka testování se bude starat samostatná komponenta, která bude nezávislá na jakémkoliv zařízení. Tato komponenta se bude nazývat v knihovně tzv. \inlinecode{TestRunner}.
+
+Komponenta bude obsahovat veškerou logiku testovacího běhu pro jednotlivého účastníka testování. Při zahájení testování komponenta za pomocí rozhraní vytvoří propojení s testovací službou a odešle zprávu o úspěchu, kde v datech zprávy uvede svoji MAC adresu. Po obdržení zprávy o úspěchu od testovací služby komponenta přechází do metody, která bude obsluhovat příchozí zprávy. 
+
+Komponenta bude očekávat dva typy zpráv - direktivu ke spuštění testu a direktivu k ukončení testování. Po obdržení direktivy k započetí testu, komponenta ze zprávy zjistí identifikátor testu a testovací fázi. Následně z rozhraní získá instanci testu, který si po dobu běhu testu drží. Poté dle instrukcí spouští jednotlivé fáze testování. Po konci každé testovací fáze komponenta odesílá zprávu o úspěchu/neúspěchu testovací službě.
+
+Dle této implementace může teoreticky dojít k tomu, že účastník testování obdrží zprávu s požadavkem na spuštění fáze testování nebo fáze úklidu po testu, ještě předtím než obdrží instrukci ke spuštění fáze přípravy na test. Komponenta tuto situaci kontroluje a v případě jejího vzniku automaticky odesílá zprávu o neúspěchu fáze. 
+
+Průběh běhu účastníka testování lze vidět na diagramu aktivit, který můžeme vidět na obrázku \ref{fig:act_diag_device}. Jak lze z diagramu vidět, běh zařízení se silně odvíjí od příkazů, které obdrží od testovací služby. Zároveň na diagramu můžeme vidět již zmíněné tři synchronizační body. Tyto body jsou zvýrazněny modrým čárkovaným obdélníkem. Z diagramu se může zdát, že pokud zařízení ve fázi přípravy na testování nebo ve fázi úklidu po testu vrátí neúspěch, tak poté lze pokračovat v testování. Toto ale není pravda, protože tento případ testovací služba nepovolí a po dokončení tohoto testu, který způsobil danou chybu, bude testovací běh ukončen. Výjimkou jsou pouze virtuální zařízení. Tyto zařízení jsou po konci testu ukončována, proto jejich chybný stav nemá následky na další testy.
+
+\begin{figure}
+    \centering 
+    \includegraphics[height=0.98\textheight]{assets/img/activitydiagramdevice.pdf}
+    \caption{Diagram aktivit účastníka testování}
+    \label{fig:act_diag_device}
+\end{figure}
+
 
 \section{Propojení se serverem Azure DevOps}
-Jedním z cílů této práce je vytvoření takového připojení, aby server Azure DevOps byl schopen spouštět jednotlivé testy. K tomuto propojení využijeme testovací framework MSTest. Vyvíjená testovací knihovna tedy poběží nad tímto testovacím frameworkem. Za pomoci frameworku MSTest bude server Azure DevOps schopen registrovat jednotlivé testy, a spouštět je jednotlivě.
+Jedním z cílů této práce je vytvoření takového připojení, aby server Azure DevOps byl schopen spouštět jednotlivé testy a zároveň obdržel výsledek testu. K tomuto propojení využijeme testovací framework MSTest. Vyvíjená testovací knihovna tedy poběží nad tímto testovacím frameworkem. Za pomoci frameworku MSTest bude server Azure DevOps schopen registrovat jednotlivé testy, a spouštět je jednotlivě.
 
+\subsection{Propojení s frameworkem MSTest}
+
+
+
+\begin{figure}[htbp]
+    \centering 
+    \includegraphics[width=0.95\textwidth]{assets/img/deploymentmodel.pdf}
+    \caption{Deployment model}
+    \label{fig:deploymodel}
+\end{figure}
