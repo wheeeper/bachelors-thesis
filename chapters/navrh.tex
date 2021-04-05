@@ -8,14 +8,14 @@ V rámci knihovny a testovacího běhu se bude vyskytovat několik účastníků
 \begin{description}
     \item[Testovací služba] Služba, která řídí testovací běh.
     \item[Testované zařízení] Hlavní účastník testování, který běží na jiném zařízení, než ze kterého běží testovací služba. 
-    \item[Virtuální zařízení] Zařízení, které simuluje nějakou činnost testovaného zařízení. Toto zařízení běží na stejném zařízení, jako testovací služba. 
+    \item[Virtualizované zařízení] Zařízení, které simuluje nějakou činnost testovaného zařízení. Toto zařízení běží na stejném zařízení, jako testovací služba. 
 \end{description}
 
 Testovací služba bude jádrem k řízení testování. Tato služba poběží na samostatném zařízení. Toto zařízení bude běžet na operačním systému Windows. Zařízení bude v rámci infrastruktury serveru Azure DevOps tzv. agent. Agent je výpočetní infrastruktura s nainstalovaným softwarem agenta, který pracuje na jedné určité úloze \cite{agent_docs}. Na agentovi bude server Azure DevOps spouštět testovací běh.
 
 Hlavním cílem je testovat vyvíjený produkt. Toto zařízení v rámci knihovny bude bráno jako testované zařízení. Testovací služba bude podporovat připojení jednoho a více testovaných zařízení. Tato zařízení budou připojeno k zařízení, ze kterého poběží testovací služba, za pomocí Ethernet připojení. 
 
-Součástí knihovny zároveň bude také tzv. virtuální zařízení. Toto zařízení bude primárně sloužit k simulaci nějaké činnosti, kterou by jinak muselo provádět nějaké z testovaných zařízení. Simulováním testovaných zařízení snižujeme hardwarové nároky na testování, což vede ke snížení ekonomických nákladů na testování. Tato zařízení se budou připojovat v závislosti na jednotlivých testech. Následně po skončení testu budou tato zařízení odpojena.
+Součástí knihovny zároveň bude také tzv. virtualizované zařízení. Toto zařízení bude primárně sloužit k simulaci nějaké činnosti, kterou by jinak muselo provádět nějaké z testovaných zařízení. Simulováním testovaných zařízení snižujeme hardwarové nároky na testování, což vede ke snížení ekonomických nákladů na testování. Tato zařízení se budou připojovat v závislosti na jednotlivých testech. Následně po skončení testu budou tato zařízení odpojena.
 
 \section{Komunikace}
 Komunikace mezi všemi účastníky testování bude fungovat na principu TCP/IP připojení. Zařízení, na kterém poběží testovací služba, bude sloužit jako server a všichni účastnící testovaní budou klienti, kteří se budou k tomuto zařízení připojovat. 
@@ -42,7 +42,7 @@ Za hlavičkou zprávy následně budou moct být uložena data zprávy. Tyto dat
 
 Samotná zpráva nebude obsahovat žádné kontrolní data, který by fungovali k detekci možných chyb v komunikaci. Protokol TCP/IP avšak sám obsahuje jednoduchou detekci chyb. V tomto případě bude tato detekce považována jako dostatečná.
 
-Účastníci testování se na začátku připojí k testovací službě a odešlou inicializační zprávu. Tato zpráva bude typu 1 a v datech zprávy bude obsahovat svojí MAC adresu. Výjimkou budou virtuální zařízení, která budou jako svoji MAC adresu odesílat adresu \inlinecode{DE:AD:BE:EF:00:00}. Díky tomu je testovací služba jednoduše identifikuje. Testovací služba následně odešle potvrzovací zprávu o úspěšném připojení s typem 1, bez žádných dat. V případě vzniku chyby služba odešle zprávu typu 2, bez dat. 
+Účastníci testování se na začátku připojí k testovací službě a odešlou inicializační zprávu. Tato zpráva bude typu 1 a v datech zprávy bude obsahovat svojí MAC adresu. Výjimkou budou virtualizované zařízení, která budou jako svoji MAC adresu odesílat adresu \inlinecode{DE:AD:BE:EF:00:00}. Díky tomu je testovací služba jednoduše identifikuje. Testovací služba následně odešle potvrzovací zprávu o úspěšném připojení s typem 1, bez žádných dat. V případě vzniku chyby služba odešle zprávu typu 2, bez dat. 
 
 Pro započnutí testování a spuštění jednotlivých stádií testování služba odešle všem účastníkům testování zprávu s typem 3. V datech zprávy služba odesílá tyto data:
 
@@ -72,16 +72,16 @@ Testovací služba započíná běh inicializační fází. Služba v inicializa
     \item vypršení časového limitu na inicializační fázi
     \item chyba v komunikaci, nesprávná komunikace
     \item nepřipojení definovaného počtu zařízení
-    \item připojení virtuálního zařízení
+    \item připojení virtualizovaného zařízení
 \end{itemize}
 
 V případě neúspěchu inicializační fáze služba nastavuje stav služby jako chybný. Testy poté nebudou provedeny.
 
-\subsection{Spravování virtuálních zařízení}
-Jak již bylo nastíněno, služba bude podporovat připojení virtuálních zařízení. Tato zařízení se budou připojovat před spuštěním jednotlivých testů. Testovací služba obdrží direktivu k očekávaní připojení virtuálního zařízení. Toto zařízení projde stejnou inicializační fází jako ostatní testovaná zařízení. Služba vyhodnocuje neúspěch připojení virtualizovaného zařízení v těchto případech:
+\subsection{Spravování virtualizovaných zařízení}
+Jak již bylo nastíněno, služba bude podporovat připojení virtualizovaných zařízení. Tato zařízení se budou připojovat před spuštěním jednotlivých testů. Testovací služba obdrží direktivu k očekávaní připojení virtualizovaného zařízení. Toto zařízení projde stejnou inicializační fází jako ostatní testovaná zařízení. Služba vyhodnocuje neúspěch připojení virtualizovaného zařízení v těchto případech:
 
 \begin{itemize}
-    \item připojení jiného než virtualizovaného zařízení (tedy zařízení ve své zprávě odešle jinou MAC adresu, než je MAC adresa virtuálního zařízení)
+    \item připojení jiného než virtualizovaného zařízení
     \item vypršení časového limitu na připojení
     \item chyba v komunikaci
 \end{itemize}
@@ -146,9 +146,9 @@ Testovací knihovna tedy bude definovat rozhraní, které bude vyžadovat, aby t
 
 
 
-\subsection{Rozhraní pro účastníka testování}
+\subsection{Rozhraní pro testované zařízení}
 
-Dalším důležitým rozhraním bude rozhraní pro účastníka testování. Toto rozhraní bude definovat metody, které bude potřeba definovat na každém testovaném zařízení. Cílem je, aby toto rozhraní bylo co nejjednodušší pro co nejrychlejší implementaci na nově testovaném zařízení.
+Dalším důležitým rozhraním bude rozhraní pro testované zařízení. Toto rozhraní bude definovat metody, které bude potřeba definovat na každém testovaném zařízení. Cílem je, aby toto rozhraní bylo co nejjednodušší pro co nejrychlejší implementaci na nově testovaném zařízení.
 
 Návrh tohoto rozhraní můžeme vidět na výpisu \ref{listing:dev_if_abstract}. Jak můžeme z výpisu vidět vidět, první tři metody se starají o propojení s testovací službou. Metoda \inlinecode{createConnection} bude implementovat vytvoření propojení s testovací službou. Metoda pouze vytvoří propojení s testovací službou na základě TCP/IP protokolu a následně vrátí informaci o úspěšnosti. Cíl připojení, tedy IP adresu a port na kterém poběží testovací služba, metoda obdrží v argumentech.
 
@@ -181,35 +181,40 @@ Metoda \inlinecode{getMacAddress} bude, jak již z názvu vyplývá, vracet MAC 
 \label{listing:dev_if_abstract}
 \end{listing}
 
-\section{Virtualizovaná zařízení}
-\todo{Doplnit}
+\section{Běh testovaného zařízení}
 
+O samotný běh jednotlivého testovaného zařízení se bude starat samostatná komponenta, která bude nezávislá na jakémkoliv zařízení. Tato komponenta se bude nazývat v knihovně tzv. \inlinecode{TestRunner}.
 
-\section{Testovací běh účastníka testování}
-
-O samotný běh jednotlivého účastníka testování se bude starat samostatná komponenta, která bude nezávislá na jakémkoliv zařízení. Tato komponenta se bude nazývat v knihovně tzv. \inlinecode{TestRunner}.
-
-Komponenta bude obsahovat veškerou logiku testovacího běhu pro jednotlivého účastníka testování. Při zahájení testování komponenta za pomocí rozhraní vytvoří propojení s testovací službou a odešle zprávu o úspěchu, kde v datech zprávy uvede svoji MAC adresu. Po obdržení zprávy o úspěchu od testovací služby komponenta přechází do metody, která bude obsluhovat příchozí zprávy. 
+Komponenta bude obsahovat veškerou logiku testovacího běhu pro jednotlivé testované zařízení. Při zahájení testování komponenta za pomocí rozhraní vytvoří propojení s testovací službou a odešle zprávu o úspěchu, kde v datech zprávy uvede svoji MAC adresu. Po obdržení zprávy o úspěchu od testovací služby komponenta přechází do metody, která bude obsluhovat příchozí zprávy. 
 
 Komponenta bude očekávat dva typy zpráv - direktivu ke spuštění testu a direktivu k ukončení testování. Po obdržení direktivy k započetí testu, komponenta ze zprávy zjistí identifikátor testu a testovací fázi. Následně z rozhraní získá instanci testu, který si po dobu běhu testu drží. Poté dle instrukcí spouští jednotlivé fáze testování. Po konci každé testovací fáze komponenta odesílá zprávu o úspěchu/neúspěchu testovací službě.
 
-Dle této implementace může teoreticky dojít k tomu, že účastník testování obdrží zprávu s požadavkem na spuštění fáze testování nebo fáze úklidu po testu, ještě předtím než obdrží instrukci ke spuštění fáze přípravy na test. Komponenta tuto situaci kontroluje a v případě jejího vzniku automaticky odesílá zprávu o neúspěchu fáze. 
+Dle této implementace může teoreticky dojít k tomu, že testované zařízení obdrží zprávu s požadavkem na spuštění fáze testování nebo fáze úklidu po testu, ještě předtím, než obdrží instrukci ke spuštění fáze přípravy na test. Komponenta tuto situaci kontroluje a v případě jejího vzniku automaticky odesílá zprávu o neúspěchu fáze. 
 
-Průběh běhu účastníka testování lze vidět na diagramu aktivit, který můžeme vidět na obrázku \ref{fig:act_diag_device}. Jak lze z diagramu vidět, běh zařízení se silně odvíjí od příkazů, které obdrží od testovací služby. Zároveň na diagramu můžeme vidět již zmíněné tři synchronizační body. Tyto body jsou zvýrazněny modrým čárkovaným obdélníkem. Z diagramu se může zdát, že pokud zařízení ve fázi přípravy na testování nebo ve fázi úklidu po testu vrátí neúspěch, tak poté lze pokračovat v testování. Toto ale není pravda, protože tento případ testovací služba nepovolí a po dokončení tohoto testu, který způsobil danou chybu, bude testovací běh ukončen. Výjimkou jsou pouze virtuální zařízení. Tyto zařízení jsou po konci testu ukončována, proto jejich chybný stav nemá následky na další testy.
+Průběh testovacího běhu testovaného zařízení lze vidět na diagramu aktivit, který můžeme vidět na obrázku \ref{fig:act_diag_device}. Jak lze z diagramu vidět, běh zařízení se silně odvíjí od příkazů, které obdrží od testovací služby. Zároveň na diagramu můžeme vidět již zmíněné tři synchronizační body. Tyto body jsou zvýrazněny modrým čárkovaným obdélníkem. Z diagramu se může zdát, že pokud zařízení ve fázi přípravy na testování nebo ve fázi úklidu po testu vrátí neúspěch, tak poté lze pokračovat v testování. Toto ale není pravda, protože tento případ testovací služba nepovolí a po dokončení tohoto testu, který způsobil danou chybu, bude testovací běh ukončen. Výjimkou jsou pouze virtualizované zařízení. Tyto zařízení jsou po konci testu ukončována, proto jejich chybný stav nemá následky na další testy.
 
 \begin{figure}
     \centering 
     \includegraphics[height=0.98\textheight]{assets/img/activitydiagramdevice.pdf}
-    \caption{Diagram aktivit účastníka testování}
+    \caption{Diagram aktivit testovaného zařízení}
     \label{fig:act_diag_device}
 \end{figure}
 
+
+\section{Virtualizované zařízení}
+Virtualizované zařízení je speciálním druhem účastníka. Toto zařízení bude spouštěno ze stejného zařízení, jako testovací služba. Zařízení bude fungovat primárně na stejném principu, jako testovaná zařízení. Tedy, zařízení bude mít implementované rozhraní pro testované zařízení, které bude ovládáno komponentou \inlinecode{TestRunner}. 
+
+Změnou je způsob ovládání této komponenty. Komponenta bude běžet ve vlastní třídě, která tuto komponentu bude spouštět na vlastním vlákně. Toto bude umožňovat nezávislý běh zařízení. Rozdílem také bude způsob definování testů. Virtualizované zařízení bude podporovat dva typy způsobů jak definovat testy. První způsobem bude za pomocí předání jedné instance testu. Jelikož virtualizované zařízení je vázáno na jednotlivé testy, je tento přístup nejjednodušší. Dalším způsobem bude předání funkce, která bude vracet instance testů na základě číselného identifikátoru. Tento způsob je totožný jako u testovaných zařízení a v určitých případech může usnadnit správu těchto zařízení. 
+
+Tato zařízení, jak již bylo nastíněno, po konci testu budou odpojena od testovací služby. Zároveň bude kontrolováno jejich ukončení. V případě neúspěchu ukončení bude ukončeno vlákno, na kterém virtualizované zařízení poběží.
+
+Testovací služba nebude nijak omezovat maximální možný počet připojených virtualizovaných zařízení. Jediné omezení, které teoreticky může vzniknout, bude v případě, že při vytváření vláken pro jednotlivá zařízení se vyčerpá maximální počet dostupných vláken. Toto by ale při reálném použití neměl být problém, jelikož je předpokládáno, že počet těchto zařízení využitých pro jeden test se bude pohybovat maximálně v desítkách. 
 
 \section{Propojení se serverem Azure DevOps}
 Jedním z cílů této práce je vytvoření takového připojení, aby server Azure DevOps byl schopen spouštět jednotlivé testy a zároveň obdržel výsledek testu. K tomuto propojení využijeme testovací framework MSTest. Vyvíjená testovací knihovna tedy poběží nad tímto testovacím frameworkem. Za pomoci frameworku MSTest bude server Azure DevOps schopen registrovat jednotlivé testy, a spouštět je jednotlivě.
 
 \subsection{Propojení s frameworkem MSTest}
-
+\todo{Doplnit}
 
 
 \begin{figure}[htbp]
