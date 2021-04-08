@@ -1,45 +1,14 @@
 \chapter{Teoretická část} % Je to vhodný název kapitoly?
 
-\section{Průmyslová komunikace}
-
-Při řešení průmyslové komunikace se často objevuje slovo \textit{fieldbus}. Běžný význam tohoto slova je \uv{Síť, která propojuje průmyslová zařízení jako kontrolery, PLC, regulátory atd.} \cite{fieldbus_thomesse}. Vznik těchto sítí je úzce spojený s historií vývoje informačních technologií. V době, kdy začali tyto sítě vznikat, nebyli dostupné komunikační technologie, jako dnes. Dostupné informační a telekomunikační sítě té doby nemohli uspokojit potřeby průmyslových sítí na deterministickou, spolehlivou a efektivní komunikaci \cite{future_of_ind_com}. 
-
-V dobách vzniku těchto komunikačních protokolů bylo pro fyzické připojení využíváno různých protokolů -- například RS-232 nebo RS-485. Nedostatkem těchto protokolů avšak byli vysoké implementační náklady. S růstem popularity standardu IEEE 802.3 -- dnes často nazýván Ethernet -- se začalo zkoumat možné použití tohoto standardu při průmyslové komunikaci. Odborníci došli k závěru, že je možné při průmyslové komunikace v reálném čase využít tento standard \cite{lee_ethernet_fieldbus}. V dnešní době je Ethernetový standard hojně využíván při přenosu průmyslové komunikace.
-
-Hlavním cílem naší práce je vytvoření testovací knihovny pro ET 200SP I/O systém, vyvíjený společností Siemens,~s.\,{}r.\,{}o. Toto zařízení využívá tzv. \textit{Multifieldbus technologie}. Tato technologie umožňuje zařízení komunikovat na základě několika průmyslových protokolů. V rámci této práce budeme využívat protokoly ModbusTCP a Ethernet/IP. Oba tyto protokoly, jak již z jejich názvů plyne, využívají Ethernetový standard.  
-
-% MiDu: udělal bych dvě krátké podkapitolky jednu na Ethernet / IP a druhou na Modbus TCP a v krátkosti bych je popsal -> taková stručná charakteristika... nesel bych do historie nepopisoval bych vznik ale technicky bych je popsal v krátkosti jak funguji co využívají a třeba nějaké charakteristiky... na netu se toho da vygooglit spousta
-
-\subsection{ModbusTCP}
-Modbus je komunikační protokol, který je umístěn na aplikační vrstvě ISO/OSI modelu. Tento protokol, vytvořený v roce 1979, umožňuje komunikaci klient-server mezi zařízeními na různých typech sítí a sběrnic. Modbus používá komunikaci požadavek-odpověď. Podporované služby jsou poté definováno funkčními kódy, které jsou součástí požadavku.
-
-Protokol definuje strukturu zprávy (tzv. PDU -- Protocol Data Unit) nezávisle od komunikační vrstvy. Tato zpráva se avšak může rozšířit, v závislosti na způsobu přenosu této zprávy. V závislosti na typu sítě je poté tato zpráva rozšířena o další údaje. Tento celek se poté označuje jako ADU -- Application Data Unit. Tuto celou strukturu můžeme vidět znázorněnou na obrázku \ref{fig:modbus_frame}. \cite{modbus}
-
-\begin{figure}[htbp]
-    \centering 
-    \includegraphics[width=\textwidth]{assets/img/modbusframe.pdf}
-    \caption{Obecné znázornění jednoho rámce protokolu Modbus}
-    \source{Vytvořeno dle předlohy z \cite{modbus}}
-    \label{fig:modbus_frame}
-\end{figure}
-
-\todo{Doplnit}
-
-
-\subsection{Ethernet/IP}
-\todo{Doplnit}
-
 \section{Testování}
 
-Testování je podstatnou součástí vývoje produktu a jeho softwaru. Cílem testování není pouze odhalení chyb v softwaru, ale také verifikace a validace softwaru \cite{singh2012software}. Při testování se snažíme vytvářet situace, ve kterých můžeme ověřit, že se software chová dle zadané specifikace.
+Testování je podstatnou součástí vývoje produktu a jeho softwaru. Cílem testování není pouze odhalení chyb v softwaru, ale také verifikace a validace softwaru. Validací softwaru kontrolujeme, zda software odpovídá specifikacím a je tím, co zákazník chtěl. Verifikací kontrolujeme správnost softwaru, tedy kontrolujeme, že systém ve vytvořených situacích se chová dle očekávání a specifikace. \cite{singh2012software}
 
 Testování softwaru je zároveň dovednost. Při testování musí tester vybrat z nekonečného množství možných testů nějaký konečný počet, který nejlépe reprezentuje danou problematiku a pokrývá co největší možnou množinu všech možných případů. Zároveň musí vzít v potaz náročnost na vytvoření testu a na rigidnost vytvořeného testu proti změnám v softwaru. Tyto faktory poté ovlivňují i náklady na testování. \cite{fewster1999software}
 
 Od testování softwaru se také odvodit kvalita softwaru. Kvalitu softwaru se dá určit tím, jak moc vytvořený software odpovídá zadaným specifikacím \cite{software_quality}. Tyto informace jsou poté velmi důležité pro managment. Díky nim může vyhodnocovat současný stav vývoje a upravovat plán na vývoj. 
 
 Testování zároveň zvyšuje důvěru ve vyvíjený softwaru. Každý dobře navržený test snižuje šanci, že v softwaru existuje nepodchycená chyba. S každým rozsáhlým testováním se tato důvěra zvyšuje. \cite{fewster1999software}
-
-
 
 \subsection{Rozdělení testů}
 
@@ -72,19 +41,20 @@ Propojení testů a vývojového cyklu je dobře znázorněno na tzv. V-modelu, 
     \centering 
     \includegraphics[width=0.9\textwidth]{assets/img/vmodel.pdf}
     \caption{V-model}
-    \source{Doplnit}
+    \source{Vytvořeno dle předlohy z \cite{fewster1999software}}
     \label{fig:vmodel}
 \end{figure}
 
 
 \section{Automatizace testování}
 
-Automatizace testování je odlišná od samotného testování. Automatizace testu neurčuje samotnou kvalitu testu. \highlight{Pokud automatizujeme test, který nic nového nepřinese, dostaneme toto nic pouze rychleji} \cite{fewster1999software}. Automatizování je ale přesto v mnoha ohledech v dnešní době standardem při testování, a to především díky jeho výhodám. Mezi tyto výhody podle \cite{fewster1999software} patří:
+Automatizace testování je odlišná od samotného testování. Automatizace testu neurčuje samotnou kvalitu testu. Pokud automatizujeme test, který nepřináší žádné nové benefity vývoji softwaru, tak poté dostaneme jeho výsledek pouze rychleji. \cite{fewster1999software} Proto tvorba testů je minimálně stejně důležitá, ne-li důležitější, jako samotná jejich automatizace. Automatizování je ale v mnoha ohledech v dnešní době standardem při testování, a to především díky jeho výhodám. Mezi tyto výhody podle \cite{fewster1999software} patří:
 
 \begin{description}
     \item[Častější testování] S automatizací jsme schopni testovat software mnohem častěji, než při manuálním testování. Software může být testován například při každé jeho změně. Toto manuálně je velmi náročné, už jenom kvůli vysokému požadavku na lidské zdroje.  
-    \item[Možnost testovat \highlight{nové} věci] Automatizace umožňuje testovat takové aspekty, které se nedají manuálně testovat, nebo jejich manuální testování je velice náročné. Tím se zvyšuje pokrytí testování.
-    \item[Lepší využití zdrojů] Tester je vysoce kvalifikovaný člověk a jeho využití na opakované vkládání vstupů a ověřování výstupů je v některých případech plýtvání jeho drahocenným časem. Díky automatizaci se tester může zaměřit na jiné přínosnější činnosti, jako například vytváření nových testů, kterými pokryje nové případy.
+    \item[Ulehčení testování] Test, který bude požadovat k jeho uskutečnění 200 uživatelů, není nemožný provést manuálně. S automatizací ale můžeme vstupy těchto uživatelů simulovat a tím celé testování zjednodušit.  
+    \item[Lepší využití zdrojů] Tester je kvalifikovaný člověk a jeho využití na opakované vkládání vstupů a ověřování výstupů může být v některých případech plýtváním jeho časem.
+    Taktéž při manuálním testování můžeme vyžadovat více účastníků testování, kteří všichni si musí vyhradit čas na testování. Díky automatizaci můžeme tyto zdroje využít víc efektivněji. Tester se například díky automatizaci může více soustředit na vytváření nových testů.
     \item[Konzistence] Při automatizaci testování každý běh testu proběhne naprosto identicky. Stejně jako ve vývoji, i v testování může dojít k lidské chybě. Díky automatizaci se šance lidské chyby snižuje. Toto zvyšuje konzistenci testování, než když se testy provádějí manuálně.
     \item[Snížení doby testování] Jednou automatizované testy můžou být provedeny mnohem rychleji a efektivněji, než při jejich manuálním spuštění. Toto způsobuje snížení potřebné doby na testování.
 \end{description}
@@ -103,9 +73,51 @@ Azure DevOps server poskytuje vývojářům služby, které pomáhají při výv
 
 Azure DevOps server využívá při delegování úkolů tzv. agenty. Agent je výpočetní infrastruktura s nainstalovaným softwarem agenta, který pracuje na jedné určité úloze \cite{agent_docs}. Agent následně provádí například jednotlivé úkony definované v Azure Pipelines, jako kompilace, testování atd.
 
-
 \section{Framework MSTest}
 
 Framework MSTest je výchozí testovací framework, který je integrován do IDE Visual Studio. Díky tomu je také často nazýván jako \uv{Visual Studio Unit Testing Framework}. Framework započal jako nástroj spouštěný z příkazové řádky, který následně prováděl testování. Díky implementaci do Visual Studia je tento framework často preferován vývojáři, kteří používají Visual Studio pro vývoj. 
 
 MSTest framework přináší nástroje, které jsou potřeba k verifikaci a validaci softwaru. V dnešní době framework MSTest V2 je open-source projekt, který je stále rozvíjen. Mezi jeho výhody patří podpora napříč platformami a rozšiřitelnost. \cite{mstest_descr}
+
+
+\section{Průmyslová komunikace}
+
+Při řešení průmyslové komunikace se často objevuje slovo \textit{fieldbus}. Běžný význam tohoto slova je \uv{Síť, která propojuje průmyslová zařízení jako kontrolery, PLC, regulátory atd.} \cite{fieldbus_thomesse}. Vznik těchto sítí je úzce spojený s historií vývoje informačních technologií. V době, kdy začali tyto sítě vznikat, nebyli dostupné komunikační technologie, jako dnes. Dostupné informační a telekomunikační sítě té doby nemohli uspokojit potřeby průmyslových sítí na deterministickou, spolehlivou a efektivní komunikaci \cite{future_of_ind_com}. 
+
+V dobách vzniku těchto komunikačních protokolů bylo pro fyzické připojení využíváno různých protokolů -- například RS-485. Nedostatkem těchto protokolů avšak byli vysoké implementační náklady. S růstem popularity standardu IEEE 802.3 -- dnes často nazýván Ethernet -- se začalo zkoumat možné použití tohoto standardu při průmyslové komunikaci. Odborníci došli k závěru, že je možné při průmyslové komunikace v reálném čase využít tento standard \cite{lee_ethernet_fieldbus}. V dnešní době je Ethernetový standard hojně využíván při přenosu průmyslové komunikace.
+
+
+\subsection{Modbus}
+Modbus je průmyslový komunikační protokol, který je umístěn na aplikační vrstvě ISO/OSI modelu. Tento protokol, vytvořený v roce 1979, umožňuje komunikaci typu klient-server mezi zařízeními na různých typech sítí a sběrnic. 
+
+Protokol definuje strukturu zprávy (tzv. PDU -- Protocol Data Unit) nezávisle od komunikační vrstvy. Tato zpráva se avšak může rozšířit, v závislosti na způsobu přenosu této zprávy. V závislosti na typu sítě je poté tato zpráva rozšířena o další údaje. Tento celek se poté označuje jako ADU -- Application Data Unit. Tuto celou strukturu můžeme vidět znázorněnou na obrázku \ref{fig:modbus_frame}.~\cite{modbus}
+
+\begin{figure}[htbp]
+    \centering 
+    \includegraphics[width=\textwidth]{assets/img/modbusframe.pdf}
+    \caption{Obecné znázornění jednoho rámce protokolu Modbus}
+    \source{Vytvořeno dle předlohy z \cite{modbus}}
+    \label{fig:modbus_frame}
+\end{figure}
+
+Podporované služby jsou definováno funkčními kódy, které jsou součástí požadavku. Kód funkce je uložen v jednom bajtu a tedy rozsah možných kódu je 1-255 (0 je nevalidní), kde rozsah 128-255 je rezervován pro chybové zprávy. Data zprávy poté slouží k upřesnění operace definované funkčním kódem. V určitých situacích muže postačovat v provedení operace funkční kód, data zpráva poté mají nulovou délku.
+
+Modbus používá komunikaci požadavek-odpověď. Na požadavek klienta server odpovídá zprávou, kterou značí úspěch či neúspěch operace. V případě úspěchu server odesílá zpět zprávu se stejným funkčním kódem jako byl požadavek. V opačném případě odesílá zpět zprávu, která obsahuje stejný kód funkce jako byl kód funkce požadavku, ale tento kód má zároveň nastavený nejvýznamnější bit na 1. Zpráva v obou případech může poté obsahovat data, v závislosti na operacích. \cite{modbus}
+
+V této práci se budu zaměřovat na použití protokolu ModbusTCP. Jak již z názvu vyplívá, ModbusTCP používá k přenosu zpráv protokol TCP/IP a Ethernet připojení. Zároveň používá stejnou komunikaci definovanou protokolem Modbus.
+
+\subsection{EtherNet/IP}
+Protokol EtherNet/IP (EtherNet/Industrial Protocol) je dalším dnes již široce používaným průmyslovým protokolem. Jak již z názvu vyplívá, protokol používá Ethernetový standard a protokol TCP/IP ke komunikaci. Tento protokol byl poprvé představen v roce 2001 a od roku 2005 je standardizován. 
+
+Protokol je umístěn na 5--7 vrstvě ISO/OSI modelu. V rámci sítě jsou jednotlivým uzlům přiřazeny předem definované profily. Profil reprezentuje typ zařízení se specifickými vlastnostmi. Profil zařízení a aplikační vrstva protokolu EtherNet/IP jsou vytvářeny protokolem CIP (Common Industrial Protocol). Tento protokol používá komunikaci na principu producent-konzument. Použitím společného protokolu CIP se následně dosahuje interoperability mezi všemi sítěmi, které ho podporují. 
+
+Protokol CIP je objektově orientovaný. Každé zařízení je reprezentováno skupinou objektů. Každý z objektů obsahuje data, služby resp. příkazy a specifikaci funkcí. V rámci protokolu je poté definováno, jaké atributy musí každý objekt obsahovat.
+
+Aplikační objekty obsahují data, které jsou specifická pro komunikující zařízeni. Výrobci mohou specifikovat i svoje vlastní objekty. Pro identifikaci dostupných objektů jsou sestaveny elektronické popisy zařízení, které obsahují potřebné informace ke konfiguraci zařízení v síti EtherNet/IP. 
+
+Přenos v síti EtherNet/IP se odvíjí dle využitého protokolu pro přenos. Při použití protokolu TCP je přenos explicitní, naopak při použití protokolu UDP je přenos implicitní. Komunikační model objektů CIP umožňuje lépe využít možnosti komunikačního kanálu. Přenos zprávy následně probíhá dle protokolu. Žadatel zahajuje komunikaci s cílovým zařízením odesláním žádosti k vytvoření komunikace, která obsahuje navrhované parametry spojení. Cílové zařízení následně odesílá potvrzení s přesnými parametry a navazuje spojení. Každé spojení je poté určeno identifikátorem. \cite{ethernet_ip}
+
+\subsection{Testovaný produkt}
+Hlavním cílem naší práce je vytvoření testovací knihovny pro ET 200SP I/O systém, vyvíjený společností Siemens,~s.\,{}r.\,{}o. Toto zařízení využívá tzv. \textit{Multifieldbus technologie}. Tato technologie umožňuje zařízení komunikovat na základě několika průmyslových protokolů. V rámci této práce budeme využívat protokoly ModbusTCP a EtherNet/IP. 
+
+\todo{Popsat ET200}

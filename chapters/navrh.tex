@@ -110,7 +110,7 @@ Testovaná zařízení se v době běhu testu mohou dostat do chybového stavu, 
     \item[Chyba v komunikaci] Pokud během testu zařízení odpoví jinak, než dle stanovené komunikace, tak poté bude toto zařízení považováno jako v chybném stavu. Zároveň bude za chybu považováno odpojení zařízení od služby.  
 \end{description}
 
-Služba vyhodnocuje test jako úspěšný, pokud všechny fáze testu byli úspěšné. Obráceně služba vyhodnocuje test jako neúspěšný pokud jedna z fází byla neúspěšná. V případě nastání chyby, kde testované zařízení je předpokládáno jako v chybovém stavu, testovací služba nastavuje svůj stav jako chybový. Následující testy nebudou provedeny.
+Pokud všechny fáze testu byli úspěšné, tak poté služba vyhodnocuje test jako úspěšný. Obráceně služba vyhodnocuje test jako neúspěšný pokud jedna z fází byla neúspěšná. V případě nastání chyby, kde testované zařízení je předpokládáno jako v chybovém stavu, testovací služba nastavuje svůj stav jako chybový. Následující testy nebudou provedeny.
 
 
 \subsection{Ukončení testování}
@@ -212,16 +212,19 @@ Tato zařízení, jak již bylo nastíněno, po konci testu budou odpojena od te
 
 Testovací služba nebude nijak omezovat maximální možný počet připojených virtualizovaných zařízení. Jediné omezení, které teoreticky může vzniknout, bude v případě, že při vytváření vláken pro jednotlivá zařízení se vyčerpá maximální počet dostupných vláken. Toto by ale při reálném použití neměl být problém, jelikož je předpokládáno, že počet těchto zařízení využitých pro jeden test se bude pohybovat maximálně v desítkách. 
 
+
 \section{Propojení se serverem Azure DevOps}
+\todo{Popsat propojení s Azure DevOps}
+
 Jedním z cílů této práce je vytvoření takového připojení, aby server Azure DevOps byl schopen spouštět jednotlivé testy a zároveň obdržel výsledek testu. K tomuto propojení využijeme testovací framework MSTest. Vyvíjená testovací knihovna tedy poběží nad tímto testovacím frameworkem. Za pomoci frameworku MSTest bude server Azure DevOps schopen registrovat jednotlivé testy, a spouštět je jednotlivě.
 
 \subsection{Propojení s frameworkem MSTest}
 \todo{Doplnit}
 
 
-\begin{figure}[htbp]
-    \centering 
-    \includegraphics[width=0.95\textwidth]{assets/img/deploymentmodel.pdf}
-    \caption{Deployment model}
-    \label{fig:deploymodel}
-\end{figure}
+% \begin{figure}[htbp]
+%     \centering 
+%     \includegraphics[width=0.95\textwidth]{assets/img/deploymentmodel.pdf}
+%     \caption{Deployment model}
+%     \label{fig:deploymodel}
+% \end{figure}
