@@ -11,7 +11,20 @@ Hlavním cílem naší práce je vytvoření testovací knihovny pro ET 200SP I/
 % MiDu: udělal bych dvě krátké podkapitolky jednu na Ethernet / IP a druhou na Modbus TCP a v krátkosti bych je popsal -> taková stručná charakteristika... nesel bych do historie nepopisoval bych vznik ale technicky bych je popsal v krátkosti jak funguji co využívají a třeba nějaké charakteristiky... na netu se toho da vygooglit spousta
 
 \subsection{ModbusTCP}
+Modbus je komunikační protokol, který je umístěn na aplikační vrstvě ISO/OSI modelu. Tento protokol, vytvořený v roce 1979, umožňuje komunikaci klient-server mezi zařízeními na různých typech sítí a sběrnic. Modbus používá komunikaci požadavek-odpověď. Podporované služby jsou poté definováno funkčními kódy, které jsou součástí požadavku.
+
+Protokol definuje strukturu zprávy (tzv. PDU -- Protocol Data Unit) nezávisle od komunikační vrstvy. Tato zpráva se avšak může rozšířit, v závislosti na způsobu přenosu této zprávy. V závislosti na typu sítě je poté tato zpráva rozšířena o další údaje. Tento celek se poté označuje jako ADU -- Application Data Unit. Tuto celou strukturu můžeme vidět znázorněnou na obrázku \ref{fig:modbus_frame}. \cite{modbus}
+
+\begin{figure}[htbp]
+    \centering 
+    \includegraphics[width=\textwidth]{assets/img/modbusframe.pdf}
+    \caption{Obecné znázornění jednoho rámce protokolu Modbus}
+    \source{Vytvořeno dle předlohy z \cite{modbus}}
+    \label{fig:modbus_frame}
+\end{figure}
+
 \todo{Doplnit}
+
 
 \subsection{Ethernet/IP}
 \todo{Doplnit}
@@ -75,3 +88,24 @@ Automatizace testování je odlišná od samotného testování. Automatizace te
     \item[Konzistence] Při automatizaci testování každý běh testu proběhne naprosto identicky. Stejně jako ve vývoji, i v testování může dojít k lidské chybě. Díky automatizaci se šance lidské chyby snižuje. Toto zvyšuje konzistenci testování, než když se testy provádějí manuálně.
     \item[Snížení doby testování] Jednou automatizované testy můžou být provedeny mnohem rychleji a efektivněji, než při jejich manuálním spuštění. Toto způsobuje snížení potřebné doby na testování.
 \end{description}
+
+\section{Azure DevOps}
+
+Azure DevOps server poskytuje vývojářům služby, které pomáhají při vývoji softwaru. Jeho cílem je podporovat jednotlivé procesy vývoje, což poté zrychluje vývoj softwaru. \cite{azure_devops} V této práci budu využívat několik služeb, které Azure DevOps server nabízí. Tyto služby budou:
+
+\begin{description}
+    \item[Azure Repos] Azure Repos je sada nástrojů, která umožňuje správu jednotlivých verzí softwaru. V této práci budeme používat systém správy verzí Git, který je Azure Repos podporovaný. \cite{azure_repos}
+    \item[Azure Pipelines] Azure Pipelines automaticky kompiluje a testuje vyvíjený software. Zároveň podporuje procesy jako kontinuální integrace, kontinuálního nasazení softwaru nebo kontinuální testování. \cite{azure_pipelines}
+    \\ \question{Je potřeba vysvětlit co je CI a CD, když to nikde jinde nepoužívám}
+    \item[Azure Test Plans] Azure Test Plans přináší sadu nástrojů, které umožnují spravovat testování softwaru. Tyto nástroje umožňují správu testovacích sad a jednotlivých testů, ať už manuálních nebo automatizovaných. \cite{azure_test_plans}
+    \item[Azure Artifacts] Azure Artifacts umožňuje publikování a verzování různých typů balíčků. Následně tato správa těchto balíčků může být využita při vydání těchto balíčků. Mezi podporované balíčky patří například NuGet, Maven nebo npm. Zároveň skrz Azure Artifact můžeme publikovat data z Azure Pipelines. \cite{azure_artifacts}
+\end{description}
+
+Azure DevOps server využívá při delegování úkolů tzv. agenty. Agent je výpočetní infrastruktura s nainstalovaným softwarem agenta, který pracuje na jedné určité úloze \cite{agent_docs}. Agent následně provádí například jednotlivé úkony definované v Azure Pipelines, jako kompilace, testování atd.
+
+
+\section{Framework MSTest}
+
+Framework MSTest je výchozí testovací framework, který je integrován do IDE Visual Studio. Díky tomu je také často nazýván jako \uv{Visual Studio Unit Testing Framework}. Framework započal jako nástroj spouštěný z příkazové řádky, který následně prováděl testování. Díky implementaci do Visual Studia je tento framework často preferován vývojáři, kteří používají Visual Studio pro vývoj. 
+
+MSTest framework přináší nástroje, které jsou potřeba k verifikaci a validaci softwaru. V dnešní době framework MSTest V2 je open-source projekt, který je stále rozvíjen. Mezi jeho výhody patří podpora napříč platformami a rozšiřitelnost. \cite{mstest_descr}

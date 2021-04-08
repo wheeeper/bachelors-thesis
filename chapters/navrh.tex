@@ -11,14 +11,14 @@ V rámci knihovny a testovacího běhu se bude vyskytovat několik účastníků
     \item[Virtualizované zařízení] Zařízení, které simuluje nějakou činnost testovaného zařízení. Toto zařízení běží na stejném zařízení, jako testovací služba. 
 \end{description}
 
-Testovací služba bude jádrem k řízení testování. Tato služba poběží na samostatném zařízení. Toto zařízení bude běžet na operačním systému Windows. Zařízení bude v rámci infrastruktury serveru Azure DevOps tzv. agent. Agent je výpočetní infrastruktura s nainstalovaným softwarem agenta, který pracuje na jedné určité úloze \cite{agent_docs}. Na agentovi bude server Azure DevOps spouštět testovací běh.
+Testovací služba bude jádrem k řízení testování. Tato služba poběží na samostatném zařízení. Toto zařízení bude běžet na operačním systému Windows. Zařízení bude v rámci infrastruktury serveru Azure DevOps agent. 
 
 Hlavním cílem je testovat vyvíjený produkt. Toto zařízení v rámci knihovny bude bráno jako testované zařízení. Testovací služba bude podporovat připojení jednoho a více testovaných zařízení. Tato zařízení budou připojeno k zařízení, ze kterého poběží testovací služba, za pomocí Ethernet připojení. 
 
 Součástí knihovny zároveň bude také tzv. virtualizované zařízení. Toto zařízení bude primárně sloužit k simulaci nějaké činnosti, kterou by jinak muselo provádět nějaké z testovaných zařízení. Simulováním testovaných zařízení snižujeme hardwarové nároky na testování, což vede ke snížení ekonomických nákladů na testování. Tato zařízení se budou připojovat v závislosti na jednotlivých testech. Následně po skončení testu budou tato zařízení odpojena.
 
 \section{Komunikace}
-Komunikace mezi všemi účastníky testování bude fungovat na principu TCP/IP připojení. Zařízení, na kterém poběží testovací služba, bude sloužit jako server a všichni účastnící testovaní budou klienti, kteří se budou k tomuto zařízení připojovat. 
+Komunikace mezi všemi účastníky testování bude fungovat na principu TCP/IP připojení. Testovací služba a zařízení, na kterém služba poběží, bude sloužit jako server a všichni účastnící testovaní budou klienti, kteří se budou k tomuto zařízení připojovat. 
 
 Jednotlivé zprávy, které budou mezi testovací službou a všemi účastníky testování vyměňovány, budou mít jasně stanovenou strukturu. Diagram složení zprávy lze vidět na obrázku \ref{fig:message}. Na tomto obrázku můžeme vidět, že jedna zpráva lze rozdělit na dvě části -- hlavičku zprávy a data zprávy. Zároveň jak můžeme vidět, jedna buňka v diagramu odpovídá jednomu bajtu. 
 
@@ -32,15 +32,17 @@ Jednotlivé zprávy, které budou mezi testovací službou a všemi účastníky
 Zpráva bude obsahovat povinně hlavičku zprávy. Tato hlavička bude obsahovat typ zprávy a délku dat zprávy. Jak můžeme vidět na diagramu, každý z těchto údajů bude mít velikost dva bajty. Celkově tedy hlavička bude o velikosti 4 bajty. Knihovna bude podporovat tyto typy zpráv:
 
 \begin{enumerate}
-    \item Zpráva o úspěchu/potvrzení
-    \item Zpráva o neúspěchu
-    \item Direktiva ke spuštění testu
-    \item Direktiva k ukončení testování
+    \item \inlinecode{MSG\_OK} -- Zpráva o úspěchu/potvrzení
+    \item \inlinecode{MSG\_FAIL} -- Zpráva o neúspěchu
+    \item \inlinecode{MSG\_TEST} -- Direktiva ke spuštění testu
+    \item \inlinecode{MSG\_STOP} -- Direktiva k ukončení testování
 \end{enumerate}
 
-Za hlavičkou zprávy následně budou moct být uložena data zprávy. Tyto data avšak budou nepovinná. V těchto případech bude pro přenesení informace postačovat pouze typ zprávy a v hlavičce bude uvedena nulová hodnota jako délka dat zprávy. Zároveň lze odvodit, že maximální délka dat zprávy bude rovna číslu, které se vejde do dvou bajtů, tedy maximální délka dat zprávy je 65~535 bajtů. Všechny hodnoty zprávy budou ukládány v kladné (anglicky tzv. unsigned) podobě.
+Za hlavičkou zprávy následně budou moct být uložena data zprávy. Tyto data avšak budou nepovinná. V těchto případech, kdy zpráva nebude neobsahovat data zprávy, bude pro přenesení informace postačovat pouze typ zprávy a v hlavičce bude uvedena nulová hodnota jako délka dat zprávy. 
 
-Samotná zpráva nebude obsahovat žádné kontrolní data, který by fungovali k detekci možných chyb v komunikaci. Protokol TCP/IP avšak sám obsahuje jednoduchou detekci chyb. V tomto případě bude tato detekce považována jako dostatečná.
+Maximální délka jedné zprávy se bude odvíjet od limitací použitých technologií. Limit se bude primárně odvíjet od Ethernet protokolu, který podporuje nejmenší maximální délku jednoho packetu ze všech použitých protokolů, a to 1500 bajtů. Toto číslo avšak také zahrnuje všechny potřebné hlavičky k přenosu packetu. Proto jako maximální délka jedné zprávy bude zvolena délka 1400 bajtů. Toto číslo ponechává místo pro potřebné hlavičky a zároveň je více než dostatečné pro navrhované použití. \cite{max_packet_size} 
+
+Všechny hodnoty zprávy budou ukládány v kladné (anglicky tzv. unsigned) podobě. Jedinou kontrolní informací, kterou bude zpráva obsahovat, je délka dat zprávy. Protokol TCP/IP avšak sám obsahuje jednoduchou detekci chyb. Všechny tyto kontroly budou považovány jako dostatečné.
 
 Účastníci testování se na začátku připojí k testovací službě a odešlou inicializační zprávu. Tato zpráva bude typu 1 a v datech zprávy bude obsahovat svojí MAC adresu. Výjimkou budou virtualizované zařízení, která budou jako svoji MAC adresu odesílat adresu \inlinecode{DE:AD:BE:EF:00:00}. Díky tomu je testovací služba jednoduše identifikuje. Testovací služba následně odešle potvrzovací zprávu o úspěšném připojení s typem 1, bez žádných dat. V případě vzniku chyby služba odešle zprávu typu 2, bez dat. 
 
@@ -131,7 +133,7 @@ Testovací knihovna tedy bude definovat rozhraní, které bude vyžadovat, aby t
 
 \begin{listing}[htbp]
     \begin{minted}[breaklines]{text}
-    TestCase 
+    ITestCase 
     {
         bool StartUp()
 
@@ -160,7 +162,7 @@ Metoda \inlinecode{getMacAddress} bude, jak již z názvu vyplývá, vracet MAC 
 
 \begin{listing}[htbp]
     \begin{minted}[breaklines]{text}
-    TestClient 
+    ITestClient 
     {
 
         bool createConnection(ipAddress, port)
@@ -169,7 +171,7 @@ Metoda \inlinecode{getMacAddress} bude, jak již z názvu vyplývá, vracet MAC 
 
         bool rcvMessage(message)
 
-        TestCase getTest(test)
+        ITestCase getTest(test)
 
         void print(toPrint)
 
