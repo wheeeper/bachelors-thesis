@@ -87,7 +87,7 @@ Při řešení průmyslové komunikace se často objevuje slovo \textit{fieldbus
 V dobách vzniku těchto komunikačních protokolů bylo pro fyzické připojení využíváno různých protokolů -- například RS-485. Nedostatkem těchto protokolů avšak byli vysoké implementační náklady. S růstem popularity standardu IEEE 802.3 -- dnes často nazýván Ethernet -- se začalo zkoumat možné použití tohoto standardu při průmyslové komunikaci. Odborníci došli k závěru, že je možné při průmyslové komunikace v reálném čase využít tento standard \cite{lee_ethernet_fieldbus}. V dnešní době je Ethernetový standard hojně využíván při přenosu průmyslové komunikace.
 
 
-\subsection{Modbus}
+\subsection{Protokol Modbus}
 Modbus je průmyslový komunikační protokol, který je umístěn na aplikační vrstvě ISO/OSI modelu. Tento protokol, vytvořený v roce 1979, umožňuje komunikaci typu klient-server mezi zařízeními na různých typech sítí a sběrnic. 
 
 Protokol definuje strukturu zprávy (tzv. PDU -- Protocol Data Unit) nezávisle od komunikační vrstvy. Tato zpráva se avšak může rozšířit, v závislosti na způsobu přenosu této zprávy. V závislosti na typu sítě je poté tato zpráva rozšířena o další údaje. Tento celek se poté označuje jako ADU -- Application Data Unit. Tuto celou strukturu můžeme vidět znázorněnou na obrázku \ref{fig:modbus_frame}.~\cite{modbus}
@@ -106,7 +106,7 @@ Modbus používá komunikaci požadavek-odpověď. Na požadavek klienta server 
 
 V této práci se budu zaměřovat na použití protokolu ModbusTCP. Jak již z názvu vyplívá, ModbusTCP používá k přenosu zpráv protokol TCP/IP a Ethernet připojení. Zároveň používá stejnou komunikaci definovanou protokolem Modbus.
 
-\subsection{EtherNet/IP}
+\subsection{Protokol EtherNet/IP}
 Protokol EtherNet/IP (EtherNet/Industrial Protocol) je dalším dnes již široce používaným průmyslovým protokolem. Jak již z názvu vyplívá, protokol používá Ethernetový standard a protokol TCP/IP ke komunikaci. Tento protokol byl poprvé představen v roce 2001 a od roku 2005 je standardizován. 
 
 Protokol je umístěn na 5--7 vrstvě ISO/OSI modelu. V rámci sítě jsou jednotlivým uzlům přiřazeny předem definované profily. Profil reprezentuje typ zařízení se specifickými vlastnostmi. Profil zařízení a aplikační vrstva protokolu EtherNet/IP jsou vytvářeny protokolem CIP (Common Industrial Protocol). Tento protokol používá komunikaci na principu producent-konzument. Použitím společného protokolu CIP se následně dosahuje interoperability mezi všemi sítěmi, které ho podporují. 
@@ -117,7 +117,18 @@ Aplikační objekty obsahují data, které jsou specifická pro komunikující z
 
 Přenos v síti EtherNet/IP se odvíjí dle využitého protokolu pro přenos. Při použití protokolu TCP je přenos explicitní, naopak při použití protokolu UDP je přenos implicitní. Komunikační model objektů CIP umožňuje lépe využít možnosti komunikačního kanálu. Přenos zprávy následně probíhá dle protokolu. Žadatel zahajuje komunikaci s cílovým zařízením odesláním žádosti k vytvoření komunikace, která obsahuje navrhované parametry spojení. Cílové zařízení následně odesílá potvrzení s přesnými parametry a navazuje spojení. Každé spojení je poté určeno identifikátorem. \cite{ethernet_ip}
 
-\subsection{Testovaný produkt}
-Hlavním cílem naší práce je vytvoření testovací knihovny pro ET 200SP I/O systém, vyvíjený společností Siemens,~s.\,{}r.\,{}o. Toto zařízení využívá tzv. \textit{Multifieldbus technologie}. Tato technologie umožňuje zařízení komunikovat na základě několika průmyslových protokolů. V rámci této práce budeme využívat protokoly ModbusTCP a EtherNet/IP. 
+\section{Testovaný produkt}
 
-\todo{Popsat ET200}
+Hlavním cílem této práce je vytvoření testovací knihovny pro SIMATIC ET 200SP I/O systém, vyvíjený společností Siemens,~s.\,{}r.\,{}o. Řada produktů SIMATIC ET 200 přináší jednu z nejširších nabídek I/O zařízení. Produkty této řady můžeme vidět znázorněné na obrázku \ref{fig:et200}. Jak z obrázku můžeme vidět, každé zařízení obsahuje jiný stupeň ochrany v závislosti na jejich plánovaném umístěním. \cite{et200} 
+
+\begin{figure}[htbp]
+    \centering 
+    \includegraphics[width=0.87\textwidth]{assets/img/et200.pdf}
+    \caption{Znázornění produktové řady SIMATIC ET 200}
+    \source{Marketingové materiály firmy Siemens,~s.\,{}r.\,{}o \cite{et200}}
+    \label{fig:et200}
+\end{figure}
+
+Zařízení SIMATIC ET 200SP je určeno k umístění do kompaktních řídících kabinetů. Díky modulárnosti systému se systém může vysoce přizpůsobit potřebám jednotlivých průmyslů. Mezi tyto moduly patří standardní I/O moduly, komunikační moduly, technologické moduly nebo moduly ke startování motorů. Zároveň je velikou výhodou celkový kompaktní design. Jednotlivé moduly zároveň mohou být vyměňovány za běhu. \cite{et200sp}
+
+SIMATIC ET 200SP zařízení využívá tzv. \textit{Multifieldbus technologie}. Tato technologie umožňuje zařízení komunikovat na základě několika průmyslových protokolů. V rámci této práce se zaměříme na protokoly ModbusTCP a EtherNet/IP, které již byli dříve popsané.
