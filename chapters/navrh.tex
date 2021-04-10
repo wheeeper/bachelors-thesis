@@ -11,11 +11,11 @@ V rámci knihovny a testovacího běhu se bude vyskytovat několik účastníků
     \item[Virtualizované zařízení] Zařízení, které simuluje nějakou činnost testovaného zařízení. Toto zařízení běží na stejném zařízení, jako testovací služba. 
 \end{description}
 
-Testovací služba bude jádrem k řízení testování. Tato služba poběží na samostatném zařízení. Toto zařízení bude běžet na operačním systému Windows. Zařízení bude v rámci infrastruktury serveru Azure DevOps agent. 
+Testovací služba bude jádrem k řízení testování. Tato služba poběží na samostatném zařízení, které bude běžet na operačním systému Windows. Zařízení bude v rámci infrastruktury serveru Azure DevOps agent. Testovací služba bude implementována v jazyce \csharp{}.
 
-Hlavním cílem je testovat vyvíjený produkt. Toto zařízení v rámci knihovny bude bráno jako testované zařízení. Testovací služba bude podporovat připojení jednoho a více testovaných zařízení. Tato zařízení budou připojeno k zařízení, ze kterého poběží testovací služba, za pomocí Ethernet připojení. 
+Hlavním cílem je testovat vyvíjený produkt. Toto zařízení v rámci knihovny bude bráno jako testované zařízení. Testovací služba bude podporovat připojení jednoho a více testovaných zařízení. Tato zařízení budou připojeno k zařízení, ze kterého poběží testovací služba, za pomocí Ethernet připojení. Zařízení SIMATIC ET 200SP má svojí implementaci v jazyce \cpp{}. Z toho vyplývá že implementace pro toto zařízení bude vytvořena v tomto jazyce. 
 
-Součástí knihovny zároveň bude také tzv. virtualizované zařízení. Toto zařízení bude primárně sloužit k simulaci nějaké činnosti, kterou by jinak muselo provádět nějaké z testovaných zařízení. Simulováním testovaných zařízení snižujeme hardwarové nároky na testování, což vede ke snížení ekonomických nákladů na testování. Tato zařízení se budou připojovat v závislosti na jednotlivých testech. Následně po skončení testu budou tato zařízení odpojena.
+Součástí knihovny zároveň bude také tzv. virtualizované zařízení. Toto zařízení bude primárně sloužit k simulaci nějaké činnosti, kterou by jinak muselo provádět nějaké z testovaných zařízení. Simulováním testovaných zařízení snižujeme hardwarové nároky na testování, což vede ke snížení ekonomických nákladů na testování. Tato zařízení se budou připojovat v závislosti na jednotlivých testech. Následně po skončení testu budou tato zařízení odpojena. Virtualizované zařízení bude vytvořeno v jazyce \csharp{}, stejně jako testovací služba. 
 
 \section{Komunikace}
 Komunikace mezi všemi účastníky testování bude fungovat na principu TCP/IP připojení. Testovací služba a zařízení, na kterém služba poběží, bude sloužit jako server a všichni účastnící testovaní budou klienti, kteří se budou k tomuto zařízení připojovat. 
@@ -89,6 +89,9 @@ Jak již bylo nastíněno, služba bude podporovat připojení virtualizovaných
 \end{itemize}
 
 V opačném případě služba vyhodnocuje úspěch. Po dokončení testu služba vysílá všem připojeným virtualizovaným zařízením direktivu k ukončení testování a ukončuje spojení s nimi.
+
+\subsection{Registrování testů}
+Testovací služba nebude mít žádné informace o jednotlivých testech. Jedinou informaci, kterou testovací služba obdrží, bude číselný identifikátor testu. Tento identifikátor bude typem enumerátor. Zároveň ale tento enumerátor může být jakéhokoliv typu. 
 
 \subsection{Testovací běh}\label{test_run}
 Po úspěšné inicializační fázi a případném připojení virtualizovaných zařízení služba čeká na direktivu ke spuštění testu. Po obdržení této direktivy s identifikátorem testu služba odesílá všem účastníkům testování zprávu k zahájení první fáze testu. Tuto fázi budeme označovat jako přípravu na testování. V této fázi účastníci testovaní připraví všechny potřebné prostředky pro provedení testu. Účastníci následně odesílají zprávu o úspěchu/neúspěchu této fáze. Služba vyhodnocuje fázi jako úspěšnou pokud od všech účastníků obdrží zprávu o úspěchu. V opačném případě vyhodnocuje fázi jako neúspěšnou.
@@ -206,25 +209,49 @@ Průběh testovacího běhu testovaného zařízení lze vidět na diagramu akti
 \section{Virtualizované zařízení}
 Virtualizované zařízení je speciálním druhem účastníka. Toto zařízení bude spouštěno ze stejného zařízení, jako testovací služba. Zařízení bude fungovat primárně na stejném principu, jako testovaná zařízení. Tedy, zařízení bude mít implementované rozhraní pro testované zařízení, které bude ovládáno komponentou \inlinecode{TestRunner}. 
 
-Změnou je způsob ovládání této komponenty. Komponenta bude běžet ve vlastní třídě, která tuto komponentu bude spouštět na vlastním vlákně. Toto bude umožňovat nezávislý běh zařízení. Rozdílem také bude způsob definování testů. Virtualizované zařízení bude podporovat dva typy způsobů jak definovat testy. První způsobem bude za pomocí předání jedné instance testu. Jelikož virtualizované zařízení je vázáno na jednotlivé testy, je tento přístup nejjednodušší. Dalším způsobem bude předání funkce, která bude vracet instance testů na základě číselného identifikátoru. Tento způsob je totožný jako u testovaných zařízení a v určitých případech může usnadnit správu těchto zařízení. 
+Změnou je způsob ovládání této komponenty. Komponenta bude zaobalena vlastní třídou, která tuto komponentu bude spouštět na vlastním vlákně. Toto bude umožňovat nezávislý běh zařízení. Rozdílem také bude způsob definování testů. Virtualizované zařízení bude podporovat dva typy způsobů jak definovat testy. První způsobem bude za pomocí předání jedné instance testu. Jelikož virtualizované zařízení je vázáno na jednotlivé testy, je tento přístup nejjednodušší. Dalším způsobem bude předání funkce, která bude vracet instance testů na základě číselného identifikátoru. Tento způsob je totožný jako u testovaných zařízení a v určitých případech může usnadnit správu těchto zařízení. 
 
-Tato zařízení, jak již bylo nastíněno, po konci testu budou odpojena od testovací služby. Zároveň bude kontrolováno jejich ukončení. V případě neúspěchu ukončení bude ukončeno vlákno, na kterém virtualizované zařízení poběží.
+Virtuální zařízení bude spouštěno z testovacího projektu za pomoci testovací knihovny. Vytvořená instance virtuální participanta bude předána testovací knihovně, která se následovně postará o jeho spuštění a ukončení. Zařízení bude po konci testu odpojeno od testovací služby. Testovací knihovna bude kontrolovat úspešnost tohoto ukončení a v případě neúspěchu standardního ukončení testovací knihovna ukončí vlákno, na kterém zařízení poběží.
 
 Testovací služba nebude nijak omezovat maximální možný počet připojených virtualizovaných zařízení. Jediné omezení, které teoreticky může vzniknout, bude v případě, že při vytváření vláken pro jednotlivá zařízení se vyčerpá maximální počet dostupných vláken. Toto by ale při reálném použití neměl být problém, jelikož je předpokládáno, že počet těchto zařízení využitých pro jeden test se bude pohybovat maximálně v desítkách. 
 
 
 \section{Propojení se serverem Azure DevOps}
-\todo{Popsat propojení s Azure DevOps}
 
-Jedním z cílů této práce je vytvoření takového připojení, aby server Azure DevOps byl schopen spouštět jednotlivé testy a zároveň obdržel výsledek testu. K tomuto propojení využijeme testovací framework MSTest. Vyvíjená testovací knihovna tedy poběží nad tímto testovacím frameworkem. Za pomoci frameworku MSTest bude server Azure DevOps schopen registrovat jednotlivé testy, a spouštět je jednotlivě.
+Jedním z cílů této práce je vytvoření takového připojení, aby server Azure DevOps byl schopen spouštět jednotlivé testy a zároveň obdržel výsledek testu. K tomuto propojení využijeme testovací framework MSTest, který je nativně podporovaný serverem Azure DevOps. Celé následující propojení je možné díky uložení projektu v Azure Repos.
 
 \subsection{Propojení s frameworkem MSTest}
-\todo{Doplnit}
+Cílem vytvořeného propojení je, aby bylo co nejvíce automatizované a obsahovalo co nejméně práce ze strany testera. MSTest bude nezávisle na jednotlivých testech inicializovat službu před započnutím testování. V této době proběhne inicializační fáze služby. 
+
+Následně framework MSTest bude spouštět jednotlivé vybrané testy. V testech bude zadávat testovací službě direktivu ke spuštění testu. Zároveň bude moct před zavoláním direktivy přidávat virtualizované participanty. Následně po skončení testu framework MSTest vyhodnotí úspěšnost testu.
+
+Po proběhnutí jednotlivých testů framework MSTest službu ukončuje. V případě vzniku chyby během testování, díky které nebude možné pokračovat v testování, bude framework vyhodnocovat tyto testy jako bezvýsledné a testy přeskočí.
+
+Propojení testovací služby a testovacího frameworku MSTest bude zajišťovat API. Toto API bude určovat přístupné metody, které mohou být využity v testovacím frameworku. Zároveň bude jedinou komponentou, kde bude framework MSTest v knihovně využívat.
+
+\subsection{Registrování testů}
+Registrování testů ve frameworku MSTest a testovací službě bude na sobě nezávislé. Framework MSTest automaticky objevuje metody, které jsou označeny jako testovací. Framework MSTest v implementaci pro jazyk \csharp{} využívá pro rozlišení testovacích součástí tzv. atributy. Atributy přidávají metadata k třídám, typům, metodám atd. \cite{attribute_docs}. Testovací knihovna bude rozšiřovat tyto atributy o atribut \inlinecode{TestEnum}. Tento atribut bude identifikovat typy enumerátorů, které reprezentují testy. 
+
+Tím, že testovací služba může přijmout jakýkoliv enumerátor, tak může vzniknout kolize mezi jednotlivými typy enumerátorů. V inicializační fázi proto bude API kontrolovat, zda enumerátory s atributem \inlinecode{TestEnum} neobsahují mezi sebou neobsahují kolizi a v případě jejího vzniku vyhodí výjimku a nepokračuje v testování.
+
+Jednotlivé testy frameworku MSTest následně budou registrovány na serveru Azure DevOps. Na serveru Azure DevOps tester vytvoří tzv. Test Case, který následně asociuje odpovídající testovací metodě frameworku MSTest. Vytvoření této asociace je nativně podporované v IDE Visual Studiu, ve kterém je celá knihovna vyvíjena. 
 
 
-% \begin{figure}[htbp]
-%     \centering 
-%     \includegraphics[width=0.95\textwidth]{assets/img/deploymentmodel.pdf}
-%     \caption{Deployment model}
-%     \label{fig:deploymodel}
-% \end{figure}
+\subsection{Testování}
+Spuštění testů na serveru je možné díky propojení Azure Pipelines a Azure Test Plans. Azure Pipelines stáhne testovací projekt na agenta z Azure Repos a následně ho dle direktiv zkompiluje. Server následně na agentovi spouští testovací projekt a spouští testy definované v určeném testovacím plánu. Tyto plány, vytvořené v Azure Test Plans, shlukují jednotlivé registrované testy a určují, které testy mají být spuštěny. Po dokončení testů server Azure DevOps automaticky obdrží výsledky testů. Tyto výsledky jsou následně dohledatelné u jednotlivých testů v Azure Test Plans a u jednotlivých běhů v Azure Pipelines. 
+
+
+\section{Distribuce knihovny}
+
+Knihovna bude distribuována jako NuGet balíček. Zapouzdřením knihovny do NuGet balíčku umožní jednoduché verzování, distribuci a instalaci. Zároveň NuGet balíček vytváří asociace k ostatním NuGet balíčkům, které budou použity v knihovně.
+
+Tento NuGet balíček bude následně nahrán do služby Azure Artifacts. Využitím Azure Artifacts udržíme stejnou jednoduchost distribuce NuGet balíčku a zároveň limitujeme veřejný přístup k tomuto balíčku. 
+
+Distribuci jednotlivých částí knihovny můžeme také vidět na obrázku \ref{fig:deploymodel}. Na tomto obrázku můžeme vidět, kam jsou jednotlivé části knihovny distribuovány a jak je knihovna rozdělena. Součástí dříve zmiňovaného NuGet balíčku bude celá implementace v jazyku \csharp{}, což zahrnuje testovací službu, virtuální zařízení a rozhraní pro testovaná zařízení v jazyku \csharp{}. 
+
+\begin{figure}[htbp]
+    \centering 
+    \includegraphics[width=0.95\textwidth]{assets/img/deploymentmodel.pdf}
+    \caption{Model distribuce jednotlivých částí knihovny}
+    \label{fig:deploymodel}
+\end{figure}
