@@ -159,7 +159,7 @@ Návrh tohoto rozhraní můžeme vidět na výpisu \ref{listing:dev_if_abstract}
 
 O samotné odesílání, resp. přijímání jednotlivých zpráv se bude starat metoda \inlinecode{sendMessage}, resp. \inlinecode{rcvMessage}. Metoda \inlinecode{sendMessage} po svém zavolání převede objekt zprávy, obdržený v argumentu metody, na bajtové pole, které následně odešle testovací službě. Metoda \inlinecode{rcvMessage} symetricky zprávu od testovací služby přijme a převede ji na objekt jedné zprávy. Následně odkaz na tuto zprávu uloží do argumentu, který je výstupní. Obě tyto metody vrací informaci o úspěchu/neúspěchu.
 
-Metoda \inlinecode{getTest} bude určena k získání jednotlivých instancí testů. Testy, které bude tato metoda vracet, musí být dle dříve zadefinovaného rozhraní pro jednotlivé testy. Metoda obdrží číselnou reprezentaci testu a na základě toho poté vrátí správnou instanci testu. 
+Metoda \inlinecode{getTest} bude určena k získání jednotlivých instancí testů. Testy, které bude tato metoda vracet, musí být dle dříve nadefinovaného rozhraní pro jednotlivé testy. Metoda obdrží číselnou reprezentaci testu a na základě toho poté vrátí správnou instanci testu. 
 
 Metoda \inlinecode{getMacAddress} bude, jak již z názvu vyplývá, vracet MAC adresu zařízení. V neposlední řadě metoda \inlinecode{print} bude sloužit k výpisu průběhu běhu. Tento výpis by měl hlavně posloužit k náhledu na průběh testovacího běhu, pokud se během běhu vyskytnou například nějaké chyby.
 
@@ -211,7 +211,7 @@ Virtualizované zařízení je speciálním druhem účastníka. Toto zařízen�
 
 Změnou je způsob ovládání této komponenty. Komponenta bude zaobalena vlastní třídou, která tuto komponentu bude spouštět na vlastním vlákně. Toto bude umožňovat nezávislý běh zařízení. Rozdílem také bude způsob definování testů. Virtualizované zařízení bude podporovat dva typy způsobů jak definovat testy. První způsobem bude za pomocí předání jedné instance testu. Jelikož virtualizované zařízení je vázáno na jednotlivé testy, je tento přístup nejjednodušší. Dalším způsobem bude předání funkce, která bude vracet instance testů na základě číselného identifikátoru. Tento způsob je totožný jako u testovaných zařízení a v určitých případech může usnadnit správu těchto zařízení. 
 
-Virtuální zařízení bude spouštěno z testovacího projektu za pomoci testovací knihovny. Vytvořená instance virtuální participanta bude předána testovací knihovně, která se následovně postará o jeho spuštění a ukončení. Zařízení bude po konci testu odpojeno od testovací služby. Testovací knihovna bude kontrolovat úspešnost tohoto ukončení a v případě neúspěchu standardního ukončení testovací knihovna ukončí vlákno, na kterém zařízení poběží.
+Virtuální zařízení bude spouštěno z testovacího projektu za pomoci testovací knihovny. Vytvořená instance virtuálního zařízení bude předána testovací knihovně, která se následovně postará o jeho spuštění a ukončení. Zařízení bude po konci testu odpojeno od testovací služby. Testovací knihovna bude kontrolovat úspešnost tohoto ukončení a v případě neúspěchu standardního ukončení testovací knihovna ukončí vlákno, na kterém zařízení poběží.
 
 Testovací služba nebude nijak omezovat maximální možný počet připojených virtualizovaných zařízení. Jediné omezení, které teoreticky může vzniknout, bude v případě, že při vytváření vláken pro jednotlivá zařízení se vyčerpá maximální počet dostupných vláken. Toto by ale při reálném použití neměl být problém, jelikož je předpokládáno, že počet těchto zařízení využitých pro jeden test se bude pohybovat maximálně v desítkách. 
 
@@ -223,7 +223,7 @@ Jedním z cílů této práce je vytvoření takového připojení, aby server A
 \subsection{Propojení s frameworkem MSTest}
 Cílem vytvořeného propojení je, aby bylo co nejvíce automatizované a obsahovalo co nejméně práce ze strany testera. MSTest bude nezávisle na jednotlivých testech inicializovat službu před započnutím testování. V této době proběhne inicializační fáze služby. 
 
-Následně framework MSTest bude spouštět jednotlivé vybrané testy. V testech bude zadávat testovací službě direktivu ke spuštění testu. Zároveň bude moct před zavoláním direktivy přidávat virtualizované participanty. Následně po skončení testu framework MSTest vyhodnotí úspěšnost testu.
+Následně framework MSTest bude spouštět jednotlivé vybrané testy. V testech bude zadávat testovací službě direktivu ke spuštění testu. Zároveň bude moct před zavoláním direktivy přidávat virtuální zařízení. Následně po skončení testu framework MSTest vyhodnotí úspěšnost testu.
 
 Po proběhnutí jednotlivých testů framework MSTest službu ukončuje. V případě vzniku chyby během testování, díky které nebude možné pokračovat v testování, bude framework vyhodnocovat tyto testy jako bezvýsledné a testy přeskočí.
 
