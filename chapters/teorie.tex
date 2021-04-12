@@ -19,7 +19,7 @@ I když primární cíl testování je jednotný, přístupů k testování je n
 Testování se dá rozdělit podle přístupu k informacím, které o komponentách softwaru/systému víme. Tyto typy jsou:
 
 \begin{description}
-    \item[Black box testování] Nazýváno taktéž funkční testování. Na software se pohlíží jako na tzv. černou skříňku. O komponentě nebo celku nic nevíme a testujeme na základě funkcionálních požadavků, návrhu a specifikací. 
+    \item[Black box testování] Nazýváno taktéž funkční testování. Na software se pohlíží jako na tzv. černou skříňku. O komponentě nebo celku nic nevíme a testujeme na základě funkcionálních požadavků, návrhu, specifikací nebo uživatelské dokumentace. 
     \item[White box testování] Se znalostí implementace testované části se snažíme vytvořit takové testy, které způsobí spouštění určitých částí testované komponenty. Cílem je co největší pokrytí testování dané komponenty.
     \item[Grey box testování] Kombinace Black box a White box testování. Při testování máme nějakou znalost implementace komponenty, ale je nižší, než při White box testování. \cite{khan2010different}
 \end{description}
@@ -29,7 +29,7 @@ Testování se dá rozdělit podle přístupu k informacím, které o komponent�
 Testování podle částí vývoje se přibližuje vývojovému cyklu. Tyto kategorie jsou:  
 
 \begin{description}
-    \item[Testování jednotlivých částí] V angličtině nazýváno známým pojmem \uv{Unit testing}. Je to nejnižší úroveň testování. Testuje jednotlivé komponenty systému samostatně.
+    \item[Testování jednotlivých částí] Více známé pod anglickým pojmem \uv{Unit testing}. Je to nejnižší úroveň testování. Testuje jednotlivé komponenty systému samostatně.
     \item[Integrační testování] Testování dvou a více komponent, které spolu vytváří nějaký větší celek softwaru. Často také využíván při testování částí, které nelze samostatně testovat.
     \item[Systémové testování] Testování softwaru jako celku. Testování se směřuje na testování funkčních požadavků. Zároveň je možno vyhodnocovat další požadavky na systém, jako spolehlivost, bezpečnost, atd.
     \item[Akceptační testování] U toho testování se systém dostane do rukou zákazníkovi/uživatelům. Cílem je otestování produktu u uživatelů softwaru a získání jejich zpětné vazby. 
@@ -100,7 +100,7 @@ Protokol definuje strukturu zprávy (tzv. PDU -- Protocol Data Unit) nezávisle 
     \label{fig:modbus_frame}
 \end{figure}
 
-Podporované služby jsou definováno funkčními kódy, které jsou součástí požadavku. Kód funkce je uložen v jednom bajtu a tedy rozsah možných kódu je 1-255 (0 je nevalidní), kde rozsah 128-255 je rezervován pro chybové zprávy. Data zprávy poté slouží k upřesnění operace definované funkčním kódem. V určitých situacích muže postačovat v provedení operace funkční kód, data zpráva poté mají nulovou délku.
+Podporované služby jsou definováno funkčními kódy, které jsou součástí požadavku. Kód funkce je uložen v jednom bajtu a tedy rozsah možných kódu je 1-255 (0 je nevalidní), kde rozsah 128-255 je rezervován pro chybové zprávy. Data zprávy poté slouží k upřesnění operace definované funkčním kódem. V určitých situacích muže postačovat v provedení operace funkční kód, data zprávy poté mají nulovou délku.
 
 Modbus používá komunikaci požadavek-odpověď. Na požadavek klienta server odpovídá zprávou, kterou značí úspěch či neúspěch operace. V případě úspěchu server odesílá zpět zprávu se stejným funkčním kódem jako byl požadavek. V opačném případě odesílá zpět zprávu, která obsahuje stejný kód funkce jako byl kód funkce požadavku, ale tento kód má zároveň nastavený nejvýznamnější bit na 1. Zpráva v obou případech může poté obsahovat data, v závislosti na operacích. \cite{modbus}
 
@@ -119,7 +119,7 @@ Přenos v síti EtherNet/IP se odvíjí dle využitého protokolu pro přenos. P
 
 \section{Testovaný produkt}
 
-Hlavním cílem této práce je vytvoření testovací knihovny pro SIMATIC ET 200SP I/O systém, vyvíjený společností Siemens,~s.\,{}r.\,{}o. Řada produktů SIMATIC ET 200 přináší jednu z nejširších nabídek I/O zařízení. Produkty této řady můžeme vidět znázorněné na obrázku \ref{fig:et200}. Jak z obrázku můžeme vidět, každé zařízení obsahuje jiný stupeň ochrany v závislosti na jejich plánovaném umístěním. \cite{et200} 
+Hlavním cílem této práce je vytvoření testovací knihovny pro řadu zařízení SIMATIC ET 200, vyvíjený společností Siemens,~s.\,{}r.\,{}o, se zaměřením na zařízení SIMATIC ET 200SP. Řada produktů SIMATIC ET 200 přináší jednu z nejširších nabídek I/O zařízení. Produkty této řady můžeme vidět znázorněné na obrázku \ref{fig:et200}. Jak z obrázku můžeme vidět, každé zařízení obsahuje jiný stupeň ochrany v závislosti na jejich plánovaném umístěním. \cite{et200} 
 
 \begin{figure}[htbp]
     \centering 
@@ -129,6 +129,14 @@ Hlavním cílem této práce je vytvoření testovací knihovny pro SIMATIC ET 2
     \label{fig:et200}
 \end{figure}
 
-Zařízení SIMATIC ET 200SP je určeno k umístění do kompaktních řídících kabinetů. Díky modulárnosti systému se systém může vysoce přizpůsobit potřebám jednotlivých průmyslů. Mezi tyto moduly patří standardní I/O moduly, komunikační moduly, technologické moduly nebo moduly ke startování motorů. Zároveň je velikou výhodou celkový kompaktní design. Jednotlivé moduly zároveň mohou být vyměňovány za běhu. \cite{et200sp}
+Zařízení SIMATIC ET 200SP, které můžeme vidět na obrázku \ref{fig:et200sp}, je určeno k umístění do kompaktních řídících kabinetů. Díky modulárnosti systému se systém může vysoce přizpůsobit potřebám jednotlivých průmyslů. Mezi tyto moduly patří standardní I/O moduly, komunikační moduly, technologické moduly nebo moduly ke startování motorů. Zároveň je velikou výhodou celkový kompaktní design. Jednotlivé moduly zároveň mohou být vyměňovány za běhu. \cite{et200sp}
 
 SIMATIC ET 200SP využívá tzv. Multifieldbus technologie. Tato technologie umožňuje zařízení komunikovat na základě několika průmyslových protokolů. V rámci této práce se zaměříme na protokoly ModbusTCP a EtherNet/IP, které již byli dříve popsané.
+
+\begin{figure}[htbp]
+    \centering 
+    \includegraphics[width=\textwidth]{assets/img/et200sp.png}
+    \caption{Zařízení SIMATIC ET 200SP}
+    \source{Marketingové materiály firmy Siemens,~s.\,{}r.\,{}o \cite{et200sp}}
+    \label{fig:et200sp}
+\end{figure}
