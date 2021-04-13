@@ -17,14 +17,14 @@ Následná komunikace skrz protokol TCP/IP je implementována v závislosti na z
 \section{Testovací služba}
 Testovací služba je v implementaci rozdělena na dvě hlavní třídy. Třída \inlinecode{TestService} obstarává jednotlivé úkony služby, následně třída \inlinecode{ServiceRunner} propojuje třídu \inlinecode{TestService} s ostatními komponentami, které jsou potřebné pro testování.
 
-\subsection{Nastavení služby}
+\subsection{Nastavení služby}\label{sec:settings}
 
 Konfigurace služby je uložena v souboru \inlinecode{config.xml}. Tento soubor obsahuje tři hodnoty pro nastavení:
 
 \begin{itemize}
     \item \inlinecode{ip} -- Adresa, na které bude služba poslouchat příchozí připojení. Všechna zařízení se budou připojovat na tuto adresu.
     \item \inlinecode{port} -- Síťový port, skrz který služba provádí komunikaci.
-    \item \inlinecode{participants} -- Počet testovaných zařízení (tedy ne virtuálních), které se připojí ke službě.   
+    \item \inlinecode{participants} -- Počet testovaných zařízení, které se připojí ke službě.   
 \end{itemize}
 
 Ukázku tohoto souboru můžeme vidět na výpisu \ref{listing:configxml}. V knihovně se o konfiguraci stará třída \inlinecode{Configuration}. Tato třída existuje v jmenném prostoru \inlinecode{GlobalVar}. Tento jmenný prostor simuluje globální proměnnou. Kvůli tomu jsou ale všechny třídy, které jsou odsud používány, konstruovány tak, aby primárně fungovaly jen ke čtení. Při vytvoření instance třída získá konfiguraci z konfiguračního souboru a uloží je do vnitřních proměnných třídy. Tyto proměnné jsou určeny pouze ke čtení, nelze je upravovat. Stav konfigurace určuje proměnná \inlinecode{bool IsValid}. V případě chyby je tato proměnná nastavená na hodnotu \inlinecode{false} a v proměnné \inlinecode{Exception} je uložen důvod neúspěchu. V opačném případě je tato proměnná nastavena na hodnotu \inlinecode{true}.
@@ -84,15 +84,15 @@ Metoda z konfigurace zjistí IP adresu a port, na kterém má služba běžet. N
 V případě příchozí komunikace je poté zavolána metoda \inlinecode{AddClient}. Tato metoda vytvoří připojení s testovacím zařízením a přijme identifikační zprávu od testovaného zařízení. Po úspěšném ověření připojení metoda uloží vytvořeného klienta a jeho MAC adresu do seznamu připojených účastníků testování. Nakonec metoda vrací tři hodnoty typu integer:
 \begin{itemize}
     \item \inlinecode{0} -- pokud připojení účastníka testování vyústilo v neúspěch, ať už kvůli překročení časového limitu, nebo kvůli nedodržení stanovené komunikace
-    \item \inlinecode{1} -- pokud služba úspěšně přijme testované zařízení
-    \item \inlinecode{2} -- pokud služba úspěšně přijme virtuálního zařízení
+    \item \inlinecode{1} -- pokud se ke službě úspěšně připojí testované zařízení
+    \item \inlinecode{2} -- pokud se ke službě úspěšně připojí testovací partner
 \end{itemize}
 
-Služba úspěšně ukončuje inicializační fázi poté co se úspěšně připojí stejný počet účastníků testovaní, jako bylo určeno v konfiguraci. V případě nepřipojení se očekávaného počtu zařízení v definovaném čase, obdržení špatné nebo žádné zprávy služba vyhodnocuje inicializační fázi jako neúspěšnou. Připojení virtuálního zařízení v této fázi vyústí též v neúspěch inicializace.
+Služba úspěšně ukončuje inicializační fázi poté co se úspěšně připojí stejný počet účastníků testovaní, jako bylo určeno v konfiguraci. V případě nepřipojení se očekávaného počtu zařízení v definovaném čase, obdržení špatné nebo žádné zprávy služba vyhodnocuje inicializační fázi jako neúspěšnou. Připojení testovacího partnera v této fázi vyústí též v neúspěch inicializace.
 
-\subsubsection{Připojení virtuálního zařízení}
+\subsubsection{Připojení testovacího partnera}
 
-Jelikož každý test může obsahovat různý počet virtuálních zařízení, je podstatné, aby služba mohla při testovacím běhu tyto zařízení přidávat a odebírat. K tomuto slouží dvě metody. Metoda \inlinecode{AddVirtualParticipant} řekne službě, že má očekávat připojení virtuálního zařízení. V případě úspěšného připojení virtuálního zařízení služba vrací úspěch. Naopak případě chyby, nebo připojení jiného zařízení, metoda vrací neúspěch. O opačnou operaci se stará metoda \inlinecode{StopVirtualDevices}. Metoda po svém zavolání odešle všem virtuálním zařízení zprávu o ukončení testování a tato zařízení jsou odpojena a ukončena.
+Jelikož každý test může obsahovat různý počet testovacích partnerů, je podstatné, aby služba mohla při testovacím běhu tyto zařízení přidávat a odebírat. K tomuto slouží dvě metody. Metoda \inlinecode{AddTestPartner} řekne službě, že má očekávat připojení testovacího partnera. V případě úspěšného připojení metoda vrací úspěch. Naopak v případě chyby, nebo připojení jiného zařízení, metoda vrací neúspěch. O opačnou operaci se stará metoda \inlinecode{StopTestPartners}. Metoda po svém zavolání odešle všem testovací partnerům zprávu o ukončení testování a tato zařízení jsou odpojena a ukončena.
 
 \subsubsection{Spuštění testu}
 
@@ -118,8 +118,8 @@ Tato třída ve svém konstruktoru inicializuje konfiguraci služby a zjistí, z
 
 \begin{itemize}
     \item \inlinecode{bool RunTest<T>(T test, int timeout = DefaultTimeout)} \\ Metoda předá instrukci pro spuštění testu. Očekává stejné parametry jako metoda \inlinecode{RunTest} třídy \inlinecode{TestService}. Jedinou změnou je, že pokud časový limit nebude zadán, tak bude použit defaultní časový limit.
-    \item \inlinecode{bool AddVirtualParticipant(VirtualClient participant)} \\ Metoda spouští virtuální zařízení předané v argumentu a předává informaci o očekávání připojení virtuálního zařízení instanci třídy \inlinecode{TestService}. Instanci virtuálního zařízení následně uloží.
-    \item \inlinecode{void TestCleanup()} \\ Metoda je volána po dokončení jednotlivého testu. Metoda předá instanci třídy \inlinecode{TestService} direktivu k odpojení virtuálních zařízení. Následně zkontroluje, zda se zařízení ukončila a pokud ne, tak zařízení ukončí.
+    \item \inlinecode{bool AddTestPartner(TestPartner participant)} \\ Metoda spouští testovacího partnera předaného v argumentu a předává informaci o očekávání jeho připojení  instanci třídy \inlinecode{TestService}. Instanci partnera následně uloží.
+    \item \inlinecode{void TestCleanup()} \\ Metoda je volána po dokončení jednotlivého testu. Metoda předá instanci třídy \inlinecode{TestService} direktivu k odpojení testovacích partnerů. Následně zkontroluje, zda se partneři ukončily a pokud ne, tak partnery ukončí.
     \item \inlinecode{void Stop()} \\ Metoda předá informaci o ukončení testovacího běhu.
 \end{itemize}
 
@@ -162,30 +162,30 @@ Toto rozhraní je následně využito ve třídě \inlinecode{TestRunner}. Tato 
 
 Bližší vysvětlení si zaslouží metoda \inlinecode{RunTest}. Tato metoda je volána z metody \inlinecode{HandleInstruction}. K udržení stádia testu si třída mezi jednotlivými stádii drží instanci jednotlivých testů. Ve fázi přípravy na testování metoda zkontroluje že instance testu je nastavena na hodnotu \inlinecode{null}. Jiná hodnota by značila chybu během předchozího testování. Ve fázi úklidu po dokončení testu je odkaz na instanci testu nastaven na zpátky hodnotu null. 
 
-\section{Virtuální zařízení}
-Implementace virtuálního zařízení přímo kopíruje navrhnuté rozhraní pro testované zařízení. Logika virtuálního zařízení je obsažena ve třídě \inlinecode{VirtualClient}. Tato třída má tři možné konstruktory:
+\section{Testovací partner}
+Implementace testovacího partnera přímo kopíruje navrhnuté rozhraní pro testované zařízení. Jeho logika je obsažena ve třídě \inlinecode{TestPartner}. Tato třída má tři možné konstruktory:
 
 \begin{itemize} 
-    \item \inlinecode{VirtualClient(ITestClient device)} \\
+    \item \inlinecode{TestPartner(ITestClient device)} \\
     Konstruktor dostane v argumentu odkaz na instanci rozhraní zařízení.
-    \item \inlinecode{VirtualClient (ITestCase testCase)} \\
+    \item \inlinecode{TestPartner (ITestCase testCase)} \\
     Konstruktor dostane v argumentu odkaz na instanci jednoho testu, který je odvozený z rozhraní pro test.
-    \item \inlinecode{VirtualClient (Func<UInt32, ITestCase> getTest)} \\
+    \item \inlinecode{TestPartner (Func<UInt32, ITestCase> getTest)} \\
     Argumentem konstruktoru je funkce, která obsahuje seznam testů. Funkce v argumentu dostane číselnou reprezentaci testu a vrací instanci testu, který je odvozený z rozhraní testu.
 \end{itemize}
 
 Třída následně vytvoří instanci implementovaného rozhraní pro zařízení, které přijme v konstruktoru vybraný způsob reprezentace testů. Následně toto rozhraní předá instanci třídy \inlinecode{TestRunner} a po zavolání metody \inlinecode{Start} spustí \inlinecode{TestRunner} na vlastním vlákně.
 
-Třída také obsahuje metodu \inlinecode{Stop}, která po zavolání kontroluje ukončení virtuálního zařízení v daném časovém limitu. Po vypršení časového limitu funkce ukončuje vlákno, na kterém instance třídy \inlinecode{TestRunner} běží.
+Třída také obsahuje metodu \inlinecode{Stop}, která po zavolání kontroluje ukončení testovacího partnera v daném časovém limitu. Po vypršení časového limitu funkce ukončuje vlákno, na kterém instance třídy \inlinecode{TestRunner} běží.
 
 
-\section{Propojení s frameworkem MSTest \note{Tahle část potřebuje předělat}}
+\section{Propojení s frameworkem MSTest}
 
-Podstatnou součástí implementace je propojení služby s testovacím frameworkem MSTest. O toto se stará třída \inlinecode{API}. Jako jediná třída využívá nástroje tohoto frameworku. Třída je koncipovaná jako statická třída, i když je závislá na jím vytvořené instanci třídy \inlinecode{ServiceRunner}. Toto je uděláno z důvodu designového omezení frameworku MSTest. 
+Podstatnou součástí implementace je propojení služby s testovacím frameworkem MSTest. O toto se stará třída \inlinecode{API}. Jako jediná třída využívá nástroje tohoto frameworku. Třída je koncipovaná jako statická třída, i když je závislá na jím vytvořené instanci třídy \inlinecode{ServiceRunner}. Toto je uděláno kvůli kompatibilitě s frameworkem MSTest. 
 
 
 \subsection{Použití frameworku}
-Framework MSTest využívá pro rozlišení testovacích součástí tzv. atributy. Atributy přidávají metadata k třídám, typům, metodám atd. \cite{attribute_docs}. Framework MSTest využívá například tyto atributy:
+Jak jsem již zmínil v sekci \ref{sec:reg_test}, framework MSTest pro identifikaci testových metody využívá atributy. Framework MSTest využívá například tyto atributy:
 
 \begin{itemize}
     \item \inlinecode{AssemblyInitialize} -- identifikuje inicializační funkci, která je spuštěna před spuštěním testů \cite{attr_init_clean}
@@ -194,12 +194,12 @@ Framework MSTest využívá pro rozlišení testovacích součástí tzv. atribu
     \item \inlinecode{TestMethod} -- identifikuje metody, které reprezentují jednotlivé  testy \cite{mstest_docs}
 \end{itemize}
 
-Framework MSTest následně používá tyto metody, které jsou identifikovány těmito a dalšími atributy. Při kompilaci jazyk \inlinecode{C\#} vytváří jednotlivé celky kompilovaného kódu, které poté spojuje do logického celku. Tyto jednotlivé celky se nazývají \textit{assembly}. \cite{assembly}
+Framework MSTest následně používá tyto metody, které jsou identifikovány těmito a dalšími atributy. Při kompilaci jazyk \csharp{} vytváří jednotlivé celky kompilovaného kódu, které poté spojuje do logického celku. Tyto jednotlivé celky se nazývají \textit{assembly}. \cite{assembly}
 
 Testovací knihovna a použití frameworku MSTest tvoří samostatné celky -- \textit{assemblies}. MSTest framework používá správně definované funkce pouze ze své assembly. 
 
 
-\subsection{Inicializace služby}
+\subsection{Spuštění a ukončení služby}
 
 Při spuštění jednotlivých testů je nutné brát v potaz, že testovací služba neví jaké testy budou kdy spuštěny. Testovací služba se tedy musí používat nezávisle na všech testech. K tomuto využijeme dvě funkce frameworku MSTest -- \inlinecode{AssemblyInitialize} a \inlinecode{AssemblyCleanup}. Tyto dvě funkce jsou spuštěny ještě před započnutím a po skončení testovaní. V třídě \inlinecode{API} jejím implementacím odpovídají metody \inlinecode{AssemblyInit} a \inlinecode{AssemblyCleanup}. Metoda \inlinecode{AssemblyInit} přijímá dva argumenty:
 
@@ -208,18 +208,37 @@ Při spuštění jednotlivých testů je nutné brát v potaz, že testovací sl
     \item \inlinecode{int InitTimeout} -- časový limit na inicializační fázi služby (tedy časový limit, který je využíván v metodě \inlinecode{TestService.Init}), pokud je ponechán prázdný, je použit defaultní časový limit z třídy \inlinecode{ServiceRunner}.
 \end{itemize}
 
-Metoda \inlinecode{AssemblyCleanup} symetricky ukončuje běh testovací služby. V určitých případech tato funkce nemusí být zavolána \question{Je zde potřeba citace}. Při zjištění chyby v běhu, která vyústí v ukončení testovacího běhu, je tato funkce volána manuálně.
+Metoda \inlinecode{AssemblyCleanup} symetricky ukončuje běh testovací služby. V určitých případech tato funkce nemusí být zavolána \question{Je zde potřeba citace}. Při zjištění chyby v běhu, která vyústí v ukončení testovacího běhu, je tedy tato funkce zavolána manuálně. Zároveň je kontrolováno, aby tato metoda nebyla volána vícekrát.
 
-Aby mohl MSTest rozeznat tyto funkce, je potřeba je definovat v assembly, která spouští tento framework. Toto vytváří problém u automatizace vytvoření propojení s testovací knihovnou. Pokud v testovací knihovně definujeme metody, které budou obsahovat atributy \inlinecode{AssemblyInitialize} a \inlinecode{AssemblyCleanup}, tak testovací framework  MSTest tyto metody nevidí a tím pádem je nepoužije. Proto je potřeba vytvořit dvě funkce, které budou obalovat metody \inlinecode{AssemblyInit} a \inlinecode{AssemblyCleanup}. Toto zpravuje třída \inlinecode{TestLibInit}. Tato statická třída pouze zaobaluje tyto dvě metody svými metodami a přidává k nim potřebné atributy. Tato třída není součásti assembly testovací knihovny. V kontextu knihovny je to pouze textový soubor. Připojení tohoto souboru k assembly, který spouští MSTest framework, bude přiblíženo v sekci o distribuci knihovny.
+Aby mohl MSTest rozeznat tyto funkce, je potřeba je definovat ve stejné assembly, která spouští tento framework. Toto vytváří problém u automatizace vytvoření propojení s testovací knihovnou. Pokud v testovací knihovně definujeme metody, které budou obsahovat atributy \inlinecode{AssemblyInitialize} a \inlinecode{AssemblyCleanup}, tak testovací framework  MSTest tyto metody nevidí a tím pádem je nepoužije. Proto je potřeba vytvořit dvě funkce, které budou obalovat metody \inlinecode{AssemblyInit} a \inlinecode{AssemblyCleanup}, ve stejné assembly, jako ve které běží framework MSTest.
 
-\subsection{Registrování a spuštění testů}
+Toto zpravuje třída \inlinecode{TestLibInit}. Tato statická třída pouze zaobaluje tyto dvě metody svými metodami a přidává k nim potřebné atributy. Tato třída není součásti assembly testovací knihovny. V kontextu knihovny je to pouze textový soubor. Proces propojení této třídy s testovacím projektem, ve kterém poběží framework MSTest, je popsán v sekci \ref{sec:distrbution}.
 
-Při rozlišování jednotlivých testů knihovna a testovací služba využívá enumerátory. Tyto enumerátory odkazují na nějakou číselnou hodnotu, které je následně odesílána testovaným zařízením. Zároveň avšak může být využito více výčtových typů. Toto může zapříčinit vznik kolizí. 
+\subsection{Registrování testů}
 
-K podchycení těchto kolizí je tedy potřeba udělat kontrolu před započnutím testování. Aby testovací služba mohla podchytit kolize, tak je potřeba rozlišit, které enumerátory identifikují testy. Proto testovací knihovna rozšiřuje sadu atributů o atribut \inlinecode{TestEnum}. Tento atribut říká, že enumerátor s atributem \inlinecode{TestEnum} reprezentuje nějaké testy. Tento atribut je povinný pro všechny enumerátory, které reprezentují testy.
+Při rozlišování jednotlivých testů knihovna a testovací služba využívá enumerátory. Tyto enumerátory odkazují na nějakou číselnou hodnotu, které je následně odesílána testovaným zařízením. Všechny enumerátory musí být označeny atributem \inlinecode{TestEnum}. Díky němu může knihovna identifikovat výčtové typy, které reprezentují testy a zjistit mezi nimi kolize. 
 
-Tato kontrola je provedena v inicializační části služby, uvnitř metody \inlinecode{AssemblyInit}. Díky předání runtime odkazu na assembly je možné zjistit, jaké enumerátory obsahují atribut \inlinecode{TestEnum}. Metoda následně zjistí, zda existují nějaké kolize mezi enumerátory s atributem \inlinecode{TestEnum} a pokud ano, tak vyhodí výjimku. Tato kontrola může být přeskočena předáním hodnoty \inlinecode{null} místo odkazu na runtime blok. 
+Tato kontrola je provedena před započnutím testování v metodě \inlinecode{AssemblyInit} díky odkazu na runtime blok, který obdrží v argumentu. Tato kontrola se dá přeskočit předáním hodnoty \inlinecode{null} jako odkazu na na runtime blok.
 
-Pro spuštění testování je použita metoda \inlinecode{Run} z třídy \inlinecode{API}. Tato metoda přijímá stejné argumenty jako metoda \inlinecode{RunTest} třídy \inlinecode{ServiceRunner}. Metoda zkontroluje, že argument identifikující test je typem enumerátor a obsahuje atribut \inlinecode{TestEnum}. V případě že se testovací služba nenachází v chybném stavu, tak metoda předá testovací službě direktivu k započnutí testu. Následně vyhodnotí úspěšnost testu. V případě, že služba je v chybném stavu, metoda vyhodnotí test jako bezvýsledný.
+Framework MSTest registruje testy nezávisle na testovací knihovně. Jednotlivé třídy musí být označený atributem \inlinecode{TestClass} a zároveň jednotlivé metody atributem \inlinecode{TestMethod}. Framework následně testy detekuje automaticky.
 
-\todo{Doplnit}
+\subsection{Spuštění testu}
+Pro spuštění testu je použita metoda \inlinecode{Run} z třídy \inlinecode{API}. Tato metoda přijímá stejné argumenty jako metoda \inlinecode{RunTest} třídy \inlinecode{ServiceRunner}. Metoda zkontroluje, že argument identifikující test je typem enumerátor a obsahuje atribut \inlinecode{TestEnum}. V případě že se testovací služba nenachází v chybném stavu, tak metoda předá testovací službě direktivu k započnutí testu. Následně vyhodnotí úspěšnost testu. V případě, že služba je v chybném stavu, metoda vyhodnotí test jako bezvýsledný.
+
+Zároveň lze před započnutím testu přidat testovací partnery. Toto je možné za pomocí metody \inlinecode{AddTestPartner} z třídy \inlinecode{API}. Metoda v argumentu obdrží instanci testovacího partnera a následně se postará o běh tohoto participanta.
+
+
+\section{Vytvoření balíčku NuGeT a distribuce knihovny}\label{sec:distrbution}
+
+Knihovna je distribuována jako NuGet balíček. Vytvořený balíček NuGet je následně nahrán do služby Azure Artifacts. K vytvoření NuGet balíčku stačí definovat konfigurační soubor s příponou \inlinecode{.nuspec}, který definuje metadata balíčku a závislosti na ostatních NuGet balíčcích. Balíček je následně vytvořen za pomocí příkazu \inlinecode{nuget pack}. 
+
+NuGet balíček umožňuje i distribuci souboru, které nejsou součástí kompilované knihovny. Tuto funkci využijeme k distribuci několika souborů. Balíček obsahuje informační soubor, který popisuje základní informace k použití balíčku. Taktéž ale obsahuje soubory, které usnadňují použití knihovny. 
+
+Prvním je \inlinecode{TestLibInit.cs}. Tento soubor obsahuje třídu \inlinecode{TestLibInit}, které obaluje metody \inlinecode{AssemblyInit} a \inlinecode{AssemblyCleanup} třídy \inlinecode{API}. Soubor je díky NuGet balíčku automaticky vytvořen při instalaci a zároveň je automaticky přidán mezi soubory, které jsou v testovacím projektu kompilovány. 
+
+Dalším souborem je soubor \inlinecode{TestEnumTemplate.cs.txt}. Tento soubor obsahuje šablonu souboru, který bude obsahovat enumerátory, které identifikují testy. Soubor má přidanou příponu \inlinecode{.txt} kvůli tomu, aby nebyl automaticky přidán do kompilace testovacího projektu.
+
+Posledním souborem je soubor \inlinecode{config.xml}. Tento soubor obsahuje nastavení služby, které již bylo definováno v sekci \ref{sec:settings}. Všechny tyto soubory jsou po instalaci uloženy do složky \inlinecode{resources}.
+
+Je dobré vytvořit kopii souborů \inlinecode{TestEnumTemplate.cs.txt} a \inlinecode{config.xml} a přesunout je mimo složku \inlinecode{resources}. Při aktualizaci NuGet balíčku jsou totiž aktualizovány všechny soubory, které jsou na něj vázané. Toto může zapříčinit přepsání konfiguračních souborů, pokud nebudou přesunuty. 
+
