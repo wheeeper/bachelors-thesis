@@ -1,4 +1,4 @@
-\chapter{Teoretická část} % Je to vhodný název kapitoly?
+\chapter{Teoretická část}\label{chap:teorie}
 
 \section{Testování}
 
@@ -59,6 +59,8 @@ Automatizace testování je odlišná od samotného testování. Automatizace te
     \item[Snížení doby testování] Jednou automatizované testy můžou být provedeny mnohem rychleji a efektivněji, než při jejich manuálním spuštění. Toto způsobuje snížení potřebné doby na testování.
 \end{description}
 
+Automatizované testování následně může podporovat další procesy během vývoje. Mezi tyto procesy patří například proces kontinuální integrace nebo proces kontinuálního doručení softwaru. Proces kontinuální integrace se zaměřuje na integrování jednotlivých upravovaných částí do celkového softwaru. Oproti tomu proces kontinuálního doručení softwaru se zaměřuje na to, aby software vždy byl v takovém stavu, aby mohl být doručen zákazníkovi, nebo nasazen. \cite{ci_cd}
+
 \section{Azure DevOps}
 
 Azure DevOps server poskytuje vývojářům služby, které pomáhají při vývoji softwaru. Jeho cílem je podporovat jednotlivé procesy vývoje, což poté zrychluje vývoj softwaru. \cite{azure_devops} V této práci budu využívat několik služeb, které Azure DevOps server nabízí. Tyto služby budou:
@@ -66,7 +68,6 @@ Azure DevOps server poskytuje vývojářům služby, které pomáhají při výv
 \begin{description}
     \item[Azure Repos] Azure Repos je sada nástrojů, která umožňuje správu jednotlivých verzí softwaru. V této práci budeme používat systém správy verzí Git, který je Azure Repos podporovaný. \cite{azure_repos}
     \item[Azure Pipelines] Azure Pipelines automaticky kompiluje a testuje vyvíjený software. Zároveň podporuje procesy jako kontinuální integrace, kontinuálního nasazení softwaru nebo kontinuální testování. \cite{azure_pipelines}
-    \\ \question{Je potřeba vysvětlit co je CI a CD, když to nikde jinde nepoužívám}
     \item[Azure Test Plans] Azure Test Plans přináší sadu nástrojů, které umožnují spravovat testování softwaru. Tyto nástroje umožňují správu testovacích sad a jednotlivých testů, ať už manuálních nebo automatizovaných. \cite{azure_test_plans}
     \item[Azure Artifacts] Azure Artifacts umožňuje publikování a verzování různých typů balíčků. Následně tato správa těchto balíčků může být využita při vydání těchto balíčků. Mezi podporované balíčky patří například NuGet, Maven nebo npm. Zároveň skrz Azure Artifact můžeme publikovat data z Azure Pipelines. \cite{azure_artifacts}
 \end{description}
