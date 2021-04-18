@@ -169,7 +169,7 @@ Testovací knihovna tedy bude definovat rozhraní, které bude vyžadovat, aby t
 
 
 
-\subsection{Rozhraní pro testované zařízení}
+\subsection{Rozhraní pro testované zařízení}\label{sec:deviceif}
 
 Dalším důležitým rozhraním bude rozhraní pro testované zařízení. Toto rozhraní bude definovat metody, které bude potřeba definovat na každém testovaném zařízení. Cílem je, aby toto rozhraní bylo co nejjednodušší pro co nejrychlejší implementaci na nově testovaném zařízení.
 
@@ -179,7 +179,7 @@ O samotné odesílání, resp. přijímání jednotlivých zpráv se bude starat
 
 Metoda \inlinecode{getTest} bude určena k získání jednotlivých instancí testů. Testy, které bude tato metoda vracet, musí být dle dříve nadefinovaného rozhraní pro jednotlivé testy. Metoda obdrží číselnou reprezentaci testu a na základě toho poté vrátí správnou instanci testu. 
 
-Metoda \inlinecode{getMacAddress} bude, jak již z názvu vyplývá, vracet MAC adresu zařízení. V neposlední řadě metoda \inlinecode{print} bude sloužit k výpisu průběhu běhu. Tento výpis by měl hlavně posloužit k náhledu na průběh testovacího běhu, pokud se během běhu vyskytnou například nějaké chyby.
+Metoda \inlinecode{getMacAddress} bude, jak již z názvu vyplývá, vracet MAC adresu zařízení. Metoda \inlinecode{print} bude sloužit k výpisu průběhu běhu. Tento výpis by měl hlavně posloužit k náhledu na průběh testovacího běhu, pokud se během běhu vyskytnou například nějaké chyby. Nakonec metoda \inlinecode{stop} slouží k ukončení běhu zařízení.
 
 \begin{listing}[htbp]
     \begin{minted}[breaklines]{text}
@@ -193,6 +193,8 @@ Metoda \inlinecode{getMacAddress} bude, jak již z názvu vyplývá, vracet MAC 
         bool rcvMessage(message)
 
         ITestCase getTest(test)
+
+        void stop()
 
         void print(toPrint)
 

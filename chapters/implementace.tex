@@ -19,7 +19,7 @@ Testovací služba je v implementaci rozdělena na dvě hlavní třídy. Třída
 
 \subsection{Nastavení služby}\label{sec:settings}
 
-Konfigurace služby je uložena v souboru \inlinecode{config.xml}. Tento soubor obsahuje tři hodnoty pro nastavení:
+Konfigurace služby je uložena v souboru \inlinecode{config.xml}. Služba očekává tento soubor v kořenové složce, ze které je spouštěna. Tento soubor obsahuje tři hodnoty pro nastavení:
 
 \begin{itemize}
     \item \inlinecode{ip} -- Adresa, na které bude služba poslouchat příchozí připojení. Všechna zařízení se budou připojovat na tuto adresu.
@@ -124,7 +124,7 @@ Tato třída ve svém konstruktoru inicializuje konfiguraci služby a zjistí, z
 \end{itemize}
 
 
-\section{Rozhraní pro testovaná zařízení}
+\section{Rozhraní pro testovaná zařízení}\label{sec:testrunner}
 
 Rozhraní pro testovaná zařízení je vytvořeno dle definovaného návrhu. Rozhraní pro zařízení je implementováno pro jazyk \csharp{} a \cpp{}. Na výpisu \ref{listing:dev_if} můžeme vidět rozhraní v jazyce \cpp{}. 
 
@@ -137,14 +137,18 @@ Rozhraní pro testovaná zařízení je vytvořeno dle definovaného návrhu. Ro
         virtual ~ITestClient() {}
 
         virtual bool createConnection(const char* ipAddress, uint16_t port) = 0;
-
+        
         virtual bool sendMessage(const Message& msg) = 0;
 
         virtual bool rcvMessage(Message& msg) = 0;
 
         virtual ITestCase* getTest(uint32_t test) = 0;
 
-        virtual bool getMacAddress(uint8_t** macAddr, uint32_t* size) = 0;
+        virtual void stop() = 0;
+
+        virtual void print(char* text) = 0;
+
+        virtual bool getMacAddress(uint8_t* macAddr, uint32_t size) = 0;
     };
     \end{minted}
 \caption{Ukázka definice rozhraní}
@@ -154,7 +158,7 @@ Rozhraní pro testovaná zařízení je vytvořeno dle definovaného návrhu. Ro
 Toto rozhraní je následně využito ve třídě \inlinecode{TestRunner}. Tato třída zajištuje běh jednotlivých účastníků testování. Třída má tyto metody:
 
 \begin{itemize}
-    \item \inlinecode{Start()} \\ Metoda vytvoří připojení s testovací službou.
+    \item \inlinecode{Init()} \\ Metoda inicializuje připojení s testovací službou.
     \item \inlinecode{HandleInstruction()} \\ Metoda přijímá instrukce od testovací služby a na základě nich provádí úkony.
     \item \inlinecode{RunTest(uint32\_t test\_enum, TestStateE test\_state)} \\ Metoda spouští jednotlivé části testů. 
     \item \inlinecode{Stop()} \\ Metoda ukončuje testovací běh.
@@ -236,7 +240,7 @@ NuGet balíček umožňuje i distribuci souboru, které nejsou součástí kompi
 
 Prvním je \inlinecode{TestLibInit.cs}. Tento soubor obsahuje třídu \inlinecode{TestLibInit}, které obaluje metody \inlinecode{AssemblyInit} a \inlinecode{AssemblyCleanup} třídy \inlinecode{API}. Soubor je díky NuGet balíčku automaticky vytvořen při instalaci a zároveň je automaticky přidán mezi soubory, které jsou v testovacím projektu kompilovány. 
 
-Dalším souborem je soubor \inlinecode{TestEnumTemplate.cs.txt}. Tento soubor obsahuje šablonu souboru, který bude obsahovat enumerátory, které identifikují testy. Soubor má přidanou příponu \inlinecode{.txt} kvůli tomu, aby nebyl automaticky přidán do kompilace testovacího projektu.
+Dalším souborem je soubor \inlinecode{TestEnumTemplate.cs.txt}. Tento soubor obsahuje šablonu souboru, který bude obsahovat enumerátory, které identifikují testy. Tato šablona obsahuje preprocesorové direktivy, které dělají tento soubor kompatibilní jak pro jazyk \csharp{}, tak pro jazyk \cpp{}. Soubor má přidanou příponu \inlinecode{.txt} kvůli tomu, aby nebyl automaticky přidán do kompilace testovacího projektu.
 
 Posledním souborem je soubor \inlinecode{config.xml}. Tento soubor obsahuje nastavení služby, které již bylo definováno v sekci \ref{sec:settings}. Všechny tyto soubory jsou po instalaci uloženy do složky \inlinecode{resources}.
 

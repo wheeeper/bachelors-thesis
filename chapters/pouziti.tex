@@ -1,4 +1,120 @@
 \chapter{Demonstrace použití knihovny}\label{chap:demonstration}
 
-V této kapitole se budu věnovat demonstraci použití knihovny při testování. K tomu použiji jeden z průmyslových protokolů.
+V této kapitole se budu věnovat demonstraci použití knihovny při testování. K tomu použiji jeden z průmyslových protokolů. \note{Kapitola je ještě hodně v raw stavu}
+
+\section{Nastavení knihovny}
+Před započnutím testování je potřeba provést prvotní nastavení testovací služby a testovaného zařízení. V následujících sekcích si ho popíšeme.
+
+\subsection{Příprava testovaného zařízení}
+K použití testované knihovny na testovaném zařízení je potřeba implementovat vytvořené rozhraní pro testované zařízení, definované v sekci \ref{sec:deviceif}. Instance tohoto rozhraní je následně předána komponentě \inlinecode{TestRunner}, jejíž implementace je popsána v sekci \ref{sec:testrunner}. Komponenta \inlinecode{TestRunner} započne běh inicializací a po její úspěšné inicializaci se zavolá metoda \inlinecode{HandleInstruction}, která se následně postará o běh komponenty, a tím celého zařízení.
+
+\subsection{Testovací projekt}
+K správě jednotlivých testů je potřeba vytvořit testovací projekt. Tento testovací projekt bude obsahovat testovací knihovnu, ze které následně bude spouštěna testovací službu. Projekt vytvořím za pomocí IDE Visual Studio, kde využijeme předlohy nazvané \uv{Unit Test Project (.NET Framework)}. 
+
+Do tohoto projektu následně přidám NuGet balíček, který obsahuje testovací knihovnu. S instalací knihovny se přidá i složka \inlinecode{resources}, která obsahuje vše potřebné k testování.
+
+\subsubsection{Konfigurace}
+Ve složce \inlinecode{resources} nalezneme soubor \inlinecode{config.xml}, který obsahuje konfiguraci služby. Tento soubor po zkopírování ze složky resource do kořenové složky projektu lze upravit do požadovaného základního nastavení. 
+
+Testovací knihovna a služba očekává tento soubor v kořenové složce, ze které se spouští program. Soubor je tedy potřeba po kompilaci do této složky přesunout. Toho docílím za pomocí tzv. \uv{Post-build events}, neboli událostí po sestavení. Do těchto událostí přidám direktivu, která po kompilaci, neboli sestavení, přesune konfigurační soubor do výstupní složky s programem. Tuto direktivu můžeme vidět na výpisu \ref{listing:postbuild}.
+
+\begin{listing}[htbp]
+    \centering
+    \begin{minted}[breaklines]{text}
+        COPY "$(ProjectDir)config.xml"  "$(TargetDir)"
+    \end{minted}
+\caption{Direktiva k přesunutí konfiguračního souboru}
+\label{listing:postbuild}
+\end{listing}
+
+V tento moment je zároveň vhodné vytvořit soubor, ve kterém budou uloženy jednotlivé identifikátory testů. K tomu využiji soubor \inlinecode{TestEnumTemplate.cs.txt} ve složce \inlinecode{resources}. Jeho kopii přesunu mimo složku resources a odstraním příponu \inlinecode{.txt} ze jména. 
+
+\section{Vytvoření testu}
+Jednotlivé testy je potřeba implementovat pro všechny zařízení, které se účastní testování. Pro demonstraci funkcionality vytvořím test, který bude obsahovat testované zařízení a 8 testovacích partnerů. Partneři budou číst z testovaného zařízení za pomoci protokolu ModbusTCP z registrů a následně kontrolovat správnost obdržených dat. Tento test bude označen enumerátorem \inlinecode{TestCaseE} hodnotou \inlinecode{TEST\_MODD\_READ\_DATA}.
+
+
+\subsection{Testované zařízení}
+Implementaci testu lze vidět na výpisu \ref{listing:test_device}. Test v první fázi inicializuje protokol ModbusTCP a do výstupních registrů zapíše data. Během testovací fáze zařízení neprovádí žádné úkony. Zařízení nakonec vrací v poslední fázi testu do původního stavu před testováním.
+
+Test je následovně přidán do implementovaného rozhraní do metody \inlinecode{getTest} tak, aby když metoda obdrží číselnou hodnotu enumerátoru \inlinecode{TEST\_MODD\_READ\_DATA}, tak poté vrátí instanci testu \inlinecode{TestModdReadData}. 
+
+\begin{listing}[htbp]
+    \centering
+    \begin{minted}[breaklines,autogobble]{cpp}
+    //TODO Resize, comments
+    class TestModdReadData : public ITestCase {
+    public:
+        bool StartUp() {
+            NV_IP_SUITE* pIpSuite;
+            MFD_INT len;
+            MFD_IP_SUITE networkInfo;
+            MFD_AlignPack alignPack = MFD_ALIGN_PACK_1;
+
+            if ((mfd_modd_add_configuration(1, 0, 4, 2, 0, alignPack, MFD_MODULE_STANDARD)) != MFD_TRUE)    { 
+                return false; 
+            }
+
+            Bsp_nv_data_restore(PNIO_NVDATA_IPSUITE, (PNIO_VOID**)&pIpSuite, (PNIO_UINT32*)&len);
+            networkInfo.ipAddress = LSA_HTONL(pIpSuite->IpAddr);
+            networkInfo.ipMask = LSA_HTONL(pIpSuite->SubnetMask);
+            networkInfo.ipGateway = LSA_HTONL(pIpSuite->DefRouter);
+
+            if (mfd_modd_online(&networkInfo) != MFD_TRUE) {
+                return false;
+            }
+
+            mfd_modd_start();
+            MFD_BYTE* data;
+            mfd_modd_out_data_lock(const_cast<const MFD_BYTE**>(&data));
+            data[0] = 0;
+            data[1] = 0xFF;
+            return mfd_modd_out_data_unlock() != MFD_TRUE;
+        }
+
+        bool Test() {
+            return true;
+        }
+
+        bool TearDown() {
+            return mfd_modd_stop() && mfd_modd_offline() && mfd_modd_remove_configurations();
+        }
+    };
+    \end{minted}
+\caption{Implementace testu na testovaném zařízení}
+\label{listing:test_device}
+\end{listing}
+
+
+\subsection{Testovací partner}
+\todo{Doplnit}
+
+\subsection{Testovací služba}
+
+K vytvoření testů použiji standardní vytváření testů dle frameworku MSTest. Ukázku pro jeden test můžeme vidět na výpisu \ref{listing:testcase}. Jak můžeme vidět, testovací třída \inlinecode{Modbus} obsahuje jednu testovací metoda \inlinecode{TestModdReadData}. Třída i metoda jsou označeny atributy, definovanými frameworkem MSTest. 
+
+Uvnitř testovací metody můžeme vidět cyklus, který přidá 8 testovacích partnerů. V argumentu direktivy můžeme vidět vytváření instance testovacího partnera, která ve svém argumentu obdrží instanci testu \inlinecode{TestModdReadData}, který je navrhnut dle definovaného rozhraní pro testy. 
+
+
+
+
+\begin{listing}[htbp]
+    \centering
+    \begin{minted}[breaklines]{csharp}
+    [TestClass]
+    public class Modbus
+    {
+        [TestMethod]
+        public void TestModdReadData()
+        {
+            for (int x = 0; x < 8; x++)
+                API.AddTestPartner(new TestLib.Client.TestPartner(new TestModdReadData()));
+            API.Run(TestCaseE.TEST_MODD_READ_DATA);
+        }
+    }
+    \end{minted}
+\caption{Ukázka testu v testovacím projektu}
+\label{listing:testcase}
+\end{listing}
+
+
 
