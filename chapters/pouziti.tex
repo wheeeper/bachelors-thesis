@@ -1,6 +1,6 @@
 \chapter{Demonstrace použití knihovny}\label{chap:demonstration}
 
-V této kapitole se budu věnovat demonstraci použití knihovny při testování. K tomu použiji jeden z průmyslových protokolů. \note{Kapitola je ještě hodně v raw stavu}
+V této kapitole se budu věnovat demonstraci použití knihovny při testování. K tomu použiji jeden z průmyslových protokolů.
 
 \section{Nastavení knihovny}
 Před započnutím testování je potřeba provést prvotní nastavení testovací služby a testovaného zařízení. V následujících sekcích si ho popíšeme.
@@ -11,7 +11,7 @@ K použití testované knihovny na testovaném zařízení je potřeba implement
 \subsection{Testovací projekt}
 K správě jednotlivých testů je potřeba vytvořit testovací projekt. Tento testovací projekt bude obsahovat testovací knihovnu, ze které následně bude spouštěna testovací službu. Projekt vytvořím za pomocí IDE Visual Studio, kde využijeme předlohy nazvané \uv{Unit Test Project (.NET Framework)}. 
 
-Do tohoto projektu následně přidám NuGet balíček, který obsahuje testovací knihovnu. S instalací knihovny se přidá i složka \inlinecode{resources}, která obsahuje vše potřebné k testování.
+Do tohoto projektu následně přidám NuGet balíček, který obsahuje testovací knihovnu. S instalací knihovny se přidá i složka \inlinecode{resources}, která obsahuje vše potřebné k testování. Testovací projekt je následně uložen ve vlastním repositáři v Azure Repos.  
 
 \subsubsection{Konfigurace}
 Ve složce \inlinecode{resources} nalezneme soubor \inlinecode{config.xml}, který obsahuje konfiguraci služby. Tento soubor po zkopírování ze složky resource do kořenové složky projektu lze upravit do požadovaného základního nastavení. 
@@ -34,14 +34,14 @@ Jednotlivé testy je potřeba implementovat pro všechny zařízení, které se 
 
 
 \subsection{Testované zařízení}
-Implementaci testu lze vidět na výpisu \ref{listing:test_device}. Test v první fázi inicializuje protokol ModbusTCP a do výstupních registrů zapíše data. Během testovací fáze zařízení neprovádí žádné úkony. Zařízení nakonec vrací v poslední fázi testu do původního stavu před testováním.
+Implementaci testu lze vidět na výpisu \ref{listing:testcase_device}. Test v první fázi inicializuje protokol ModbusTCP a do výstupních registrů zapíše data. Během testovací fáze zařízení neprovádí žádné úkony. Zařízení nakonec vrací v poslední fázi testu do původního stavu před testováním.
 
-Test je následovně přidán do implementovaného rozhraní do metody \inlinecode{getTest} tak, aby když metoda obdrží číselnou hodnotu enumerátoru \inlinecode{TEST\_MODD\_READ\_DATA}, tak poté vrátí instanci testu \inlinecode{TestModdReadData}. 
+Vytvořený test následně přidáme metody \inlinecode{getTest} v rozhraní pro testované zařízení. Test přidáme do metody tak, že když metoda obdrží v argumentu číselnou reprezentaci enumerátoru \inlinecode{TEST\_MODD\_READ\_DATA}, tak poté metoda vrátí instanci testu.
+
 
 \begin{listing}[htbp]
     \centering
-    \begin{minted}[breaklines,autogobble]{cpp}
-    //TODO Resize, comments
+    \begin{minted}[breaklines,autogobble, fontsize=\footnotesize]{cpp}
     class TestModdReadData : public ITestCase {
     public:
         bool StartUp() {
@@ -50,25 +50,33 @@ Test je následovně přidán do implementovaného rozhraní do metody \inlineco
             MFD_IP_SUITE networkInfo;
             MFD_AlignPack alignPack = MFD_ALIGN_PACK_1;
 
+            // Configuration of ModbusTCP
             if ((mfd_modd_add_configuration(1, 0, 4, 2, 0, alignPack, MFD_MODULE_STANDARD)) != MFD_TRUE)    { 
                 return false; 
             }
 
+            // Restore network information from memory
             Bsp_nv_data_restore(PNIO_NVDATA_IPSUITE, (PNIO_VOID**)&pIpSuite, (PNIO_UINT32*)&len);
             networkInfo.ipAddress = LSA_HTONL(pIpSuite->IpAddr);
             networkInfo.ipMask = LSA_HTONL(pIpSuite->SubnetMask);
             networkInfo.ipGateway = LSA_HTONL(pIpSuite->DefRouter);
 
+            // ModbusTCP inicialization
             if (mfd_modd_online(&networkInfo) != MFD_TRUE) {
                 return false;
             }
 
-            mfd_modd_start();
+            if (mfd_modd_start() != MFD_TRUE) {
+                return false;
+            }
+            
+            // Set output data
             MFD_BYTE* data;
+            MFD_BYTE control_data[8] = { 0,0xDE,0,0xAD,0,0xBE,0,0xEF };
+            
             mfd_modd_out_data_lock(const_cast<const MFD_BYTE**>(&data));
-            data[0] = 0;
-            data[1] = 0xFF;
-            return mfd_modd_out_data_unlock() != MFD_TRUE;
+            MFD_MEMCPY(data, control_data, 8);
+            return mfd_modd_out_data_unlock() == MFD_TRUE;
         }
 
         bool Test() {
@@ -76,26 +84,27 @@ Test je následovně přidán do implementovaného rozhraní do metody \inlineco
         }
 
         bool TearDown() {
-            return mfd_modd_stop() && mfd_modd_offline() && mfd_modd_remove_configurations();
+            return mfd_modd_stop() == MFD_TRUE && mfd_modd_offline() == MFD_TRUE && mfd_modd_remove_configurations() == MFD_TRUE;
         }
     };
     \end{minted}
 \caption{Implementace testu na testovaném zařízení}
-\label{listing:test_device}
+\label{listing:testcase_device}
 \end{listing}
 
 
 \subsection{Testovací partner}
-\todo{Doplnit}
+Implementace testu, kterou můžeme vidět na výpisu \ref{listing:testcase_partner} pro testovacího partnera je velmi obdobná implementaci pro testované zařízení. Implementace používá knihovnu EasyModbusTCP k vytvoření připojení s testovaným zařízením. 
+Testovací partner v testovací fázi vytvoří připojení s testovaným zařízením a následně čte data z testovaného zařízení, které následně kontroluje. Tato implementace je součástí testovacího projektu.
+
 
 \subsection{Testovací služba}
 
-K vytvoření testů použiji standardní vytváření testů dle frameworku MSTest. Ukázku pro jeden test můžeme vidět na výpisu \ref{listing:testcase}. Jak můžeme vidět, testovací třída \inlinecode{Modbus} obsahuje jednu testovací metoda \inlinecode{TestModdReadData}. Třída i metoda jsou označeny atributy, definovanými frameworkem MSTest. 
+K registraci testů pro testovací službu použiji standardní metodiku vytváření testů dle frameworku MSTest, kterou můžeme vidět na výpisu \ref{listing:testcase_service}. Na výpisu lze vidět testovací třída \inlinecode{Modbus}, která obsahuje jednu testovací metodu \inlinecode{TestModdReadData}. Třída i metoda jsou označeny atributy, definovanými frameworkem MSTest. 
 
-Uvnitř testovací metody můžeme vidět cyklus, který přidá 8 testovacích partnerů. V argumentu direktivy můžeme vidět vytváření instance testovacího partnera, která ve svém argumentu obdrží instanci testu \inlinecode{TestModdReadData}, který je navrhnut dle definovaného rozhraní pro testy. 
-
-
-
+Uvnitř testovací metody můžeme vidět cyklus, který přidá 8 testovacích partnerů. V argumentu direktivy můžeme vidět vytváření instance testovacího partnera, která ve svém argumentu obdrží instanci testu \inlinecode{TestModdReadData}.
+ 
+Následně můžeme vidět direktivu k započnutí testu, který je předán testovací službě. Tato direktiva obdrží v argumentu enumerátor reprezentující test.
 
 \begin{listing}[htbp]
     \centering
@@ -113,8 +122,72 @@ Uvnitř testovací metody můžeme vidět cyklus, který přidá 8 testovacích 
     }
     \end{minted}
 \caption{Ukázka testu v testovacím projektu}
-\label{listing:testcase}
+\label{listing:testcase_service}
 \end{listing}
 
 
+\begin{listing}[htbp]
+    \centering{}
+    \begin{minted}[breaklines,autogobble, fontsize=\small]{csharp}
+    class TestModdReadData : ITestCase
+    {
+        public bool StartUp()
+        {
+            return true;
+        }
 
+        public bool Test()
+        {
+            // Get IP address of test device
+            IPAddress devkit;
+            API.getParticipantIp(PhysicalAddress.Parse( "080006020110"), out devkit);
+
+            // Create ModbusTCP connection
+            client = new ModbusClient(devkit.ToString(), 502);
+
+            try 
+            {
+                client.Connect();
+            }
+            catch 
+            {
+                return false;
+            }
+
+            if (!client.Connected)
+                return false;
+
+            // Read data from device
+            var test = client.ReadHoldingRegisters(0, 4);
+            
+            // Compare to expected data
+            int[] controlData = { 0xDE, 0xAD, 0xBE, 0xEF };
+            return Enumerable.SequenceEqual(controlData, test);
+        }
+
+
+        public bool TearDown()
+        {
+            client.Disconnect();
+            return true;
+        }
+
+        ModbusClient client;
+    }
+    \end{minted}
+\caption{Implementace testu pro testovacího partnera}
+\label{listing:testcase_partner}
+\end{listing}
+
+
+\section{Propojení s Azure DevOps serverem}
+\todo{Doplnit}
+
+
+\subsection{Příprava}
+\todo{Doplnit}
+
+
+
+\subsection{Registrování testů}
+\todo{Doplnit}
