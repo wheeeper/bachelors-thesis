@@ -164,7 +164,9 @@ Toto rozhraní je následně využito ve třídě \inlinecode{TestRunner}. Tato 
     \item \inlinecode{Stop()} \\ Metoda ukončuje testovací běh.
 \end{itemize}
 
-Bližší vysvětlení si zaslouží metoda \inlinecode{RunTest}. Tato metoda je volána z metody \inlinecode{HandleInstruction}. K udržení stádia testu si třída mezi jednotlivými stádii drží instanci jednotlivých testů. Ve fázi přípravy na testování metoda zkontroluje že instance testu je nastavena na hodnotu \inlinecode{null}. Jiná hodnota by značila chybu během předchozího testování. Ve fázi úklidu po dokončení testu je odkaz na instanci testu nastaven na zpátky hodnotu null. 
+Bližší vysvětlení si zaslouží metoda \inlinecode{RunTest}. Tato metoda je volána z metody \inlinecode{HandleInstruction}. K udržení stádia testu si třída mezi jednotlivými stádii drží instanci jednotlivých testů. Ve fázi přípravy na testování metoda zkontroluje že instance testu je nastavena na hodnotu \inlinecode{null}. Jiná hodnota by značila chybu během předchozího testování. Ve fázi úklidu po dokončení testu je odkaz na instanci testu nastaven na zpátky hodnotu null. Třída \inlinecode{TestRunner} je opět implementována v jazyce \csharp{} a \cpp{}.
+
+Bližší přiblížení si zaslouží implementace v jazyce \cpp{}. Implementace v tomto jazyku je mířena na testované zařízení, které běží na speciálně vyvinutém hardwaru. Implementačně zařízení v některých případech nepoužívá některé vestavěné funkce a místo nich používá svoje definované funkce. Mezi tyto funkce patří funkce, které kopírují a alokují paměť. Proto rozhraní je rozšířeno o vlastní funkce, který definuje tyto operace. Následně při implementaci na testované zařízení je potřeba tyto funkce dodefinovat. 
 
 \section{Testovací partner}
 Implementace testovacího partnera přímo kopíruje navrhnuté rozhraní pro testované zařízení. Jeho logika je obsažena ve třídě \inlinecode{TestPartner}. Tato třída má tři možné konstruktory:
