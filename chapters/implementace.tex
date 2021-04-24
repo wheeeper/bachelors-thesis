@@ -43,7 +43,9 @@ Konfigurace služby je uložena v souboru \inlinecode{config.xml}. Služba oček
     \item \inlinecode{participants} -- Počet testovaných zařízení, které se připojí ke službě.   
 \end{itemize}
 
-Ukázku tohoto souboru můžeme vidět na výpisu \ref{listing:configxml}. V knihovně se o konfiguraci stará třída \inlinecode{Configuration}. Tato třída existuje v jmenném prostoru \inlinecode{GlobalVar}. Tento jmenný prostor simuluje globální proměnnou. Kvůli tomu jsou ale všechny třídy, které jsou odsud používány, konstruovány tak, aby primárně fungovaly jen ke čtení. Při vytvoření instance třída získá konfiguraci z konfiguračního souboru a uloží je do vnitřních proměnných třídy. Tyto proměnné jsou určeny pouze ke čtení, nelze je upravovat. Stav konfigurace určuje proměnná \inlinecode{bool IsValid}. V případě chyby je tato proměnná nastavená na hodnotu \inlinecode{false} a v proměnné \inlinecode{Exception} je uložen důvod neúspěchu. V opačném případě je tato proměnná nastavena na hodnotu \inlinecode{true}.
+Ukázku tohoto souboru můžeme vidět na výpisu \ref{listing:configxml}. V knihovně se o konfiguraci stará třída \inlinecode{Configuration}. Tato třída existuje v jmenném prostoru \inlinecode{GlobalVar}. Tento jmenný prostor simuluje globální proměnnou. Kvůli tomu jsou ale všechny třídy, které jsou odsud používány, konstruovány tak, aby primárně fungovaly jen ke čtení. Zároveň třída \inlinecode{GlobalVar} povolí pouze jedno přiřazení instance. Při pokusu o přiřazení jiné instance třída vyhazuje výjimku. Digram těchto tříd můžeme vidět na obrázku \ref{fig:utility}. Třída také obsahuje vlastnost \inlinecode{isConfigLoaded}, která obsahuje informaci o tom, zdali je konfigurace inicializována.
+
+Při vytvoření instance třída získá konfiguraci z konfiguračního souboru a uloží je do vnitřních proměnných třídy. Tyto proměnné jsou určeny pouze ke čtení, nelze je upravovat. Stav konfigurace určuje proměnná \inlinecode{bool IsValid}. V případě chyby je tato proměnná nastavená na hodnotu \inlinecode{false} a v proměnné \inlinecode{Exception} je uložen důvod neúspěchu. V opačném případě je tato proměnná nastavena na hodnotu \inlinecode{true}.
 
 \begin{listing}[htbp]
     \centering
@@ -149,6 +151,22 @@ Metoda během běhu vyhodnocuje, zda se účastníka testování nedostal do chy
 
 Po dokončení celého testovacího běhu je zavolána metoda \inlinecode{Stop()}. Tato metoda odešle všem stále připojeným účastníkům direktivu k ukončení testování a ukončí spojení. Služba se snaží v případě chyby ukončit co nejvíce zařízení skrz stanovený protokol.
 
+\subsubsection{Pomocné třídy}
+Třída \inlinecode{TestService} využívá dvě pomocné třídy při svém běhu, jejichž diagram můžeme vidět na obrázku \ref{fig:utility}. První třídou je třída \inlinecode{Logger}. Tato třída realizuje zapisování protokolu během běhu. Tato třída je obsažena taktéž ve třídě \inlinecode{GlobalVar}, která simuluje globální proměnnou. Inicializace instance třídy \inlinecode{Logger} lze provést odkudkoliv, avšak stejně jako u konfigurace pouze jen jednou. Třída \inlinecode{GlobalVar} obsahuje vlastnost \inlinecode{isLogEnabled}, která obsahuje informaci o tom, zdali je zapisování inicializováno. 
+
+Třída \inlinecode{TestService} obsahuje ve svých metodách kontrolu, zdali je instance třídy \inlinecode{Logger} inicializována a v případě kladného vyhodnocení zapisuje průběh svého běhu. Instance třídy \inlinecode{Logger} by teda měla být vytvořena ještě před započnutím běhu služby.
+
+Druhou třídou, kterou třída \inlinecode{TestService} využívá, je třída \inlinecode{ReportGenerator}. Tato třída vytváří výstupní XML soubor s výsledky jednotlivých testů.
+Tento soubor je vytvořen ve formátu dle frameworku NUNit, jehož definici můžeme najít v \cite{nunit}. Tento soubor následně může být nahrán do serveru Azure DevOps. V navrhnutém řešení je tento výstup považován jako záložní.
+
+\begin{figure}[htbp]
+    \centering 
+    \includegraphics[width=\textwidth]{assets/img/class_diagram/utility.pdf}
+    \caption{Diagram tříd, které zajišťují pomocné služby}
+    \label{fig:utility}
+\end{figure}
+
+
 \subsection{Propojení s ostatními komponentami}
 
 O propojení třídy \inlinecode{TestService} s ostatními komponentami knihovny se stará třída \inlinecode{ServiceRunner}.
@@ -161,12 +179,11 @@ Tato třída ve svém konstruktoru inicializuje konfiguraci služby a zjistí, z
     \item \inlinecode{void Stop()} \\ Metoda předá informaci o ukončení testovacího běhu.
 \end{itemize}
 
-
 \section{Rozhraní pro testovaná zařízení}\label{sec:testrunner}
 
-Rozložení tříd, které se starají o implementaci na testovaném zařízení nalezneme na obrázku \ref{fig:test_client}. Na obrázku můžeme vidět, že rozhraní pro testované zařízení je implementováno v jazycích \csharp{} a \cpp{}. 
+Diagram tříd, které realizují implementaci pro účastníka testování, můžeme pro implementaci v jazyku \cpp{} vidět na obrázku \ref{fig:test_client_cpp} a pro implementaci v jazyku \csharp{} na obrázku \ref{fig:test_client_csharp}. Obě implementace obsahují rozhraní pro testované zařízení, které je následně na testovaném zařízení implementováno testerem.
 
-Rozhraní je následně využito ve třídě \inlinecode{TestRunner}. Tato třída zajištuje běh jednotlivých účastníků testování. Třída je rovněž implementována v jazycích \csharp{} a \cpp{}. Třída obsahuje tyto metody: 
+Vytvořené rozhraní je následně využito ve třídě \inlinecode{TestRunner}. Tato třída zajištuje běh jednotlivých účastníků testování. Třída je rovněž implementována v jazycích \csharp{} a \cpp{}. Třída obsahuje tyto metody: 
 
 \begin{itemize}
     \item \inlinecode{Init()} \\ Metoda inicializuje připojení s testovací službou.
@@ -177,7 +194,29 @@ Rozhraní je následně využito ve třídě \inlinecode{TestRunner}. Tato tří
 
 Bližší vysvětlení si zaslouží metoda \inlinecode{RunTest}. Tato metoda je volána z metody \inlinecode{HandleInstruction}. K udržení stádia testu si třída mezi jednotlivými stádii drží instanci jednotlivých testů. Ve fázi přípravy na testování metoda zkontroluje že instance testu je nastavena na hodnotu \inlinecode{null}. Jiná hodnota by značila chybu během předchozího testování. Ve fázi úklidu po dokončení testu je odkaz na instanci testu nastaven na zpátky hodnotu null. Třída \inlinecode{TestRunner} je opět implementována v jazyce \csharp{} a \cpp{}.
 
-Bližší přiblížení si zaslouží implementace v jazyce \cpp{}. Implementace v tomto jazyku je mířena na testované zařízení, které běží na speciálně vyvinutém hardwaru. Implementačně zařízení v některých případech nepoužívá některé vestavěné funkce a místo nich používá svoje definované funkce. Mezi tyto funkce patří funkce, které kopírují a alokují paměť. Proto rozhraní je rozšířeno o vlastní funkce, který definuje tyto operace. Následně při implementaci na testované zařízení je potřeba tyto funkce dodefinovat. 
+Návrhově je jak rozhraní pro zařízení, tak třída \inlinecode{TestRunner} v obou implementacích ekvivalentní. Je třeba ale upřesnit implementaci v \cpp{}. Tato implementace je mířena na testované zařízení, které běží na vlastním speciálně vyvinutém hardwaru. Zařízení avšak v některých případech nepoužívá některé vestavěné funkce a místo nich používá jejich vlastní náhradu. 
+
+Implementace v \cpp{} tedy definuje seznam funkcí, které jsou potřeba implementovat, resp. je potřeba u nich vytvořit odkaz na funkce, které jsou implementované na zařízení. Seznam těchto funkcí můžeme vidět na výpisu \ref{listing:cppinterface}. Z tohoto výpisu lze vidět, že to jsou funkce, které alokují a uvolňují paměť na haldě, a funkce, která paměť kopíruje. 
+
+\begin{listing}[H]
+    \centering
+    \begin{minted}[breaklines]{cpp}
+    /*  Allocation of memory on heap 
+     */
+     void* TESTLIB_ALLOC_MEM( const uint32_t length );
+
+    /* Free of allocated memory 
+     */
+    bool TESTLIB_FREE_MEM(void* ptr);
+
+    /* Copy of memory 
+     */
+    void* TESTLIB_MEMCPY(void* const lpDst, const void* const lpSrc, int dwNb);
+    \end{minted}
+    \caption{Seznam funkcí k implementaci na zařízení v jazyce \protect\cpp{}}
+    \label{listing:cppinterface}
+\end{listing}
+
 
 \section{Testovací partner}
 Implementace testovacího partnera přímo kopíruje navrhnuté rozhraní pro testované zařízení. Jeho logika je obsažena ve třídě \inlinecode{TestPartner}. Tato třída má tři možné konstruktory:
@@ -195,12 +234,20 @@ Třída následně vytvoří instanci implementovaného rozhraní pro zařízen�
 
 Třída také obsahuje metodu \inlinecode{Stop}, která po zavolání kontroluje ukončení testovacího partnera v daném časovém limitu. Po vypršení časového limitu funkce ukončuje vlákno, na kterém instance třídy \inlinecode{TestRunner} běží.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering 
-    \includegraphics[width=\textwidth]{assets/img/class_diagram/client.pdf}
-    \caption{Diagram tříd zajištující implementaci účastníka testování}
-    \label{fig:test_client}
+    \includegraphics[width=\textwidth]{assets/img/class_diagram/client-cpp.pdf}
+    \caption{Diagram tříd implementace účastníka testování v jazyce \protect\cpp{}}
+    \label{fig:test_client_cpp}
 \end{figure}
+
+\begin{figure}[H]
+    \centering 
+    \includegraphics[width=\textwidth]{assets/img/class_diagram/client-csharp.pdf}
+    \caption{Diagram tříd implementace účastníka testování v jazyce \protect\csharp{}}
+    \label{fig:test_client_csharp}
+\end{figure}
+
 
 \section{Propojení s frameworkem MSTest}
 
