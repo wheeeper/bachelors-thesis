@@ -5,7 +5,7 @@ Tato kapitola se věnuje implementaci všech navrhnutých komponent, které umo�
 \section{Zpráva}
 Strukturu jedné zprávy zajišťuje třída \inlinecode{Message}. Digram této třídy můžeme vidět na obrázku \ref{fig:message_class}. Třída \inlinecode{Message} je implementována v jazyce \csharp{} a \cpp{}.
 
-Dle návrhu instance této třídy obsahuje typ zprávy a data zprávy, pokud zpráva nějaké obsahuje. Typ zprávy je určen enumerátorem \inlinecode{MessageType}. 
+Dle návrhu instance této třídy obsahuje typ zprávy a data zprávy, pokud zpráva nějaké obsahuje. Typ zprávy je určen enumerátorem \inlinecode{MessageType}. Tento výčtový typ obsahuje jednotlivé typy zpráv, definované v sekci \ref{sec:communication}. Zároveň tyto typy rozšiřuje o hodnotu \inlinecode{MSG\_EXCEPTION}, která značí neplatnou zprávu.
 
 Při odesílání a přijímání zpráv skrz protokol TCP/IP je podstatné, aby se instance třídy dala převádět na bajtové pole a obráceně. Třída \inlinecode{Message} proto obsahuje dvě metody, které tyto převody zajišťují. Tyto metody jsou:
 
@@ -16,19 +16,19 @@ Při odesílání a přijímání zpráv skrz protokol TCP/IP je podstatné, aby
 
 Následná komunikace skrz protokol TCP/IP je implementována v závislosti na zařízení, za pomocí těchto metod. Jejich implementace má minimální odlišnosti, které jsou primárně zapříčiněny rozdíly těchto dvou jazyků.
 
-\begin{figure}[htbp]
+\section{Testovací služba}
+Testovací služba je v implementaci rozdělena na dvě hlavní třídy. Třída \inlinecode{TestService} obstarává jednotlivé úkony služby, následně třída \inlinecode{ServiceRunner} propojuje třídu \inlinecode{TestService} s ostatními komponentami, které jsou potřebné pro testování. Tyto třídy můžeme vidět znázorněné na obrázku \ref{fig:test_service}.
+
+\begin{figure}[H]
     \centering 
-    \includegraphics[width=0.95\textwidth]{assets/img/class_diagram/message.pdf}
+    \includegraphics[width=0.85\textwidth]{assets/img/class_diagram/message.pdf}
     \caption{Diagram třídy Message}
     \label{fig:message_class}
 \end{figure}
 
-\section{Testovací služba}
-Testovací služba je v implementaci rozdělena na dvě hlavní třídy. Třída \inlinecode{TestService} obstarává jednotlivé úkony služby, následně třída \inlinecode{ServiceRunner} propojuje třídu \inlinecode{TestService} s ostatními komponentami, které jsou potřebné pro testování. Tyto třídy můžeme vidět znázorněné na obrázku \ref{fig:test_service}.
-
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering 
-    \includegraphics[width=\textwidth]{assets/img/class_diagram/service.pdf}
+    \includegraphics[width=0.90\textwidth]{assets/img/class_diagram/service.pdf}
     \caption{Diagram tříd zajištující testovací službu}
     \label{fig:test_service}
 \end{figure}
