@@ -1,3 +1,75 @@
 \chapter{Vyhodnocení vytvořeného řešení}\label{chap:evaluation}
 
-\note{Tato kapitola je stále ve vývoji}
+V této kapitole se věnuji zhodnocení vytvořeného řešení a jeho přínosu. \\
+
+
+
+Vytvoření řešení míří na zlepšení automatizace testů verifikace průmyslové komunikace. To je následně využito při procesech kontinuální integrace a kontinuálního testování. 
+
+Tyto procesy přináší do vývoje softwaru několik výhod. Ze studie, která zkoumala dva porovnatelné projekty, kdy jeden z projektů používal kontinuální integraci a kontinuální testování oproti druhému projektu, víme, že za pomoci těchto procesů byl projekt s pomocí těchto procesů schopen odhalit mnohem více chyb před vydáním softwaru oproti druhému projektu. Zároveň projekt bez zmíněných procesů potřeboval na odstranění chyb více času oproti druhému projektu. \cite{ci_study}. 
+
+Toto je ještě více podstatné v kontextu testovaného produktu. Na industriální zařízení jsou kladeny mnohem větší požadavky na stabilitu a spolehlivost. Odhalení chyby při ostrém provozu může vést k ekonomické škodě zákazníka, ať už to jsou v lepším případě ztráty zisku a nebo horším případě materiální škody.
+
+Důležité je avšak také implementace těchto procesů. Logickým cílem každé firmy je implementovat tyto procesy za co nejméně peněz a námahy. Přesně na tyto aspekty míří vytvořená testovací knihovna. S využitím testovací knihovny standardizujeme vytváření testů. I když je knihovna mířena na verifikaci průmyslové komunikace, jeho jádro může být využito k více aspektům testování, jako je například testování jednotlivých částí. 
+
+V aktuálním řešení automatizovaného testování při vývoji testovaného produktu jsou potřeba zařízení, která komunikují s testovaným produktem. To vytváří hardwarové nároky na testování. Zároveň je potřeba tyto systémy sestavit a nakonfigurovat, což není triviální záležitost. 
+\todo{Zjistit od Jardy jak se to s přestavováním}
+
+S použitím testovací knihovny a virtualizace za pomoci testovacího partnera můžeme chování jednotlivých zařízení simulovat jejich chování a tím snížit hardwarové a ekonomické nároky na testování. Cílem knihovny není odstranění potřeby k hardwarovým zařízením, protože v určitých testovacích případech jsou stále potřeba.
+
+
+\begin{table}[htbp]
+    \centering
+    \resizebox{\textwidth}{!}{
+    \begin{tabular}{|C{3cm}|C{4cm}|C{3.5cm}|}\hline
+        \textbf{Výrobce} & \textbf{Model} & \textbf{Cena za kus bez DPH}\\\hline
+        Allen-Bradley & 1783-BMS20CGN & \koruna{64480.27}\\ \hline
+        Beckhoff & CX2030-0125 & \koruna{66650.44}\\\hline
+        Beckhoff & CX2100-0004 & \koruna{8663.21}\\\hline
+        Schneider & BMXP342020 340-20 & \koruna{30536.8}\\\hline
+        Schneider & BMXCPS2000 & \koruna{5220.27}\\\hline
+        Schneider & BMXXBP0400 & \koruna{3493.03}\\\hline
+        Schneider & M251MESC & \koruna{8192.46}\\\hline
+        Schneider & TM262L20MESE8T & \koruna{36636.86}\\\hline
+        Rockewell & 1769-L24ER-QB1B & \koruna{38526.54}\\\hline
+    \end{tabular}
+    }
+    \caption{Tabulka zařízení potřebných k testování bez množství}
+    \label{tab:device_prices}
+\end{table}
+
+\begin{table}[htbp]
+    \centering
+    \resizebox{\textwidth}{!}{
+    \begin{tabular}{|C{3cm}|C{3,5cm}|C{1.8cm}|C{2.3cm}|C{2.3cm}|}\hline
+        \textbf{Výrobce} & \textbf{Model} & \textbf{Množství} & \textbf{Cena za kus bez DPH} & \textbf{Celková cena bez DPH} \\\hline
+        Allen-Bradley & 1783-BMS20CGN & 2 & \koruna{64480.27} & \koruna{128960.54} \\ \hline
+        Beckhoff & CX2030-0125 & 2 & \koruna{66650.44} & \koruna{133300.88} \\\hline
+        Beckhoff & CX2100-0004 & 2 & \koruna{8663.21} & \koruna{17326.42} \\\hline
+        Schneider & BMXP342020 340-20 & 1 & \koruna{30536.8} & \koruna{30536.80}  \\\hline
+        Schneider & BMXCPS2000 & 1 & \koruna{5220.27} & \koruna{5220.27}  \\\hline
+        Schneider & BMXXBP0400 & 1 & \koruna{3493.03} & \koruna{3493.03}  \\\hline
+        Schneider & M251MESC & 2 & \koruna{8192.46} & \koruna{16384.92}  \\\hline
+        Schneider & TM262L20MESE8T & 1 & \koruna{36636.86}  & \koruna{36636.86}  \\\hline
+        Rockewell & 1769-L24ER-QB1B & 2 & \koruna{38526.54} & \koruna{77053.08} \\\hline
+    \end{tabular}
+    }
+    \caption{Tabulka zařízení potřebných k testování s množstvím}
+    \label{tab:device_prices}
+\end{table}
+
+
+\begin{table}[htbp]
+    \centering
+    \resizebox{\textwidth}{!}{
+    \begin{tabular}{|C{3.5cm}|C{1.8cm}|C{2.7cm}|C{2.7cm}|}\hline
+        \textbf{Produkt} & \textbf{Množství} & \textbf{Cena za kus bez DPH} & \textbf{Celková cena bez DPH} \\\hline
+        Schneider E. Machine Expert & 2 & \koruna{23987.18} & \koruna{47974.36}  \\\hline
+        SO Machine & 2 & \koruna{26907.28} & \koruna{53814.56}  \\\hline
+        Studio 5000 & 2 & \koruna{79140.18} & \koruna{158280.36}  \\\hline
+        Unity Pro & 1 & \koruna{102299.92} & \koruna{102299.92}  \\\hline
+    \end{tabular}
+    }
+    \caption{Tabulka licencí potřebných k ovládání zařízení}
+    \label{tab:device_prices}
+\end{table}
