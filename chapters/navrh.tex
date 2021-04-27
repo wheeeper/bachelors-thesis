@@ -28,7 +28,7 @@ Maximální počet připojených zařízení ke službě se odvíjí od limitac�
     \label{fig:devicemodel}
 \end{figure}
 
-\section{Komunikace}
+\section{Komunikace}\label{sec:communication}
 Komunikace mezi všemi účastníky testování bude fungovat na principu TCP/IP připojení. Testovací služba a zařízení, na kterém služba poběží, bude sloužit jako server a všichni účastnící testovaní budou klienti, kteří se budou k tomuto zařízení připojovat. 
 
 Jednotlivé zprávy, které budou mezi testovací službou a všemi účastníky testování vyměňovány, budou mít jasně stanovenou strukturu. Diagram složení zprávy lze vidět na obrázku \ref{fig:message}. Na tomto obrázku můžeme vidět, že jedna zpráva lze rozdělit na dvě části -- hlavičku zprávy a data zprávy. Zároveň jak můžeme vidět, jedna buňka v diagramu odpovídá jednomu bajtu. 
@@ -269,7 +269,7 @@ Tento NuGet balíček bude následně nahrán do služby Azure Artifacts. Využi
 
 Distribuci jednotlivých částí knihovny můžeme také vidět na obrázku \ref{fig:deploymodel}. Na tomto obrázku můžeme vidět, kam jsou jednotlivé části knihovny distribuovány a jak je knihovna rozdělena. Součástí dříve zmiňovaného NuGet balíčku bude celá implementace v jazyku \csharp{}, což zahrnuje testovací službu, testovacího partnera a rozhraní pro testovaná zařízení v jazyku \csharp{}. 
 
-\begin{figure}[H]
+\begin{figure}[htbp]
     \centering 
     \includegraphics[width=0.75\textwidth]{assets/img/deploymentmodel.pdf}
     \caption{Model distribuce jednotlivých částí knihovny}
