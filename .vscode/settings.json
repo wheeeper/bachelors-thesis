@@ -109,6 +109,7 @@
         "latex" : [ 
             "/\\\\@ifpackagelater{.+}/g",
             "/\\\\begin{minted}[^]*?\\\\end{minted}/gm",
+            "/\\\\begin{cminted}[^]*?\\\\end{cminted}/gm",
             "/\\\\begin{tabular}[^]*?\\\\end{tabular}/gm"
         ]
     },

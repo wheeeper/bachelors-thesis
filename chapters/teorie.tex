@@ -56,7 +56,7 @@ Automatizace testování je odlišná od samotného testování. Automatizace te
     \item[Lepší využití zdrojů] Tester je kvalifikovaný člověk a jeho využití na opakované vkládání vstupů a ověřování výstupů může být v některých případech plýtváním jeho časem.
     Taktéž při manuálním testování můžeme vyžadovat více účastníků testování, kteří všichni si musí vyhradit čas na testování. Díky automatizaci můžeme tyto zdroje využít víc efektivněji. Tester se například díky automatizaci může více soustředit na vytváření nových testů.
     \item[Konzistence] Při automatizaci testování každý běh testu proběhne naprosto identicky. Stejně jako ve vývoji, i v testování může dojít k lidské chybě. Díky automatizaci se šance lidské chyby snižuje. Toto zvyšuje konzistenci testování, než když se testy provádějí manuálně.
-    \item[Snížení doby testování] Jednou automatizované testy můžou být provedeny mnohem rychleji a efektivněji, než při jejich manuálním spuštění. Toto způsobuje snížení potřebné doby na testování.
+    \item[Snížení doby testování] Jednou automatizované testy mohou být provedeny mnohem rychleji a efektivněji, než při jejich manuálním spuštění. Toto způsobuje snížení potřebné doby na testování.
 \end{description}
 
 Automatizované testování následně může podporovat další procesy během vývoje. Mezi tyto procesy patří například proces kontinuální integrace nebo proces kontinuálního doručení softwaru. Proces kontinuální integrace se zaměřuje na integrování jednotlivých upravovaných částí do celkového softwaru. Oproti tomu proces kontinuálního doručení softwaru se zaměřuje na to, aby software vždy byl v takovém stavu, aby mohl být doručen zákazníkovi, nebo nasazen. \cite{ci_cd}
@@ -67,7 +67,7 @@ Azure DevOps server poskytuje vývojářům služby, které pomáhají při výv
 
 \begin{description}
     \item[Azure Repos] Azure Repos je sada nástrojů, která umožňuje správu jednotlivých verzí softwaru. V této práci budeme používat systém správy verzí Git, který je Azure Repos podporovaný. \cite{azure_repos}
-    \item[Azure Pipelines] Azure Pipelines automaticky kompiluje a testuje vyvíjený software. Zároveň podporuje procesy jako kontinuální integrace, kontinuálního nasazení softwaru nebo kontinuální testování. \cite{azure_pipelines}
+    \item[Azure Pipelines] Azure Pipelines umožňuje automaticky kompilovat a testovat vyvíjený software. Tím také podporuje procesy kontinuální integrace, kontinuálního nasazení softwaru nebo kontinuálního testování. \cite{azure_pipelines}
     \item[Azure Test Plans] Azure Test Plans přináší sadu nástrojů, které umožnují spravovat testování softwaru. Tyto nástroje umožňují správu testovacích sad a jednotlivých testů, ať už manuálních nebo automatizovaných. \cite{azure_test_plans}
     \item[Azure Artifacts] Azure Artifacts umožňuje publikování a verzování různých typů balíčků. Následně tato správa těchto balíčků může být využita při vydání těchto balíčků. Mezi podporované balíčky patří například NuGet, Maven nebo npm. Zároveň skrz Azure Artifact můžeme publikovat data z Azure Pipelines. \cite{azure_artifacts}
 \end{description}
@@ -85,7 +85,7 @@ MSTest framework přináší nástroje, které jsou potřeba k verifikaci a vali
 
 Při řešení průmyslové komunikace se často objevuje slovo \textit{fieldbus}. Běžný význam tohoto slova je \uv{Síť, která propojuje průmyslová zařízení jako kontrolery, PLC, regulátory atd.} \cite{fieldbus_thomesse}. Vznik těchto sítí je úzce spojený s historií vývoje informačních technologií. V době, kdy začali tyto sítě vznikat, nebyli dostupné komunikační technologie, jako dnes. Dostupné informační a telekomunikační sítě té doby nemohli uspokojit potřeby průmyslových sítí na deterministickou, spolehlivou a efektivní komunikaci \cite{future_of_ind_com}. 
 
-V dobách vzniku těchto komunikačních protokolů bylo pro fyzické připojení využíváno různých protokolů -- například RS-485. Nedostatkem těchto protokolů avšak byli vysoké implementační náklady. S růstem popularity standardu IEEE 802.3 -- dnes často nazýván Ethernet -- se začalo zkoumat možné použití tohoto standardu při průmyslové komunikaci. Odborníci došli k závěru, že je možné při průmyslové komunikace v reálném čase využít tento standard \cite{lee_ethernet_fieldbus}. V dnešní době je Ethernetový standard hojně využíván při přenosu průmyslové komunikace.
+V dobách vzniku těchto komunikačních protokolů bylo pro fyzické připojení využíváno různých protokolů -- například RS-485. Nedostatkem těchto protokolů avšak byli vysoké implementační náklady. S růstem popularity standardu IEEE 802.3 -- dnes často nazýván Ethernet -- se začalo zkoumat možné použití tohoto standardu při průmyslové komunikaci. Odborníci došli k závěru, že je možné při průmyslové komunikaci v reálném čase využít tento standard \cite{lee_ethernet_fieldbus}. V dnešní době je Ethernetový standard hojně využíván při přenosu průmyslové komunikace.
 
 
 \subsection{Protokol Modbus}
@@ -132,7 +132,7 @@ Hlavním cílem této práce je vytvoření testovací knihovny pro řadu zaří
 
 Zařízení SIMATIC ET 200SP, které můžeme vidět na obrázku \ref{fig:et200sp}, je určeno k umístění do kompaktních řídících kabinetů. Díky modulárnosti systému se systém může vysoce přizpůsobit potřebám jednotlivých průmyslů. Mezi tyto moduly patří standardní I/O moduly, komunikační moduly, technologické moduly nebo moduly ke startování motorů. Zároveň je velikou výhodou celkový kompaktní design. Jednotlivé moduly zároveň mohou být vyměňovány za běhu. \cite{et200sp}
 
-SIMATIC ET 200SP využívá tzv. Multifieldbus technologie. Tato technologie umožňuje zařízení komunikovat na základě několika průmyslových protokolů. V rámci této práce se zaměříme na protokoly ModbusTCP a EtherNet/IP, které již byli dříve popsané.
+SIMATIC ET 200SP využívá tzv. Multifieldbus technologii. Tato technologie umožňuje zařízení komunikovat na základě několika průmyslových protokolů. V rámci této práce se zaměříme na protokoly ModbusTCP a EtherNet/IP, které již byli dříve popsané.
 
 \begin{figure}[htbp]
     \centering 

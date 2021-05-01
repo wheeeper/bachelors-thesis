@@ -49,17 +49,17 @@ Při vytvoření instance třída získá konfiguraci z konfiguračního souboru
 
 \begin{listing}[htbp]
     \centering
-    \begin{minted}{xml}
-        <?xml version="1.0" encoding="UTF-8" ?>
-        <configuration>
-          <!-- IP of the service-->
-          <ip>192.168.4.100</ip>
-          <!-- Port of the service -->
-          <port>1337</port>
-          <!-- Number of non-virtualized participants-->
-          <participants>1</participants>
-        </configuration>
-    \end{minted}
+    \begin{cminted}{xml}
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+  <!-- IP of the service-->
+  <ip>192.168.4.100</ip>
+  <!-- Port of the service -->
+  <port>1337</port>
+  <!-- Number of non-virtualized participants-->
+  <participants>1</participants>
+</configuration>
+    \end{cminted}
     \caption{Ukázka konfiguračního souboru}
     \label{listing:configxml}
 \end{listing}
@@ -201,17 +201,17 @@ Implementace v \cpp{} tedy definuje seznam funkcí, které jsou potřeba impleme
 \begin{listing}[H]
     \centering
     \begin{minted}[breaklines]{cpp}
-    /*  Allocation of memory on heap 
-     */
-     void* TESTLIB_ALLOC_MEM( const uint32_t length );
+/*  Allocation of memory on heap 
+ */
+void* TESTLIB_ALLOC_MEM( const uint32_t length );
 
-    /* Free of allocated memory 
-     */
-    bool TESTLIB_FREE_MEM(void* ptr);
+/* Free of allocated memory 
+ */
+bool TESTLIB_FREE_MEM(void* ptr);
 
-    /* Copy of memory 
-     */
-    void* TESTLIB_MEMCPY(void* const lpDst, const void* const lpSrc, int dwNb);
+/* Copy of memory 
+ */
+void* TESTLIB_MEMCPY(void* const lpDst, const void* const lpSrc, int dwNb);
     \end{minted}
     \caption{Seznam funkcí k implementaci na zařízení v jazyce \protect\cpp{}}
     \label{listing:cppinterface}
@@ -255,7 +255,7 @@ Podstatnou součástí implementace je propojení služby s testovacím framewor
 
 
 \subsection{Použití frameworku}
-Jak jsem již zmínil v sekci \ref{sec:reg_test}, framework MSTest pro identifikaci testových metody využívá atributy. Framework MSTest využívá například tyto atributy:
+Jak jsem již zmínil v sekci \ref{sec:reg_test_design}, framework MSTest pro identifikaci testových metody využívá atributy. Framework MSTest využívá například tyto atributy:
 
 \begin{itemize}
     \item \inlinecode{AssemblyInitialize} -- identifikuje inicializační funkci, která je spuštěna před spuštěním testů \cite{attr_init_clean}
@@ -278,7 +278,7 @@ Při spuštění jednotlivých testů je nutné brát v potaz, že testovací sl
     \item \inlinecode{int InitTimeout} -- časový limit na inicializační fázi služby (tedy časový limit, který je využíván v metodě \inlinecode{TestService.Init}), pokud je ponechán prázdný, je použit defaultní časový limit z třídy \inlinecode{ServiceRunner}.
 \end{itemize}
 
-Metoda \inlinecode{AssemblyInit} na počátku kontroluje kolize mezi testovými identifikátory. Způsob kontroly je popsán v sekci \ref{sec:reg_test}. Metoda následně inicializuje službu, která projde inicializační fází. 
+Metoda \inlinecode{AssemblyInit} na počátku kontroluje kolize mezi testovými identifikátory. Způsob kontroly je popsán v sekci \ref{sec:reg_test_impl}. Metoda následně inicializuje službu, která projde inicializační fází. 
 
 Metoda \inlinecode{AssemblyCleanup} symetricky ukončuje běh testovací služby. V určitých případech tato funkce nemusí být zavolána. Při zjištění chyby v běhu, která vyústí v ukončení testovacího běhu, je tedy tato funkce zavolána manuálně. Zároveň je kontrolováno, aby tato metoda nebyla volána vícekrát.
 
@@ -286,7 +286,7 @@ Aby mohl MSTest rozeznat tyto funkce, je potřeba je definovat ve stejné assemb
 
 Toto zpravuje třída \inlinecode{TestLibInit}. Tato statická třída pouze zaobaluje tyto dvě metody svými metodami a přidává k nim potřebné atributy. Tato třída není součásti assembly testovací knihovny. V kontextu knihovny je to pouze textový soubor. Proces propojení této třídy s testovacím projektem, ve kterém poběží framework MSTest, je popsán v sekci \ref{sec:distrbution}.
 
-\subsection{Registrování testů}\label{sec:reg_test}
+\subsection{Registrování testů}\label{sec:reg_test_impl}
 
 Při rozlišování jednotlivých testů knihovna a testovací služba využívá enumerátory. Tyto enumerátory odkazují na nějakou číselnou hodnotu, které je následně odesílána testovaným zařízením. Všechny enumerátory musí být označeny atributem \inlinecode{TestEnum}. Díky němu může knihovna identifikovat výčtové typy, které reprezentují testy a zjistit mezi nimi kolize. 
 

@@ -41,6 +41,11 @@
 
 \def\UrlBreaks{\do\/\do\-\do\_}
 
+\usepackage{xpatch,letltxmacro}
+\LetLtxMacro{\cminted}{\minted}
+\let\endcminted\endminted
+\xpretocmd{\cminted}{\RecustomVerbatimEnvironment{Verbatim}{BVerbatim}{}}{}{}
+
 
 \input{macros/custom_macros.tex}
 

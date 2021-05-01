@@ -20,9 +20,11 @@ Testovací knihovna a služba očekává tento soubor v kořenové složce, ze k
 
 \begin{listing}[htbp]
     \centering
-    \begin{minted}[breaklines]{text}
-        COPY "$(ProjectDir)config.xml"  "$(TargetDir)"
-    \end{minted}
+    \begin{cminted}[breaklines,stripnl=false]{text}
+
+COPY "$(ProjectDir)config.xml"  "$(TargetDir)"
+
+    \end{cminted}
 \caption{Direktiva k přesunutí konfiguračního souboru}
 \label{listing:postbuild}
 \end{listing}
@@ -34,7 +36,7 @@ Jednotlivé testy je potřeba implementovat pro všechny zařízení, které se 
 
 
 \subsection{Testované zařízení}
-Implementaci testu lze vidět na výpisu \ref{listing:testcase_device}. Test v první fázi inicializuje protokol ModbusTCP a do výstupních registrů zapíše data. Během testovací fáze zařízení neprovádí žádné úkony. Zařízení nakonec vrací v poslední fázi testu do původního stavu před testováním.
+Implementaci testu lze vidět na výpisu \ref{listing:testcase_device}. Test v první fázi inicializuje protokol ModbusTCP a do výstupních registrů zapíše data. Jeden registr má velikost dva bajty. Během testovací fáze zařízení neprovádí žádné úkony. Zařízení nakonec vrací v poslední fázi testu do původního stavu před testováním.
 
 Vytvořený test následně přidáme do metody \inlinecode{getTest} v rozhraní pro testované zařízení. Test přidáme do metody tak, že když metoda obdrží v argumentu číselnou reprezentaci enumerátoru \inlinecode{TEST\_MODD\_READ\_DATA}, tak poté metoda vrátí instanci testu.
 
@@ -42,51 +44,51 @@ Vytvořený test následně přidáme do metody \inlinecode{getTest} v rozhraní
 \begin{listing}[htbp]
     \centering
     \begin{minted}[breaklines,autogobble, fontsize=\footnotesize]{cpp}
-    class TestModdReadData : public ITestCase {
-    public:
-        bool StartUp() {
-            NV_IP_SUITE* pIpSuite;
-            MFD_INT len;
-            MFD_IP_SUITE networkInfo;
-            MFD_AlignPack alignPack = MFD_ALIGN_PACK_1;
+class TestModdReadData : public ITestCase {
+public:
+    bool StartUp() {
+        NV_IP_SUITE* pIpSuite;
+        MFD_INT len;
+        MFD_IP_SUITE networkInfo;
+        MFD_AlignPack alignPack = MFD_ALIGN_PACK_1;
 
-            // Configuration of ModbusTCP
-            if ((mfd_modd_add_configuration(1, 0, 4, 2, 0, alignPack, MFD_MODULE_STANDARD)) != MFD_TRUE)    { 
-                return false; 
-            }
+        // Configuration of ModbusTCP
+        if ((mfd_modd_add_configuration(1, 0, 4, 2, 0, alignPack, MFD_MODULE_STANDARD)) != MFD_TRUE) { 
+            return false; 
+        }
 
-            // Restore network information from memory
-            Bsp_nv_data_restore(PNIO_NVDATA_IPSUITE, (PNIO_VOID**)&pIpSuite, (PNIO_UINT32*)&len);
-            networkInfo.ipAddress = LSA_HTONL(pIpSuite->IpAddr);
-            networkInfo.ipMask = LSA_HTONL(pIpSuite->SubnetMask);
-            networkInfo.ipGateway = LSA_HTONL(pIpSuite->DefRouter);
+        // Restore network information from memory
+        Bsp_nv_data_restore(PNIO_NVDATA_IPSUITE, (PNIO_VOID**)&pIpSuite, (PNIO_UINT32*)&len);
+        networkInfo.ipAddress = LSA_HTONL(pIpSuite->IpAddr);
+        networkInfo.ipMask = LSA_HTONL(pIpSuite->SubnetMask);
+        networkInfo.ipGateway = LSA_HTONL(pIpSuite->DefRouter);
 
-            // ModbusTCP inicialization
-            if (mfd_modd_online(&networkInfo) != MFD_TRUE) {
-                return false;
-            }
+        // ModbusTCP inicialization
+        if (mfd_modd_online(&networkInfo) != MFD_TRUE) {
+            return false;
+        }
 
-            if (mfd_modd_start() != MFD_TRUE) {
-                return false;
-            }
+        if (mfd_modd_start() != MFD_TRUE) {
+            return false;
+        }
             
-            // Set output data
-            MFD_BYTE* data;
-            MFD_BYTE control_data[8] = { 0,0xDE,0,0xAD,0,0xBE,0,0xEF };
+        // Set output data
+        MFD_BYTE* data;
+        MFD_BYTE control_data[8] = { 0,0xDE,0,0xAD,0,0xBE,0,0xEF };
             
-            mfd_modd_out_data_lock(const_cast<const MFD_BYTE**>(&data));
-            MFD_MEMCPY(data, control_data, 8);
-            return mfd_modd_out_data_unlock() == MFD_TRUE;
-        }
+        mfd_modd_out_data_lock(const_cast<const MFD_BYTE**>(&data));
+        MFD_MEMCPY(data, control_data, 8);
+        return mfd_modd_out_data_unlock() == MFD_TRUE;
+    }
 
-        bool Test() {
-            return true;
-        }
+    bool Test() {
+        return true;
+    }
 
-        bool TearDown() {
-            return mfd_modd_stop() == MFD_TRUE && mfd_modd_offline() == MFD_TRUE && mfd_modd_remove_configurations() == MFD_TRUE;
-        }
-    };
+    bool TearDown() {
+        return mfd_modd_stop() == MFD_TRUE && mfd_modd_offline() == MFD_TRUE && mfd_modd_remove_configurations() == MFD_TRUE;
+    }
+};
     \end{minted}
 \caption{Implementace testu na testovaném zařízení}
 \label{listing:testcase_device}
@@ -95,7 +97,7 @@ Vytvořený test následně přidáme do metody \inlinecode{getTest} v rozhraní
 
 \subsection{Testovací partner}
 Implementace testu, kterou můžeme vidět na výpisu \ref{listing:testcase_partner} pro testovacího partnera je velmi obdobná implementaci pro testované zařízení. Implementace používá knihovnu EasyModbusTCP k vytvoření připojení s testovaným zařízením. 
-Testovací partner v testovací fázi vytvoří připojení s testovaným zařízením a následně čte data z testovaného zařízení, které následně kontroluje s očekávanýmy daty. Tato implementace je součástí testovacího projektu.
+Testovací partner v testovací fázi vytvoří připojení s testovaným zařízením a následně čte data z testovaného zařízení, které následně kontroluje s očekávanými daty. Tato implementace je součástí testovacího projektu.
 
 
 \subsection{Testovací služba}
@@ -109,17 +111,17 @@ Takto vytvořený test lze následně vidět v IDE Visual Studio v průzkumníku
 \begin{listing}[htbp]
     \centering
     \begin{minted}[breaklines]{csharp}
-    [TestClass]
-    public class Modbus
+[TestClass]
+public class Modbus
+{
+    [TestMethod]
+    public void TestModdReadData()
     {
-        [TestMethod]
-        public void TestModdReadData()
-        {
-            for (int x = 0; x < 8; x++)
-                API.AddTestPartner(new TestLib.Client.TestPartner(new TestModdReadData()));
-            API.Run(TestCaseE.TEST_MODD_READ_DATA);
-        }
+        for (int x = 0; x < 8; x++)
+            API.AddTestPartner(new TestLib.Client.TestPartner(new TestModdReadData()));
+        API.Run(TestCaseE.TEST_MODD_READ_DATA);
     }
+}
     \end{minted}
 \caption{Ukázka testu v testovacím projektu}
 \label{listing:testcase_service}
@@ -127,53 +129,53 @@ Takto vytvořený test lze následně vidět v IDE Visual Studio v průzkumníku
 
 
 \begin{listing}[htbp]
-    \centering{}
+    \centering
     \begin{minted}[breaklines,autogobble, fontsize=\small]{csharp}
-    class TestModdReadData : ITestCase
+class TestModdReadData : ITestCase
+{
+    public bool StartUp()
     {
-        public bool StartUp()
-        {
-            return true;
-        }
-
-        public bool Test()
-        {
-            // Get IP address of test device
-            IPAddress devkit;
-            API.getParticipantIp(PhysicalAddress.Parse( "080006020110"), out devkit);
-
-            // Create ModbusTCP connection
-            client = new ModbusClient(devkit.ToString(), 502);
-
-            try 
-            {
-                client.Connect();
-            }
-            catch 
-            {
-                return false;
-            }
-
-            if (!client.Connected)
-                return false;
-
-            // Read data from device
-            var test = client.ReadHoldingRegisters(0, 4);
-            
-            // Compare to expected data
-            int[] controlData = { 0xDE, 0xAD, 0xBE, 0xEF };
-            return Enumerable.SequenceEqual(controlData, test);
-        }
-
-
-        public bool TearDown()
-        {
-            client.Disconnect();
-            return true;
-        }
-
-        ModbusClient client;
+        return true;
     }
+
+    public bool Test()
+    {
+        // Get IP address of test device
+        IPAddress devkit;
+        API.getParticipantIp(PhysicalAddress.Parse( "080006020110"), out devkit);
+
+        // Create ModbusTCP connection
+        client = new ModbusClient(devkit.ToString(), 502);
+
+        try 
+        {
+            client.Connect();
+        }
+        catch 
+        {
+            return false;
+        }
+
+        if (!client.Connected)
+            return false;
+
+        // Read data from device
+        var test = client.ReadHoldingRegisters(0, 4);
+            
+        // Compare to expected data
+        int[] controlData = { 0xDE, 0xAD, 0xBE, 0xEF };
+        return Enumerable.SequenceEqual(controlData, test);
+        }
+
+
+    public bool TearDown()
+    {
+        client.Disconnect();
+        return true;
+    }
+
+    ModbusClient client;
+}
     \end{minted}
 \caption{Implementace testu pro testovacího partnera}
 \label{listing:testcase_partner}

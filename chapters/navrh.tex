@@ -15,9 +15,9 @@ Testovací služba bude jádrem k řízení testování. Tato služba poběží 
 
 Hlavním cílem je testovat vyvíjený produkt. Toto zařízení v rámci knihovny bude bráno jako testované zařízení. Testovací služba bude podporovat připojení jednoho a více testovaných zařízení a při každém testovacím běhu musí být připojeno alespoň jedno testovací zařízení. Tato zařízení budou připojeno k zařízení, ze kterého poběží testovací služba, za pomocí Ethernet připojení. Zařízení SIMATIC ET 200SP má svojí implementaci v jazyce \cpp{}. Z toho vyplývá že implementace pro toto zařízení bude vytvořena v tomto jazyce. 
 
-Součástí knihovny zároveň bude také tzv. testovací partner. Tento účastník slouží k simulaci testovaného zařízení, buď jako celku, nebo pouze nějaké jeho činnosti. Zařízení může simulovat zařízení jako PLC, nebo různé nástroje, které slouží například k certifikaci zařízení. Simulováním zařízení snižujeme hardwarové nároky na testování, což vede ke snížení ekonomických nákladů na testování. Tato zařízení se budou připojovat v závislosti na jednotlivých testech. Následně po skončení testu budou tato zařízení odpojena. Testovací zařízení bude stejně jako testovací služba vytvořeno v jazyce \csharp{}.
+Součástí knihovny zároveň bude také tzv. testovací partner. Tento účastník slouží k simulaci testovaného zařízení, buď jako celku, nebo pouze nějaké jeho činnosti. Zařízení může simulovat zařízení jako PLC, nebo různé nástroje, které slouží například k certifikaci vyvíjeného zařízení. Simulováním zařízení snižujeme hardwarové nároky na testování, což vede ke snížení ekonomických nákladů na testování. Tato zařízení se budou připojovat v závislosti na jednotlivých testech. Následně po skončení testu budou tato zařízení odpojena. Testovací zařízení bude stejně jako testovací služba vytvořeno v jazyce \csharp{}.
 
-Maximální počet připojených zařízení ke službě se odvíjí od limitací protokolu TCP/IP a jeho implementace v jazyku \csharp{}. Tento limit se ale pohybuje ve stovkách, v kontrastu očekávaný počet zároveň připojených zařízení se bude pohybovat v desítkách. Tedy tento limit knihovnu v ničem neomezuje.
+Testovací služba bude očekávat připojení minimálně jednoho testovaného zařízení. Následně maximální počet připojených zařízení ke službě se bude odvíjet od limitací protokolu TCP/IP a jeho implementace v jazyku \csharp{}. Tento limit se ale pohybuje ve stovkách, v kontrastu očekávaný počet zároveň připojených zařízení se bude pohybovat v desítkách. Tedy tento limit knihovnu nijak neomezuje.
 
 Účastníky testování a jejich propojení můžeme vidět znázorněné na obrázku \ref{fig:devicemodel}. Na tomto obrázku můžeme vidět agenta, resp. zařízení na kterém poběží testovací služba a případní testovací partneři, primární testované zařízení SIMATIC ET 200SP a PLC. PLC zařízení značí jakékoliv zařízení, které není simulováno knihovnou.
 
@@ -51,7 +51,7 @@ Zpráva bude obsahovat povinně hlavičku zprávy. Tato hlavička bude obsahovat
 
 Za hlavičkou zprávy následně budou moct být uložena data zprávy. Tyto data avšak budou nepovinná. V těchto případech, kdy zpráva nebude neobsahovat data zprávy, bude pro přenesení informace postačovat pouze typ zprávy a v hlavičce bude uvedena nulová hodnota jako délka dat zprávy. 
 
-Maximální délka jedné zprávy se bude odvíjet od limitací použitých technologií. Limit se bude primárně odvíjet od Ethernet protokolu, který podporuje nejmenší maximální délku jednoho packetu ze všech použitých protokolů, a to 1500 bajtů. Toto číslo avšak také zahrnuje všechny potřebné hlavičky k přenosu packetu. Proto jako maximální délka jedné zprávy bude zvolena délka 1400 bajtů. Toto číslo ponechává místo pro potřebné hlavičky a zároveň je více než dostatečné pro navrhované použití. \cite{max_packet_size} 
+Maximální délka jedné zprávy se bude odvíjet od limitací použitých technologií. Limit se bude primárně odvíjet od Ethernet protokolu, který podporuje nejmenší maximální délku jednoho paketu ze všech použitých protokolů, a to 1500 bajtů. Toto číslo avšak také zahrnuje všechny potřebné hlavičky protokolu TCP/IP k přenosu paketu. Proto jako maximální délka jedné zprávy bude zvolena délka 1400 bajtů. Toto číslo ponechává místo pro potřebné hlavičky a zároveň je více než dostatečné pro navrhované použití. \cite{max_packet_size} 
 
 Všechny hodnoty zprávy budou ukládány v kladné (anglicky tzv. unsigned) podobě. Jedinou kontrolní informací, kterou bude zpráva obsahovat, je délka dat zprávy. Protokol TCP/IP avšak sám obsahuje jednoduchou detekci chyb. Všechny tyto kontroly budou považovány jako dostatečné.
 
@@ -109,7 +109,7 @@ Služba bude podporovat připojení testovacích partnerů. Tato zařízení se 
 V opačném případě služba vyhodnocuje úspěch. Po dokončení testu služba odesílá všem připojeným partnerům direktivu k ukončení testování a ukončuje spojení s nimi. 
 
 \subsection{Registrování testů}
-Testovací služba nebude mít žádné informace o jednotlivých testech. Jedinou informaci, kterou testovací služba obdrží, bude číselný identifikátor testu. Reprezentace testů čísel může způsobit kolizi mezi testovými identifikátory. Služba samotná tuto kolizi kontrolovat nebude. Způsob detekce kolize je popsán v sekci \ref{sec:reg_test}.
+Testovací služba nebude mít žádné informace o jednotlivých testech. Jedinou informaci, kterou testovací služba obdrží, bude číselný identifikátor testu. Reprezentace testů za pomocí čísel může způsobit kolizi mezi testovými identifikátory. Služba samotná tuto kolizi kontrolovat nebude. Způsob detekce kolize je popsán v sekci \ref{sec:reg_test_design}.
 
 \subsection{Testovací běh}\label{sec:test_run}
 Po úspěšné inicializační fázi a případném připojení testovacích partnerů služba čeká na direktivu ke spuštění testu. Po obdržení této direktivy s identifikátorem testu služba odesílá všem účastníkům testování zprávu k zahájení první fáze testu. Tuto fázi budeme označovat jako přípravu na testování. V této fázi účastníci testovaní připraví všechny potřebné prostředky pro provedení testu. Účastníci následně odesílají zprávu o úspěchu/neúspěchu této fáze. Služba vyhodnocuje fázi jako úspěšnou pokud od všech účastníků obdrží zprávu o úspěchu. V opačném případě vyhodnocuje fázi jako neúspěšnou.
@@ -126,7 +126,7 @@ Testovaná zařízení se v době běhu testu mohou dostat do chybového stavu, 
 
 
 \begin{description}
-    \item[Nezajištění konzistence testování] Pro konzistenci testů testovací služba vyžaduje, aby po každém testu testované zařízení bylo ve stejném stavu jako bylo před začátkem testu. Pokud účastník testu odešle neúspěch ve fázi přípravy na test, nebo ve fázi úklidu po testu, tak poté bude tento účastník považován jako chybném stavu. V případě že chyba nastane ve fázi přípravy na test, služba neprovádí fázi testování a přechází do fáze úklidu po testu. 
+    \item[Nezajištění konzistence testování] Pro konzistenci testů testovací služba vyžaduje, aby po každém testu testované zařízení bylo ve stejném stavu jako bylo před začátkem testu. Pokud účastník testu odešle neúspěch ve fázi přípravy na test, nebo ve fázi úklidu po testu, tak poté bude tento účastník považován chybném stavu. V případě že chyba nastane ve fázi přípravy na test, služba neprovádí fázi testování a přechází do fáze úklidu po testu. 
     \item[Vypršení časového limitu] Vypršení časového limitu primárně znamená, že služba ve stanové době neobdržela odpověď od účastníka testování, ale tento účastník je stále připojen k testovací službě. Toto vede k závěru, že tento účastník je v chybovém stavu a další testování není možné. 
     \item[Chyba v komunikaci] Pokud během testu zařízení odpoví jinak, než dle stanovené komunikace, tak poté bude toto zařízení považováno jako v chybném stavu. Zároveň bude za chybu považováno odpojení zařízení od služby.  
 \end{description}
@@ -153,20 +153,20 @@ Jak jsem již popsal v sekci \ref{sec:test_run}, jednotlivé testy budou mít t�
 Testovací knihovna tedy bude definovat rozhraní, které bude vyžadovat, aby tyto tři fáze testu byli pro každý test definované. Návrh rozhraní můžeme vidět na výpisu \ref{listing:test_if}. Na tomto výpisu můžeme vidět, že každé fázi odpovídá jedna metoda. Tyto metody následně vrací jednoduchou informaci o úspěchu/neúspěchu. To znamená, že vyhodnocení jednotlivých fází bude na jednotlivých testerech a jejich implementaci. Jednotlivé komponenty knihovny pouze obdrží informaci o výsledku fáze.
 
 \begin{listing}[htbp]
-    \begin{minted}[breaklines]{text}
-    ITestCase 
-    {
-        bool StartUp()
+    \centering
+    \begin{cminted}[breaklines]{text}
+ITestCase 
+{
+    bool StartUp()
 
-        bool Test()
+    bool Test()
 
-        bool TearDown()
-    }
-    \end{minted}
+    bool TearDown()
+}
+    \end{cminted}
 \caption{Návrh rozhraní pro jeden test}
 \label{listing:test_if}
 \end{listing}
-
 
 
 \subsection{Rozhraní pro testované zařízení}\label{sec:deviceif}
@@ -181,27 +181,27 @@ Metoda \inlinecode{getTest} bude určena k získání jednotlivých instancí te
 
 Metoda \inlinecode{getMacAddress} bude, jak již z názvu vyplývá, vracet MAC adresu zařízení. Metoda \inlinecode{print} bude sloužit k výpisu průběhu běhu. Tento výpis by měl hlavně posloužit k náhledu na průběh testovacího běhu, pokud se během běhu vyskytnou například nějaké chyby. Nakonec metoda \inlinecode{stop} slouží k ukončení běhu zařízení.
 
+
 \begin{listing}[htbp]
-    \begin{minted}[breaklines]{text}
-    ITestClient 
-    {
+    \centering
+    \begin{cminted}[breaklines]{text}
+ITestClient 
+{
+    bool createConnection(ipAddress, port)
 
-        bool createConnection(ipAddress, port)
+    bool sendMessage(message)
 
-        bool sendMessage(message)
+    bool rcvMessage(message)
 
-        bool rcvMessage(message)
+    ITestCase getTest(test)
 
-        ITestCase getTest(test)
+    void stop()
 
-        void stop()
+    void print(toPrint)
 
-        void print(toPrint)
-
-        bool getMacAddress(macAddr)
-    
-    }
-    \end{minted}
+    bool getMacAddress(macAddr)
+}
+    \end{cminted}
 \caption{Ukázka definice rozhraní}
 \label{listing:dev_if_abstract}
 \end{listing}
@@ -249,7 +249,7 @@ Po proběhnutí jednotlivých testů framework MSTest službu ukončuje. V pří
 
 Propojení testovací služby a testovacího frameworku MSTest bude zajišťovat API. Toto API bude určovat přístupné metody, které mohou být využity v testovacím frameworku. Zároveň bude jedinou komponentou, kde bude framework MSTest v knihovně využívat.
 
-\subsection{Registrování testů}\label{sec:reg_test}
+\subsection{Registrování testů}\label{sec:reg_test_design}
 Registrování testů ve frameworku MSTest a testovací službě bude na sobě nezávislé. Framework MSTest automaticky objevuje metody, které jsou označeny jako testovací. Framework MSTest v implementaci pro jazyk \csharp{} využívá pro rozlišení testovacích součástí tzv. atributy. Atributy přidávají metadata k třídám, typům, metodám atd. \cite{attribute_docs}. Testovací knihovna bude rozšiřovat tyto atributy o atribut \inlinecode{TestEnum}. Tento atribut bude identifikovat typy enumerátorů, které reprezentují testy. 
 
 Tím, že testovací služba může přijmout jakýkoliv enumerátor, tak může vzniknout kolize mezi jednotlivými typy enumerátorů. V inicializační fázi proto bude API kontrolovat, zda enumerátory s atributem \inlinecode{TestEnum} neobsahují mezi sebou neobsahují kolizi a v případě jejího vzniku vyhodí výjimku a nepokračuje v testování.
@@ -300,13 +300,20 @@ V tabulce \ref{tab:modbus} můžeme vidět seznam nejvhodnějších knihoven pro
 
 Nejpoužívanější knihovnou, dle počtu stažení NuGet balíčku, je knihovna NModbus. Knihovna má průměrnou dokumentaci, kde popisuje jednotlivé třídy. Tato knihovna je udržována komunitně, a již dvakrát byla opuštěna předchozími autory. V kontextu toho, že knihovna má nejstarší datum poslední aktualizace, zde vzniká otázka, zda knihovna bude v budoucnu udržována.
 
-Knihovna Modbus je opět komunitním projektem. I když jsou autoři knihovny vysoce aktivní, knihovna bohužel neobsahuje až na krátkou ukázku použití žádnou dokumentaci. Proto má knihovna v hodnocení zvýšenou náročnost na využití, právě kvůli této chybějící dokumentaci.  
+Knihovna Modbus je opět komunitním projektem. I když jsou autoři vysoce aktivní, knihovna bohužel neobsahuje, až na krátkou ukázku použití, žádnou dokumentaci. Proto má knihovna v hodnocení zvýšenou náročnost na využití, právě kvůli této chybějící dokumentaci.  
 
 Knihovna FluentModbus je vytvářena jednotlivcem. Knihovna obsahuje dle mého hodnocení nejlepší dokumentaci. Knihovna je avšak jako jediná vydávána pod LPGL licencí, oproti ostatním knihovnám, které jsou vydávány pod licencí MIT.
 
-Jako nejvhodnější knihovnu jsem avšak vyhodnotil knihovnu EasyModbusTCP. Tato knihovna jako jediná je vytvořena komerčním subjektem, a to firmou Rossmann Engineering. Z tohoto důvodu předpokládám, že na knihovnu jsou vyvíjeny vyšší kvalitativní nároky, než na ostatní knihovny. Knihovna splňuje všechny kvalitativní kategorie a zároveň je vydávána pod MIT licencí, která je méně omezující než licence LPGL.
+Jako nejvhodnější knihovnu jsem avšak vyhodnotil knihovnu EasyModbusTCP. Tato knihovna jako jediná je vytvořena komerčním subjektem, a to firmou Rossmann Engineering. Z tohoto důvodu předpokládám, že na knihovnu jsou vyvíjeny vyšší kvalitativní nároky, než na ostatní knihovny. 
+Vybraná knihovna splňuje všechny kvalitativní kategorie a zároveň je vydávána pod MIT licencí, která je méně omezující než licence LPGL.
 
-\begin{table}[htbp]\centering
+\subsubsection{EtherNet/IP}
+
+Dostupných knihoven pro protokol EtherNet/IP je méně, než pro protokol ModbusTCP. Výhodou opět je, že všechny knihovny jsou koncipovány jako NuGet balíčky. Knihovny EthernetIP a Incore bohužel neobsahují žádnou dokumentaci a obě obdrželi poslední aktualizaci v roce 2018. Náročnost využití je tedy kvůli chybějící dokumentaci proto výrazně zvýšena. Knihovna EthernetIP také neobsahuje žádné licenční informace, oproti tomu knihovna Incore je vydána pod licencí MIT.
+
+Nejlépe opět vyšla knihovna od firmy Rossmann Engineering. Knihovna EEIP jako jediná obsahuje kvalitní dokumentaci s ukázkami použití knihovny. Zároveň je vydána pod licencí MIT, díky které ji lze použít v komerčním prostředí. Proto jsem tuto knihovnu vyhodnotil jako nejvhodnější k použití v testovací knihovně.
+
+\begin{table}[p!]\centering
     \resizebox{\textwidth}{!}{
         \begin{tabular}{|C{3cm}|C{3cm}|C{1.8cm}|C{1.8cm}|C{2.3cm}|C{4cm}|}\hline
             Název & Autor & Hodnocení aktivity & Náročnost využití & Hodnocení dokumentace &  Dostupné na adrese \\\hline 
@@ -320,13 +327,7 @@ Jako nejvhodnější knihovnu jsem avšak vyhodnotil knihovnu EasyModbusTCP. Tat
     \label{tab:modbus}
 \end{table}
 
-\subsubsection{EtherNet/IP}
-
-Dostupných knihoven pro protokol EtherNet/IP je méně, než pro protokol ModbusTCP. Výhodou opět je, že všechny knihovny jsou koncipovány jako NuGet balíčky. Knihovny EthernetIP a Incore bohužel neobsahují žádnou dokumentaci a obě obdrželi poslední aktualizaci v roce 2018. Náročnost využití je tedy kvůli chybějící dokumentaci proto výrazně zvýšena. Knihovna EthernetIP také neobsahuje žádné licenční informace, oproti tomu knihovna Incore je vydána pod licencí MIT.
-
-Nejlépe opět vyšla knihovna od firmy Rossmann Engineering. Knihovna EEIP jako jediná obsahuje kvalitní dokumentaci s ukázkami použití knihovny. Zároveň je vydána pod licencí MIT, díky které ji lze použít v komerčním prostředí. Proto jsem tuto knihovnu vyhodnotil jako nejvhodnější k použití v testovací knihovně.
-
-\begin{table}[htbp]\centering
+\begin{table}[p!]\centering
     \resizebox{\textwidth}{!}{
         \begin{tabular}{|C{3cm}|C{3cm}|C{2.1cm}|C{1.8cm}|C{2.3cm}|C{4.7cm}|}\hline
             Název & Autor & Hodnocení aktivity & Náročnost využití & Hodnocení dokumentace &  Dostupné na adrese \\\hline 
