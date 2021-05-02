@@ -60,7 +60,9 @@
         "*.synctex.gz",
         "*.nav",
         "*.lol",
-        "*.xdv"
+        "*.xdv",
+        "*.bcf",
+        "*.run.xml"
     ],
     "latex-workshop.latex.recipes": [
         {
@@ -97,7 +99,7 @@
             ]
         }
     ],
-    "latex-workshop.latex.recipe.default": "latexmk 🔃",
+    "latex-workshop.latex.recipe.default": "arara",
     "spellright.ignoreRegExps": [
         "/\\\\thm@[a-z]+/g",
         "/\\\\@[a-z]+/g",
@@ -105,7 +107,10 @@
     ],
     "spellright.ignoreRegExpsByClass": {
         "latex" : [ 
-            "/\\\\@ifpackagelater{.+}/g"
+            "/\\\\@ifpackagelater{.+}/g",
+            "/\\\\begin{minted}[^]*?\\\\end{minted}/gm",
+            "/\\\\begin{cminted}[^]*?\\\\end{cminted}/gm",
+            "/\\\\begin{tabular}[^]*?\\\\end{tabular}/gm"
         ]
     },
     "spellright.notificationClass": "warning"

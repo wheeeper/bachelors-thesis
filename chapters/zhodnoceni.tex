@@ -1,0 +1,85 @@
+\chapter{Vyhodnocení vytvořeného řešení}\label{chap:evaluation}
+
+V této kapitole se věnuji zhodnocení vytvořeného řešení a jeho přínosu. \\
+
+
+\section{Bližší kontext}
+Vytvořená testovací knihovna míří na automatizaci testů verifikace průmyslové komunikace. Tato automatizace je následně využita při procesech kontinuální integrace a kontinuálního testování. 
+
+Tyto procesy přináší do vývoje softwaru několik výhod. Ze studie, která zkoumala dva porovnatelné projekty, kdy jeden z projektů používal kontinuální integraci a kontinuální testování oproti druhému projektu, víme, že za pomoci těchto procesů byl projekt s pomocí těchto procesů schopen odhalit mnohem více chyb před vydáním softwaru oproti druhému projektu. Zároveň projekt bez zmíněných procesů potřeboval na odstranění chyb více času oproti druhému projektu. \cite{ci_study}
+
+Toto je ještě více podstatné v kontextu testovaného produktu. Na industriální zařízení jsou kladeny mnohem větší požadavky na stabilitu a spolehlivost. Odhalení chyby při ostrém provozu může vést k ekonomické škodě zákazníka, ať už je to v lepším případě ztrátou zisku a nebo v horším případě materiální škodou.
+
+Důležité je avšak také implementace těchto procesů. Logickým cílem každé firmy je implementovat tyto procesy za co nejméně peněz a námahy. Přesně na tyto aspekty míří vytvořená testovací knihovna. 
+
+
+\section{Přínos vytvořeného řešení}
+
+Automatizované testy verifikace průmyslové komunikace vyžadují určitý počet komunikujících zařízení, které následně komunikují s testovaným produktem. Počet a typ zařízení se následně může měnit v závislosti na jednotlivých testovacích případech.  
+
+To ale vytváří vysoké hardwarové nároky na testování. Tedy k tomu, aby bylo možné automatizovaně testovat, je potřeba vytvářet sestavy zařízení, na kterých je následně testováno. Počet potřebných zařízení se dá teoreticky snížit v případě, že budou jednotlivé sestavy pravidelně přestavovány. Přestavování ale vytváří na zařízeních opotřebení a zároveň mohou během přestavování vzniknout chyby. Přestavováním sestav by testování také už nebylo plně automatizované. Proto je pro firmu výhodnější vytvořit více sestav v různých konfiguracích.
+
+Nákup zařízení, které se podílí na testovaní vyvíjeného projektu, je nemalou položkou v rozpočtu projektu. S využitím testovací knihovny ale můžeme tyto náklady v budoucnu snížit. Možnou úsporu zařízení si můžeme ukázat na jedné z investic do projektu. Seznam nakoupených zařízení můžeme vidět v tabulce \ref{tab:device_list}. Seznam zařízení dobře reprezentuje významné výrobce používající průmyslové protokoly ModbusTCP a EtherNet/IP.
+
+Současně je také potřeba zakoupit licence na software, který je potřebný k ovládání těchto zařízení. Seznam licencí potřebných k ovládaní zařízení v tabulce \ref{tab:device_list} můžeme vidět v tabulce \ref{tab:device_licenses}. Všechny ceny zařízení a licencí jsou vzaty z volně dostupných nabídek. Jednotlivé zdroje lze nalézt v příloze \ref{chap:price_list}.
+
+Využitím testovací knihovny a prostřednictvím testovacího partnera je ale možné tyto zařízení simulovat. Simulací těchto zařízení můžeme náklady na testování výrazně snížit. Cílem knihovny ale není použití fyzických zařízení úplně odstranit. Stále budou existovat případy, kdy tyto zařízení budou stále potřeba. 
+
+Jak ale můžeme v tabulkách \ref{tab:device_list} a \ref{tab:device_licenses} vidět, spousta věcí je potřeba ve větším množství. Pokud za pomoci testovací knihovny snížíme počet zařízení tak, že odstraníme potřebu duplicitních zařízení, můžeme v rozpočtu projektu ušetřit až \koruna{252767}. Tím také snižujeme nároky na licence, jelikož méně zařízení vyžaduje méně lidí, které je současně konfigurují. Pokud budeme předpokládat, že počet potřebných licencí se taktéž stejně sníží, tak poté se v rozpočtu projektu může ušetřit až \koruna{130034,64}.
+Je ale potřeba také vzít potaz další součásti, které jsou potřeba k zprovoznění těchto zařízení. Využitím méně zařízení můžeme zároveň ušetřit na ostatních materiálech, jako jsou ethernetové kabely atd. Jednotlivá zařízení můžou zároveň selhat, což poté vyžaduje jejich opětovnou koupi.
+
+\section{Výhody vytvořeného řešení}
+Při vytváření jednotlivých sestav je potřeba vzít i v potaz čas, který je třeba k stavbám, modifikacím a údržbě sestav a zařízení v nich. Toto se stává ještě obtížnější v době pandemie, kdy většina práce je prováděna z domova. Díky modulárnosti testovací knihovny lze jednoduše měnit jednotlivé konfigurace zařízení a tím snížit čas potřebný k správám jednotlivých systémů. 
+
+Využitím testovací knihovny také místo hardwarových problémů vznikají problémy softwarové, které se dají lépe podchytit a efektivněji řešit. Zároveň použitím knihovny odstraňujeme limity jednotlivých zařízení, které jsou jinak udávány jejich výrobcem.
+
+Velkou výhodou je též univerzálnost knihovny. Všechna zařízení v tabulce \ref{tab:device_list} využívají průmyslové protokoly ModbusTCP nebo EtherNet/IP, ale nic nebrání využití testovací knihovny s jinými průmyslovými protokoly. Díky tomu může být testovací knihovna využita i v ostatních projektech. 
+
+\section{Nevýhody vytvořeného řešení}
+Nevýhodou vytvořeného řešení je jeho vysoká závislost na jednotlivých implementacích zařízení, respektive jednotlivých implementacích testovacích partnerů. Tyto testovací partnery je zapotřebí vyvinout, což znamená další časovou zátěž. Od těchto implementacích se také bude odvíjet celková kvalita testovací knihovny a limity jejího možného použití.
+
+Čas vývoje je ale možné zkrátit, například využitím open-source knihoven pro jednotlivé průmyslové protokoly. Kvalita zařízení se dá též udržet jejich testováním a používáním nejnovějších verzí použitých open-source knihoven. Zároveň by produkt a testovací partner neměl být vyvíjen jedním člověkem.
+
+
+\section{Shrnutí}
+Testovací knihovna má vysoký potenciál výrazně snížit výdaje projektu na testovaní produktu. 
+Výše úspor se avšak bude odvíjet od výše implementace jednotlivých testovacích partnerů a využití testovací knihovny.
+
+Uvedená ukázka možných úspor poukazuje pouze na jednu investici do projektu a má demonstrativní charakteristiku. Výše reálných úspor se může například zvýšit využitím testovací knihovny na více projektech. Zároveň se úspora může snížit tím, že firma Siemens,~s.\,{}r.\,{}o. je schopna získat lepší ceny na jednotlivé produkty díky svému postavení.
+
+
+\begin{table}[htbp]
+    \centering
+    \resizebox{\textwidth}{!}{
+    \begin{tabular}{|C{3cm}|C{3,5cm}|C{1.8cm}|C{2.3cm}|C{2.3cm}|}\hline
+        \textbf{Výrobce} & \textbf{Model} & \textbf{Množství} & \textbf{Cena za kus bez DPH} & \textbf{Celková cena bez DPH} \\\hline
+        Beckhoff & CX2030-0125 & 2 & \koruna{66650.44} & \koruna{133300.88} \\\hline
+        Beckhoff & CX2100-0004 & 2 & \koruna{8663.21} & \koruna{17326.42} \\\hline
+        Schneider Electric & BMXP342020 340-20 & 1 & \koruna{30536.8} & \koruna{30536.80}  \\\hline
+        Schneider Electric & BMXCPS2000 & 1 & \koruna{5220.27} & \koruna{5220.27}  \\\hline
+        Schneider Electric & BMXXBP0400 & 1 & \koruna{3493.03} & \koruna{3493.03}  \\\hline
+        Schneider Electric & M251MESC & 2 & \koruna{8192.46} & \koruna{16384.92}  \\\hline
+        Schneider Electric & TM262L20MESE8T & 1 & \koruna{36636.86}  & \koruna{36636.86}  \\\hline
+        Rockwell Automation & 1769-L24ER-QB1B & 2 & \koruna{38526.54} & \koruna{77053.08} \\\hline
+        Rockwell Automation & 1783-BMS20CGN & 2 & \koruna{64480.27} & \koruna{128960.54} \\ \hline
+    \end{tabular}
+    }
+    \caption{Seznam nakoupených zařízení do projektu}
+    \label{tab:device_list}
+\end{table}
+
+
+\begin{table}[htbp]
+    \centering
+    \resizebox{\textwidth}{!}{
+    \begin{tabular}{|C{4.5cm}|C{1.8cm}|C{2.7cm}|C{2.7cm}|}\hline
+        \textbf{Produkt} & \textbf{Množství} & \textbf{Cena za kus bez DPH} & \textbf{Celková cena bez DPH} \\\hline
+        Schneider Electric Machine Expert & 2 & \koruna{23987.18} & \koruna{47974.36}  \\\hline
+        Schneider Electric SO Machine & 2 & \koruna{26907.28} & \koruna{53814.56}  \\\hline
+        Rockwell Automation Studio 5000 & 2 & \koruna{79140.18} & \koruna{158280.36}  \\\hline
+        Schneider Electric Unity Pro & 1 & \koruna{102299.92} & \koruna{102299.92}  \\\hline
+    \end{tabular}
+    }
+    \caption{Tabulka licencí potřebných k ovládání nakoupených zařízení}
+    \label{tab:device_licenses}
+\end{table}

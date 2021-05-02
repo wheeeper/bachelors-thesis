@@ -1,24 +1,53 @@
 % arara: xelatex: { shell : yes }
+% arara: biber
 % arara: xelatex: { shell : yes }
 % arara: xelatex: { shell : yes }
 
 % options:
 % thesis=B bachelor's thesis
 % thesis=M master's thesis
-% czech thesis in Czech language
-% slovak thesis in Slovak language
-% english thesis in English language
-% hidelinks remove colour boxes around hyperlinks
+% Czech thesis in Czech language
+% Slovak thesis in Slovak language
+% English thesis in English language
+% hide links remove color boxes around hyperlinks
 
 \documentclass[thesis=B,czech]{template/FITthesis}[2019/12/23]
 
 \usepackage[utf8]{inputenc} % LaTeX source encoded as UTF-8
-\usepackage{dirtree} %directory tree visualisation
+\usepackage{dirtree} %directory tree visualization
 
 \usepackage{lipsum}
 \usepackage{xevlna}
 \usepackage{pdfpages}
+\usepackage{minted}
+\usemintedstyle{friendly}
 
+
+\usepackage{chngcntr}
+\counterwithin{listing}{chapter}
+
+\usepackage[htt]{hyphenat}
+\usepackage{caption}
+
+\usepackage[style=iso-numeric]{biblatex}
+\addbibresource{ref.bib}
+
+\usepackage{float}
+
+\usepackage{siunitx}
+\sisetup{
+    output-decimal-marker={,}% just uncomment if you want to use comma as the decimal marker!
+}
+
+\def\UrlBreaks{\do\/\do\-\do\_}
+
+\usepackage{xpatch,letltxmacro}
+\LetLtxMacro{\cminted}{\minted}
+\let\endcminted\endminted
+\xpretocmd{\cminted}{\RecustomVerbatimEnvironment{Verbatim}{BVerbatim}{}}{}{}
+
+
+\input{macros/custom_macros.tex}
 
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
 % ODTUD DAL VSE ZMENTE
@@ -29,27 +58,32 @@
 \authorGN{Martin} %(křestní) jméno (jména) autora
 \authorFN{Štěpánek} %příjmení autora
 \authorWithDegrees{Martin Štěpánek} %jméno autora včetně současných akademických titulů
-\author{\authorWithDegrees} %jméno autora bez akademických titulů
+\author{Martin Štěpánek} %jméno autora bez akademických titulů
 \supervisor{Ing.\,{}Miroslav Dušek}
 \acknowledgements{Doplňte, máte-li komu a za co děkovat. V~opačném případě úplně odstraňte tento příkaz.}
-\abstractCS{V~několika větách shrňte obsah a přínos této práce v~češtině. Po přečtení abstraktu by se čtenář měl mít čtenář dost informací pro rozhodnutí, zda chce Vaši práci číst.}
-\abstractEN{Sem doplňte ekvivalent abstraktu Vaší práce v~angličtině.}
+
+\abstractCS{Tato bakalářská práce se zabývá návrhem a implementací knihovny pro automatizaci testů verifikace průmyslové komunikace. Vytvořená knihovna funguje jako doplněk do testovacího frameworku MSTest, za pomocí nehož je knihovna následně propojena se serverem Azure DevOps. Ten následně může jednotlivé testy registrovat a automaticky spouštět. Práce také ukazuje open-source knihovny pro průmyslové protokoly ModbusTCP a EtherNet/IP, které jsou vhodné k využití současně s testovací knihovnou, a za pomocí jedné z těchto knihoven následně demonstruje funčknost vytvořeného řešení. Na závěr práce zhodnocuje vytvořené řešení a jeho přínos.} 
+
+
+\abstractEN{This bachelor's thesis is focused on design and implementation of test automation library for verification of industry fieldbus communication. This library works as add-in to testing framework MSTest, which enables connection with Azure DevOps. Azure DevOps then can register each of the tests and automatically execute them. This thesis also shows open-source libraries for fieldbuses ModbusTCP and EtherNet/IP, which are suitable for use together with the created test library. Thesis also demonstrates the funcionality of the created test library, with the help of one of the open-source library for fieldbus. Lastly the thesis evalutes the created solution and its contribution.}
+
 \placeForDeclarationOfAuthenticity{V~Praze}
-\declarationOfAuthenticityOption{4} %volba Prohlášení (číslo 1-6)
-\keywordsCS{Nahraďte seznamem klíčových slov v češtině oddělených čárkou.}
-\keywordsEN{Nahraďte seznamem klíčových slov v angličtině oddělených čárkou.}
+\declarationOfAuthenticityOption{1} %volba Prohlášení (číslo 1-6)
+\keywordsCS{softwarové testování, automatizace testů, testovací knihovna, verifikace průmyslové komunikace, MSTest, ModbusTCP, EtherNet/IP}
+\keywordsEN{software testing, test automation, test library, verification of fieldbus communication, MSTest, ModbusTCP, EtherNet/IP}
 % \website{http://site.example/thesis} %volitelná URL práce, objeví se v tiráži - úplně odstraňte, nemáte-li URL práce
 
 \begin{document}
 
 \input{text.tex}
 
-\bibliographystyle{template/csn690}
-\bibliography{mybibliographyfile}
+{
+    \setlength{\emergencystretch}{3em} 
+    \printbibliography
+}
 
 \appendix
-\input{assets/appendix/abbreviations.tex}
 
-\input{assets/appendix/medium.tex}
+\input{assets/appendix/appendix.tex}
 
 \end{document}

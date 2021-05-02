@@ -16,7 +16,7 @@ jobs:
 
       - name: Set up Enviroment
         run: |
-          sudo apt install texlive texlive-xetex texlive-extra-utils texlive-lang-czechslovak texlive-bibtex-extra
+          sudo apt install texlive texlive-xetex texlive-extra-utils texlive-lang-czechslovak texlive-bibtex-extra texlive-science
           sudo apt install biber
 
           sudo timedatectl set-timezone Europe/Prague
