@@ -1,11 +1,11 @@
 \chapter{Implementace}\label{chap:implementation}
 
-Tato kapitola se věnuje implementaci všech navrhnutých komponent, které umožnují automatizaci testování.
+V této kapitole se věnuji implementaci všech navrhnutých komponent, které umožnují automatizaci testování.
 
 \section{Zpráva}
 Strukturu jedné zprávy zajišťuje třída \inlinecode{Message}. Digram této třídy můžeme vidět na obrázku \ref{fig:message_class}. Třída \inlinecode{Message} je implementována v jazyce \csharp{} a \cpp{}.
 
-Dle návrhu instance této třídy obsahuje typ zprávy a data zprávy, pokud zpráva nějaké obsahuje. Typ zprávy je určen enumerátorem \inlinecode{MessageType}. Tento výčtový typ obsahuje jednotlivé typy zpráv, definované v sekci \ref{sec:communication}. Zároveň tyto typy rozšiřuje o hodnotu \inlinecode{MSG\_EXCEPTION}, která značí neplatnou zprávu.
+Dle návrhu instance této třídy obsahuje typ zprávy a data zprávy, pokud zpráva nějaké data obsahuje. Typ zprávy je určen enumerátorem \inlinecode{MessageType}. Tento výčtový typ obsahuje jednotlivé typy zpráv, definované v sekci \ref{sec:communication}. Zároveň tyto typy rozšiřuje o hodnotu \inlinecode{MSG\_EXCEPTION}, která značí neplatnou zprávu.
 
 Při odesílání a přijímání zpráv skrz protokol TCP/IP je podstatné, aby se instance třídy dala převádět na bajtové pole a obráceně. Třída \inlinecode{Message} proto obsahuje dvě metody, které tyto převody zajišťují. Tyto metody jsou:
 
@@ -14,17 +14,17 @@ Při odesílání a přijímání zpráv skrz protokol TCP/IP je podstatné, aby
     \item \inlinecode{GetMessageFromStream} -- Statická metoda, které v argumentu obdrží bajtové pole a vrátí instanci třídy \inlinecode{Message}.
 \end{itemize}
 
-Následná komunikace skrz protokol TCP/IP je implementována v závislosti na zařízení, za pomocí těchto metod. Jejich implementace má minimální odlišnosti, které jsou primárně zapříčiněny rozdíly těchto dvou jazyků.
-
-\section{Testovací služba}
-Testovací služba je v implementaci rozdělena na dvě hlavní třídy. Třída \inlinecode{TestService} obstarává jednotlivé úkony služby, následně třída \inlinecode{ServiceRunner} propojuje třídu \inlinecode{TestService} s ostatními komponentami, které jsou potřebné pro testování. Tyto třídy můžeme vidět znázorněné na obrázku \ref{fig:test_service}.
+Následná komunikace skrz protokol TCP/IP je implementována v závislosti na zařízení, za pomocí těchto metod. Jednotlivé implementace třídy \inlinecode{Message} mají minimální rozdíly, které jsou primárně kvůli odlišnostem jazyků \csharp{} a \cpp{}.
 
 \begin{figure}[H]
     \centering 
-    \includegraphics[width=0.85\textwidth]{assets/img/class_diagram/message.pdf}
+    \includegraphics[width=\textwidth]{assets/img/class_diagram/message.pdf}
     \caption{Diagram třídy Message}
     \label{fig:message_class}
 \end{figure}
+
+\section{Testovací služba}
+Testovací služba je v implementaci rozdělena na dvě hlavní třídy. Třída \inlinecode{TestService} obstarává jednotlivé úkony služby, následně třída \inlinecode{ServiceRunner} propojuje třídu \inlinecode{TestService} s ostatními komponentami, které jsou potřebné pro testování. Tyto třídy můžeme vidět znázorněné na obrázku \ref{fig:test_service}.
 
 \begin{figure}[H]
     \centering 
@@ -143,16 +143,16 @@ Nejpodstatnější operací je spuštění jednotlivých testů. O toto se star�
     \item \inlinecode{int timeout} -- Maximální délka, po kterou služba očekává odpověď od účastníků testu. 
 \end{itemize}
 
-Metoda odesílá všem účastníkům testování direktivu k započnutí jednotlivých fází testu. Následně poté čeká na odpověď od všech účastníků testu. Doba čekání je určena argumentem \inlinecode{timeout}. Tento čas je vázaný na jednotlivá stádia testování. Tedy pokud metoda má časový limit 30 sekund, tak poté bude po každém stádiu testování čekat 30 sekund na odpověď od účastníků testu, za pomoci metody \inlinecode{CheckParticipantsResponse}.
+Metoda odesílá všem účastníkům testování direktivu k započnutí jednotlivých fází testu. Následně poté čeká na odpověď od všech účastníků testu. Doba čekání je určena argumentem \inlinecode{timeout}. Tento čas je vázaný na jednotlivá stádia testování. Tedy pokud metoda má časový limit 30 sekund, tak poté bude po každém odeslání direktivy k započnutí fáze testu čekat na odpověď maximálně těchto stanovených 30 sekund. Tento časový limit je realizován za pomoci metody \inlinecode{CheckParticipantsResponse}.
 
-Metoda během běhu vyhodnocuje, zda se účastníka testování nedostal do chybové stavu. Na základě toho poté spouští jednotlivé fáze. Po skončení testu metoda vrací jednotu z hodnot enumerátoru \inlinecode{LibState}. 
+Metoda během běhu vyhodnocuje, zda se účastníka testování nedostal do chybové stavu. Na základě toho poté spouští jednotlivé fáze. Po skončení testu metoda vrací jednu z hodnot enumerátoru \inlinecode{LibState}. 
 
 \subsubsection{Ukončení testování}
 
 Po dokončení celého testovacího běhu je zavolána metoda \inlinecode{Stop()}. Tato metoda odešle všem stále připojeným účastníkům direktivu k ukončení testování a ukončí spojení. Služba se snaží v případě chyby ukončit co nejvíce zařízení skrz stanovený protokol.
 
 \subsubsection{Pomocné třídy}
-Třída \inlinecode{TestService} využívá dvě pomocné třídy při svém běhu, jejichž diagram můžeme vidět na obrázku \ref{fig:utility}. První třídou je třída \inlinecode{Logger}. Tato třída realizuje zapisování protokolu během běhu. Tato třída je obsažena taktéž ve třídě \inlinecode{GlobalVar}, která simuluje globální proměnnou. Inicializace instance třídy \inlinecode{Logger} lze provést odkudkoliv, avšak stejně jako u konfigurace pouze jen jednou. Třída \inlinecode{GlobalVar} obsahuje vlastnost \inlinecode{isLogEnabled}, která obsahuje informaci o tom, zdali je zapisování inicializováno. 
+Třída \inlinecode{TestService} využívá dvě pomocné třídy při svém běhu, jejichž diagram můžeme vidět na obrázku \ref{fig:utility}. První třídou je třída \inlinecode{Logger}. Tato třída realizuje zapisování protokolu během běhu. Třída je obsažena taktéž ve třídě \inlinecode{GlobalVar}, která simuluje globální proměnnou. Inicializace instance třídy \inlinecode{Logger} lze provést odkudkoliv, avšak stejně jako u konfigurace pouze jen jednou. Třída \inlinecode{GlobalVar} obsahuje vlastnost \inlinecode{isLogEnabled}, která obsahuje informaci o tom, zdali je zapisování inicializováno. 
 
 Třída \inlinecode{TestService} obsahuje ve svých metodách kontrolu, zdali je instance třídy \inlinecode{Logger} inicializována a v případě kladného vyhodnocení zapisuje průběh svého běhu. Instance třídy \inlinecode{Logger} by teda měla být vytvořena ještě před započnutím běhu služby.
 
@@ -230,7 +230,7 @@ Implementace testovacího partnera přímo kopíruje navrhnuté rozhraní pro te
     Argumentem konstruktoru je funkce, která obsahuje seznam testů. Funkce v argumentu dostane číselnou reprezentaci testu a vrací instanci testu, který je odvozený z rozhraní testu.
 \end{itemize}
 
-Třída následně vytvoří instanci implementovaného rozhraní pro zařízení (třída \inlinecode{PartnerDevice}), které přijme v konstruktoru vybraný způsob reprezentace testů. Následně toto rozhraní předá instanci třídy \inlinecode{TestRunner} a po zavolání metody \inlinecode{Start} spustí \inlinecode{TestRunner} na vlastním vlákně.
+Třída následně vytvoří instanci implementovaného rozhraní pro zařízení (třída \inlinecode{PartnerDevice}), který přijme v konstruktoru vybraný způsob reprezentace testů. Instanci rozhraní následně předá instanci třídy \inlinecode{TestRunner} a po zavolání metody \inlinecode{Start} spustí instanci třídy \inlinecode{TestRunner} na vlastním vlákně.
 
 Třída také obsahuje metodu \inlinecode{Stop}, která po zavolání kontroluje ukončení testovacího partnera v daném časovém limitu. Po vypršení časového limitu funkce ukončuje vlákno, na kterém instance třídy \inlinecode{TestRunner} běží.
 
@@ -266,15 +266,14 @@ Jak jsem již zmínil v sekci \ref{sec:reg_test_design}, framework MSTest pro id
 
 Framework MSTest následně používá tyto metody, které jsou identifikovány těmito a dalšími atributy. Při kompilaci jazyk \csharp{} vytváří jednotlivé celky kompilovaného kódu, které poté spojuje do logického celku. Tyto jednotlivé celky se nazývají \textit{assembly}. \cite{assembly}
 
-Testovací knihovna a použití frameworku MSTest tvoří samostatné celky -- \textit{assemblies}. MSTest framework používá správně definované funkce pouze ze své assembly. 
-
+Implementace testovací knihovny a uživatelské použití knihovny, a tedy i testovacího frameworku MSTest, tvoří samostatné logické celky. Framework MSTest následně detekuje správně definované funkce pouze z toho logického celku, ze kterého je spouštěn.
 
 \subsection{Spuštění a ukončení služby}
 
 Při spuštění jednotlivých testů je nutné brát v potaz, že testovací služba neví jaké testy budou kdy spuštěny. Testovací služba se tedy musí používat nezávisle na všech testech. K tomuto využijeme dvě funkce frameworku MSTest -- \inlinecode{AssemblyInitialize} a \inlinecode{AssemblyCleanup}. Tyto dvě funkce jsou spuštěny ještě před započnutím a po skončení testovaní. V třídě \inlinecode{API} jejím implementacím odpovídají metody \inlinecode{AssemblyInit} a \inlinecode{AssemblyCleanup}. Metoda \inlinecode{AssemblyInit} přijímá dva argumenty:
 
 \begin{itemize}
-    \item \inlinecode{Assembly assembly} -- odkaz na runtime blok, který reprezentuje spuštěný blok programu mimo knihovnu
+    \item \inlinecode{Assembly assembly} -- odkaz na runtime blok, který odkazuje na uživatelskou část použití testovací knihovny
     \item \inlinecode{int InitTimeout} -- časový limit na inicializační fázi služby (tedy časový limit, který je využíván v metodě \inlinecode{TestService.Init}), pokud je ponechán prázdný, je použit defaultní časový limit z třídy \inlinecode{ServiceRunner}.
 \end{itemize}
 
@@ -284,7 +283,7 @@ Metoda \inlinecode{AssemblyCleanup} symetricky ukončuje běh testovací služby
 
 Aby mohl MSTest rozeznat tyto funkce, je potřeba je definovat ve stejné assembly, která spouští tento framework. Toto vytváří problém u automatizace vytvoření propojení s testovací knihovnou. Pokud v testovací knihovně definujeme metody, které budou obsahovat atributy \inlinecode{AssemblyInitialize} a \inlinecode{AssemblyCleanup}, tak testovací framework  MSTest tyto metody nevidí a tím pádem je nepoužije. Proto je potřeba vytvořit dvě funkce, které budou obalovat metody \inlinecode{AssemblyInit} a \inlinecode{AssemblyCleanup}, ve stejné assembly, jako ve které běží framework MSTest.
 
-Toto zpravuje třída \inlinecode{TestLibInit}. Tato statická třída pouze zaobaluje tyto dvě metody svými metodami a přidává k nim potřebné atributy. Tato třída není součásti assembly testovací knihovny. V kontextu knihovny je to pouze textový soubor. Proces propojení této třídy s testovacím projektem, ve kterém poběží framework MSTest, je popsán v sekci \ref{sec:distrbution}.
+Toto zpravuje třída \inlinecode{TestLibInit}. Tato statická třída pouze zaobaluje tyto dvě metody svými metodami a přidává k nim potřebné atributy. Tato třída není součásti assembly testovací knihovny. V kontextu samotné knihovny je to pouze textový soubor. Proces propojení této třídy s testovacím projektem, ve kterém poběží framework MSTest, je popsán v sekci \ref{sec:distrbution}.
 
 \subsection{Registrování testů}\label{sec:reg_test_impl}
 

@@ -183,7 +183,7 @@ class TestModdReadData : ITestCase
 
 
 \section{Propojení s Azure DevOps serverem}
-Propojení s Azure DevOps serverem funguje v závislosti na kooperaci několika služba tohoto serveru. Jejich propojení je možné vytvořit díky tomu, že všechny části jsou uloženy v Azure Repos. 
+Propojení s Azure DevOps serverem funguje v závislosti na kooperaci několika služeb tohoto serveru. Jejich propojení je možné vytvořit díky tomu, že všechny části jsou uloženy v Azure Repos. 
 
 \subsection{Příprava}
 K tomu aby server Azure DevOps mohl samostatně spouštět testy, tak je potřeba vytvořit v Azure Pipelines seznam pravidel, který zkompiluje testovací projekt, neboli tzv. \uv{pipeline}. Tato pipeline je nastavena tak, aby na začátku stáhnula z Azure Repos testovací projekt. Tento seznam pravidel obsahuje tyto pravidla:
@@ -196,7 +196,10 @@ K tomu aby server Azure DevOps mohl samostatně spouštět testy, tak je potřeb
 
 Bližší přiblížení si zaslouží nahrání artefaktů kompilace. Za artefakty se v tomto případě považují výstupní soubory kompilace. Tedy kompilace je provedena do pracovní složky, která je následně nahrána pro další použití. 
 
-Následně vytvořím tzv. \uv{Release pipeline}. Ta využije artefakty, vytvořené v předchozí fázi. Do nově vytvořené pipeline přidám fázi, ve které spustíme testování. Fáze je také nastavena, aby se spouštěla na správném zařízení. Do této fáze je též potřeba přidat pravidlo, které spustí testované zařízení, na kterém poběží testovací knihovna. 
+Následně vytvořím tzv. \uv{Release pipeline}. Ta využije artefakty, vytvořené v předchozí fázi.
+Zároveň využije artefakty, které vznikli z kompilace zdrojového kódu testovaného zařízení. Tato kompilace je prováděna automaticky po nahrání jakékoliv změny kódu.
+
+Do nově vytvořené pipeline přidám fázi, ve které spustíme testování. Fáze je nastavena tak, aby se spouštěla na správném zařízení, které obsahuje potřebné propojení s dalším hardwarem, potřebným k spuštění testovaného zařízení. Do této fáze je též potřeba přidat pravidlo, které před spuštěním testování nahraje aktuální verzi zdrojového kódu na testované zařízení a zároveň ho spustí. Následně je spuštěno samotné testování.
 
 Po tomto všem následně vytvořím testovací plán. Do nastavení testovacího plánu přidám již vytvořené pipeline. Do tohoto plánu následně budou přidány všechny testy. 
 
@@ -206,7 +209,7 @@ Vytvořené testy skrz framework MSTest lze registrovat v Azure Test Plans. Nejd
 Po vytvoření testovacího případu je potřeba vytvořit asociaci mezi testovacím případem na serveru Azure DevOps a testem v testovacím projektu. To lze udělat za pomocí IDE Visual Studio. Po vytvoření připojení mezi Azure DevOps serverem a IDE Visual Studio lze z průzkumníku testů vytvořit asociaci mezi testovacím případem a testovací metodou. Pravým kliknutím na test vyberu \uv{Přidružit k testovacímu případu} a do otevřeného okna následně vložím identifikátor testovacího případu a potvrdím přidružení. Testovací případ je následně nastaven do stavu \uv{Automatizovaný}.
 
 \subsection{Spuštění testů}
-Po všech předchozích konfiguracích je následně možné spouštět testovací plán a s tím všechny testy. Způsob spuštění testů je pak již pouze na nastavení a plánu. Testy lze například spustit:
+Po všech předchozích konfiguracích je následně možné spouštět registrované testy a následně testovací plán, který se skládá z registrovaných testů. Způsob spuštění testů je pak již pouze na nastavení. Testy lze například spustit:
 
 \begin{itemize}
     \item manuálně

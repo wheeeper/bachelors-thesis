@@ -139,7 +139,7 @@ Testovací služba po obdržení direktivy k ukončení služby odesílá všem 
 
 
 \section{Rozhraní pro testování}
-Důležitou součástí knihovny budou rozhraní, které umožní implementaci propojení s testovací službou a tím samotné testování. Knihovna bude obsahovat dvě důležitá rozhraní. 
+Důležitou součástí knihovny budou rozhraní, která umožní implementaci propojení s testovací službou a vytváření jednotlivých testů. Knihovna bude obsahovat dvě důležitá rozhraní. 
 
 \subsection{Rozhraní testu}
 Jak jsem již popsal v sekci \ref{sec:test_run}, jednotlivé testy budou mít tři fáze testování:
@@ -147,7 +147,7 @@ Jak jsem již popsal v sekci \ref{sec:test_run}, jednotlivé testy budou mít t�
 \begin{enumerate}
     \item Příprava na testování -- definování potřebných struktur, inicializace
     \item Testování -- provedení samotného testu
-    \item Úklid po testu -- uvolnění využitých zdrojů
+    \item Úklid po testu -- uvolnění využitých zdrojů a uvedení zařízení do původního stavu
 \end{enumerate}
 
 Testovací knihovna tedy bude definovat rozhraní, které bude vyžadovat, aby tyto tři fáze testu byli pro každý test definované. Návrh rozhraní můžeme vidět na výpisu \ref{listing:test_if}. Na tomto výpisu můžeme vidět, že každé fázi odpovídá jedna metoda. Tyto metody následně vrací jednoduchou informaci o úspěchu/neúspěchu. To znamená, že vyhodnocení jednotlivých fází bude na jednotlivých testerech a jejich implementaci. Jednotlivé komponenty knihovny pouze obdrží informaci o výsledku fáze.
@@ -227,9 +227,9 @@ Průběh testovacího běhu testovaného zařízení lze vidět na diagramu akti
 
 
 \section{Testovací partner}
-Testovací partner je speciálním druhem účastníka. Toto zařízení bude spouštěno ze stejného zařízení, jako testovací služba. Zařízení bude fungovat primárně na stejném principu, jako testovaná zařízení. Tedy, zařízení bude mít implementované rozhraní pro testované zařízení, které bude ovládáno komponentou \inlinecode{TestRunner}. 
+Testovací partner je speciálním druhem účastníka. Toto zařízení bude spouštěno ze stejného zařízení, jako testovací služba. Zařízení bude fungovat primárně na stejném principu, jako testovaná zařízení. Tedy, zařízení bude mít implementované rozhraní pro testované zařízení, které bude ovládáno komponentou \inlinecode{TestRunner}. Testovací partner ale bude také podporovat použití jakéhokoliv rozhraní pro testované zařízení. 
 
-Změnou je způsob ovládání této komponenty. Komponenta bude zaobalena vlastní třídou, která tuto komponentu bude spouštět na vlastním vlákně. Toto bude umožňovat nezávislý běh zařízení. Rozdílem také bude způsob definování testů. Testovací partner bude podporovat dva typy způsobů jak definovat testy. První způsobem bude za pomocí předání jedné instance testu. Jelikož testovací partner je vázán na jednotlivé testy, je tento přístup nejjednodušší. Dalším způsobem bude předání funkce, která bude vracet instance testů na základě číselného identifikátoru. Tento způsob je totožný jako u testovaných zařízení a v určitých případech může usnadnit správu těchto zařízení. 
+Změnou je způsob ovládání této komponenty. Komponenta bude zaobalena vlastní třídou, která tuto komponentu bude spouštět na vlastním vlákně. Toto bude umožňovat nezávislý běh zařízení. Rozdílem také bude způsob registrování testů. Testovací partner bude podporovat dva typy způsobů jak registrovat testy. První způsobem bude za pomocí předání jedné instance testu. Jelikož testovací partner je vázán na jednotlivé testy, je tento přístup nejjednodušší. Dalším způsobem bude předáním funkce, která bude vracet instance testů na základě číselného identifikátoru. Tento způsob je totožný jako u testovaných zařízení a v určitých případech může usnadnit správu těchto zařízení. 
 
 Testovací partner bude spouštěn z testovacího projektu za pomoci testovací knihovny. Vytvořená instance partnera bude předána testovací knihovně, která se následovně postará o jeho spuštění a ukončení. Zařízení bude po konci testu odpojeno od testovací služby. Testovací knihovna bude kontrolovat úspešnost tohoto ukončení a v případě neúspěchu standardního ukončení testovací knihovna ukončí vlákno, na kterém zařízení poběží.
 
@@ -278,7 +278,7 @@ Distribuci jednotlivých částí knihovny můžeme také vidět na obrázku \re
 
 
 \section{Využití průmyslových protokolů}
-Jak jsem již definoval v sekci \ref{sec:fieldbus}, protokoly EtherNet/IP a ModbusTCP mají jasně stanovenou komunikaci. Jejich implementace avšak ale není triviální. Z tohoto důvodu je tedy vhodné využít již vytvořené open-source knihovny, které implementují tyto protokoly. V sekcích ukáži vhodné knihovny, které můžou být využity v testovací knihovně.
+Jak jsem již definoval v sekci \ref{sec:fieldbus}, protokoly EtherNet/IP a ModbusTCP mají jasně stanovenou komunikaci. Jejich implementace avšak ale není triviální. Z tohoto důvodu je tedy vhodné využít již vytvořené open-source knihovny, které implementují tyto protokoly. V následujících sekcích ukáži vhodné knihovny, které mohou být využity v testovací knihovně.
 
 \subsection{Průzkum open-source knihoven}
 K tomu abych mohl správně ohodnotit dostupné open-source knihovny je potřeba definovat kritéria, které musí knihovna splňovat. Jednotlivé knihovny musí být kompatibilní s vytvořenou testovací knihovnou. Tedy, knihovny by měli být implementovány v jazyce \csharp{} a kompatibilní s .NET Framework 4.8. 
@@ -298,7 +298,7 @@ Následně na základě těchto kritérií a mém osobním názoru doporučím k
 
 V tabulce \ref{tab:modbus} můžeme vidět seznam nejvhodnějších knihoven pro využití v knihovně. Dle jednotlivých hodnocení můžeme vidět že knihovny se pohybují okolo stejné náročnosti na využití v knihovně. Všechny knihovny jsou dostupné jako NuGet balíčky, což jejich implementaci velice usnadňuje. Všechny knihovny zároveň obsahují srovnatelnou sadu funkcí.
 
-Nejpoužívanější knihovnou, dle počtu stažení NuGet balíčku, je knihovna NModbus. Knihovna má průměrnou dokumentaci, kde popisuje jednotlivé třídy. Tato knihovna je udržována komunitně, a již dvakrát byla opuštěna předchozími autory. V kontextu toho, že knihovna má nejstarší datum poslední aktualizace, zde vzniká otázka, zda knihovna bude v budoucnu udržována.
+Nejpoužívanější knihovnou, dle počtu stažení NuGet balíčku, je knihovna NModbus. Knihovna má průměrnou dokumentaci, kde popisuje jednotlivé třídy. Tato knihovna je udržována komunitně, a již dvakrát byla opuštěna předchozími autory. V kontextu toho, že knihovna má nejstarší datum poslední aktualizace a žádnou viditelnou aktivitu, zde vzniká otázka, zda knihovna bude v budoucnu udržována.
 
 Knihovna Modbus je opět komunitním projektem. I když jsou autoři vysoce aktivní, knihovna bohužel neobsahuje, až na krátkou ukázku použití, žádnou dokumentaci. Proto má knihovna v hodnocení zvýšenou náročnost na využití, právě kvůli této chybějící dokumentaci.  
 
