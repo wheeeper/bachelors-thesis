@@ -186,9 +186,9 @@ Diagram tříd, které realizují implementaci pro účastníka testování, mů
 Vytvořené rozhraní je následně využito ve třídě \inlinecode{TestRunner}. Tato třída zajištuje běh jednotlivých účastníků testování. Třída je rovněž implementována v jazycích \csharp{} a \cpp{}. Třída obsahuje tyto metody: 
 
 \begin{itemize}
-    \item \inlinecode{Init()} \\ Metoda inicializuje připojení s testovací službou.
-    \item \inlinecode{HandleInstruction()} \\ Metoda přijímá instrukce od testovací služby a na základě nich provádí úkony.
-    \item \inlinecode{RunTest(uint32\_t test\_enum, TestStateE test\_state)} \\ Metoda spouští jednotlivé části testů. 
+    \item \inlinecode{Init(ipAddress,port)} \\ Metoda inicializuje připojení s testovací službou, kde parametry připojení k službě jsou obdrženy v argumentech funkce.
+    \item \inlinecode{HandleInstructions()} \\ Metoda přijímá instrukce od testovací služby a na základě nich provádí úkony.
+    \item \inlinecode{RunTest(testIdentifier, testState)} \\ Metoda spouští jednotlivé fáze testů. 
     \item \inlinecode{Stop()} \\ Metoda ukončuje testovací běh.
 \end{itemize}
 
