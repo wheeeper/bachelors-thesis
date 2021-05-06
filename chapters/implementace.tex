@@ -152,7 +152,7 @@ Metoda během běhu vyhodnocuje, zda se účastníka testování nedostal do chy
 Po dokončení celého testovacího běhu je zavolána metoda \inlinecode{Stop()}. Tato metoda odešle všem stále připojeným účastníkům direktivu k ukončení testování a ukončí spojení. Služba se snaží v případě chyby ukončit co nejvíce zařízení skrz stanovený protokol.
 
 \subsubsection{Pomocné třídy}
-Třída \inlinecode{TestService} využívá dvě pomocné třídy při svém běhu, jejichž diagram můžeme vidět na obrázku \ref{fig:utility}. První třídou je třída \inlinecode{Logger}. Tato třída realizuje zapisování protokolu během běhu. Třída je obsažena taktéž ve třídě \inlinecode{GlobalVar}, která simuluje globální proměnnou. Inicializace instance třídy \inlinecode{Logger} lze provést odkudkoliv, avšak stejně jako u konfigurace pouze jen jednou. Třída \inlinecode{GlobalVar} obsahuje vlastnost \inlinecode{isLogEnabled}, která obsahuje informaci o tom, zdali je zapisování inicializováno. 
+Třída \inlinecode{TestService} využívá dvě pomocné třídy při svém běhu, jejichž diagram můžeme vidět na obrázku \ref{fig:utility}. První třídou je třída \inlinecode{Logger}. Tato třída realizuje zapisování protokolu do souboru během běhu. Zároveň zapisovat může maximálně jedno vlákno současně. Třída je obsažena taktéž ve třídě \inlinecode{GlobalVar}, která simuluje globální proměnnou. Inicializace instance třídy \inlinecode{Logger} lze provést odkudkoliv, avšak stejně jako u konfigurace pouze jen jednou. Třída \inlinecode{GlobalVar} obsahuje vlastnost \inlinecode{isLogEnabled}, která obsahuje informaci o tom, zdali je zapisování inicializováno.  
 
 Třída \inlinecode{TestService} obsahuje ve svých metodách kontrolu, zdali je instance třídy \inlinecode{Logger} inicializována a v případě kladného vyhodnocení zapisuje průběh svého běhu. Instance třídy \inlinecode{Logger} by teda měla být vytvořena ještě před započnutím běhu služby.
 
@@ -219,7 +219,7 @@ void* TESTLIB_MEMCPY(void* const lpDst, const void* const lpSrc, int dwNb);
 
 
 \section{Testovací partner}
-Implementace testovacího partnera přímo kopíruje navrhnuté rozhraní pro testované zařízení. Jeho logika je obsažena ve třídě \inlinecode{TestPartner}. Tato třída má tři možné konstruktory:
+Implementace testovacího partnera přímo kopíruje navrhnuté rozhraní pro testované zařízení. Jeho logika je obsažena ve třídě \inlinecode{TestPartner}. Diagram třídy můžeme vidět také na obrázku \ref{fig:test_client_csharp}. Tato třída má tři možné konstruktory:
 
 \begin{itemize} 
     \item \inlinecode{TestPartner(ITestClient device)} \\

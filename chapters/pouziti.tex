@@ -6,19 +6,105 @@ V této kapitole se budu věnovat demonstraci použití knihovny při testován�
 Před započnutím testování je potřeba provést prvotní nastavení testovací služby a testovaného zařízení.
 
 \subsection{Příprava testovaného zařízení}
-K použití testované knihovny na testovaném zařízení je potřeba implementovat vytvořené rozhraní pro testované zařízení, definované v sekci \ref{sec:deviceif}. Instance tohoto rozhraní je následně předána komponentě \inlinecode{TestRunner}, jejíž implementace je popsána v sekci \ref{sec:testrunner}. Komponenta \inlinecode{TestRunner} započne běh inicializací a po její úspěšné inicializaci se zavolá metoda \inlinecode{HandleInstruction}, která se následně postará o běh komponenty, a tím celého zařízení.
-
+K použití testované knihovny na testovaném zařízení je potřeba implementovat rozhraní pro testované zařízení. Instance tohoto rozhraní následně musí být předána komponentě \inlinecode{TestRunner}. Implementace obou těchto částí je popsána v sekci \ref{sec:testrunner}. Komponenta \inlinecode{TestRunner} je následně inicializována za pomocí metody \inlinecode{Init} a následně je zavolána metoda \inlinecode{HandleInstructions}, která řídí testovací běh na zařízení.
+ 
 \subsection{Testovací projekt}
-K správě jednotlivých testů je potřeba vytvořit testovací projekt, ze kterého následně také bude spouštěna testovací služba. Tento testovací projekt tedy bude obsahovat testovací knihovnu. Testovací projekt vytvořím za pomocí IDE Visual Studio, kde využiji předlohy nazvané \uv{Unit Test Project (.NET Framework)}. 
+K správě jednotlivých testů je potřeba vytvořit testovací projekt, ze kterého následně také bude spouštěna testovací služba. Testovací projekt je vytvořen za pomocí IDE Visual Studio 2019, kde je využito předlohy nazvané \uv{Unit Test Project (.NET Framework)}.
 
-Do tohoto projektu následně přidám NuGet balíček, který obsahuje testovací knihovnu. Jelikož je knihovna uložena v Azure Artifacts, může být potřeba zároveň přidat Azure Artifacts jako zdroj NuGet balíčků. S instalací knihovny se přidá i složka \inlinecode{resources}, která obsahuje vše potřebné k testování. Testovací projekt je následně uložen ve vlastním repositáři v Azure Repos.  
+Do tohoto projektu je následně přidán NuGet balíček, který obsahuje testovací knihovnu. Jelikož je knihovna uložena v Azure Artifacts, může být potřeba zároveň přidat Azure Artifacts jako zdroj NuGet balíčků. S instalací knihovny se přidá i složka \inlinecode{resources}, která obsahuje vše potřebné k nastavení testovací knihovny a testovací služby. Testovací projekt je následně uložen ve vlastním repositáři v Azure Repos.  
 
 \subsubsection{Konfigurace}
 Ve složce \inlinecode{resources} nalezneme soubor \inlinecode{config.xml}, který obsahuje konfiguraci služby. Tento soubor po zkopírování ze složky resource do kořenové složky projektu lze upravit do požadovaného základního nastavení. 
 
-Testovací knihovna a služba očekává tento soubor v kořenové složce, ze které se spouští program. Soubor je tedy potřeba po kompilaci do této složky přesunout. Toho docílím za pomocí tzv. \uv{Post-build events}, neboli událostí po sestavení. Do těchto událostí přidám direktivu, která po kompilaci, neboli sestavení, přesune konfigurační soubor do výstupní složky s programem. Tuto direktivu můžeme vidět na výpisu \ref{listing:postbuild}.
+Testovací knihovna a služba očekává tento soubor v kořenové složce, ze které se spouští program. Soubor je tedy potřeba po kompilaci do této složky přesunout. Toho lze docílit za pomocí tzv. \uv{Post-build events}, neboli událostí po sestavení. Do těchto událostí je přidána direktiva, která po kompilaci, neboli sestavení, přesune konfigurační soubor do výstupní složky s programem. Tuto direktivu můžeme vidět na výpisu \ref{listing:postbuild}.
 
-\begin{listing}[htbp]
+V tento moment je zároveň vhodné vytvořit soubor, ve kterém budou uloženy jednotlivé identifikátory testů. K tomu je využit soubor \inlinecode{TestEnumTemplate.cs.txt} ve složce \inlinecode{resources}. Jeho kopie je přesunuta mimo složku resources a následně je přejmenován na \inlinecode{TestEnum.cs}.
+
+\section{Vytvoření testu}
+Jednotlivé testy je potřeba implementovat pro všechna zařízení, která se účastní testování. 
+Pro demonstraci funkcionality je vytvořeny dva testy. Tyto testy jsou:
+\begin{enumerate}
+    \item \inlinecode{MODD\_ADD\_CONF} -- Test, který otestuje přidání nastavení implementace protokolu ModbusTCP na testovaném zařízení
+    \item \inlinecode{MODD\_READ\_DATA} -- Test, při kterém se otestuje čtení z registrů na testovaném zařízení za pomoci osmi testovacích partnerů. Partneři budou číst z testovaného zařízení za pomoci protokolu ModbusTCP a následně kontrolovat správnost obdržených dat.
+\end{enumerate}
+
+Ke každému z testů je vytvořen stejnojmenný identifikátor v souboru \inlinecode{TestEnum.cs}.
+
+
+\subsection{Testované zařízení}
+
+Implementace testu \inlinecode{MODD\_ADD\_CONF} v první fázi nic neprovádí. Následně ve druhé fázi je testována metoda \inlinecode{mfd\_modd\_add\_configuration}, která vytváří konfigurace protokolu ModbusTCP. V poslední fázi jsou tyto konfigurace odstraněny.  
+
+Implementaci testu \inlinecode{MODD\_READ\_DATA} lze vidět na výpisu \ref{listing:testcase_device}. Test v první fázi inicializuje protokol ModbusTCP a do výstupních registrů zapíše data. Jeden registr má velikost dva bajty. Během testovací fáze zařízení neprovádí žádné úkony. Zařízení nakonec vrací v poslední fázi testu do původního stavu před testováním.
+
+Vytvořené testy jsou následně přidány do metody \inlinecode{getTest} v rozhraní pro testované zařízení. Metoda getTest musí po obdržení číselného identifikátoru jednotlivých testů vrátit instanci těchto testů.
+
+
+\subsection{Testovací partner}
+Implementace testu \inlinecode{MODD\_READ\_DATA}, kterou můžeme vidět na výpisu \ref{listing:testcase_partner} pro testovacího partnera je velmi obdobná implementaci pro testované zařízení. Implementace používá knihovnu EasyModbusTCP k vytvoření připojení s testovaným zařízením. 
+
+Testovací partner v testovací fázi vytvoří připojení s testovaným zařízením a následně čte data z testovaného zařízení, které následně kontroluje s očekávanými daty. Tato implementace je součástí testovacího projektu.
+
+
+\subsection{Testovací služba}
+
+K registraci testů pro testovací službu je použita standardní metodika vytváření testů dle frameworku MSTest, kterou můžeme vidět na výpisu \ref{listing:testcase_service}. Na výpisu lze vidět testovací třídu \inlinecode{Modbus}, která obsahuje testovací metody \inlinecode{TestModdAddConf} a \inlinecode{TestModdReadData}. Třída i metody jsou označeny atributy, definovanými frameworkem MSTest. 
+
+Uvnitř testovací metody \inlinecode{TestModdAddConf} můžeme vidět direktivu k započnutí testu, definovanou testovací knihovnou, která spouští test \inlinecode{MODD\_ADD\_CFG}. Tato direktiva obdrží v argumentu enumerátor reprezentující test. Tento test nevyužívá testovacích partnerů. 
+
+Následně v testovací metodě \inlinecode{TestModdReadData} můžeme vidět cyklus, který přidá osm testovacích partnerů. V argumentu direktivy můžeme vidět vytváření instance testovacího partnera, který ve svém argumentu obdrží instanci testu \inlinecode{TestModdReadData}. Následně můžeme vidět direktivu k započnutí testu, který je předán testovací službě. 
+
+Takto vytvořené testy lze následně vidět v IDE Visual Studio v průzkumníku testů. Z tohoto průzkumníku můžeme testy spouštět a tak otestovat jejich funkčnost.  
+
+
+\section{Propojení s Azure DevOps serverem}
+Propojení s Azure DevOps serverem funguje v závislosti na kooperaci několika služeb tohoto serveru. Jejich propojení je možné vytvořit díky tomu, že všechny části jsou uloženy v Azure Repos. 
+
+\subsection{Příprava}
+K tomu aby server Azure DevOps mohl samostatně spouštět testy, tak je potřeba vytvořit v Azure Pipelines seznam pravidel, který zkompiluje testovací projekt, neboli tzv. \uv{pipeline}. Tato pipeline je nastavena tak, aby na začátku stáhnula z Azure Repos testovací projekt. Tento seznam pravidel obsahuje tyto pravidla:
+
+\begin{enumerate}
+    \item Obnovení NuGet balíčků 
+    \item Kompilaci testovacího projektu
+    \item Nahrání artefaktů kompilace 
+\end{enumerate}
+
+Bližší přiblížení si zaslouží nahrání artefaktů kompilace. Za artefakty se v tomto případě považují výstupní soubory kompilace. Tedy kompilace je provedena do pracovní složky, která je následně nahrána pro další použití. 
+
+Následně vytvořím tzv. \uv{Release pipeline}. Ta využije artefakty, vytvořené v předchozí fázi.
+Zároveň využije artefakty, které vznikli z kompilace zdrojového kódu testovaného zařízení. Tato kompilace je prováděna automaticky po nahrání jakékoliv změny kódu.
+
+Do nově vytvořené pipeline přidám fázi, ve které spustíme testování. Fáze je nastavena tak, aby se spouštěla na správném zařízení, které obsahuje potřebné propojení s dalším hardwarem, potřebným k spuštění testovaného zařízení. Do této fáze je též potřeba přidat pravidlo, které před spuštěním testování nahraje aktuální verzi zdrojového kódu na testované zařízení a zároveň ho spustí. Následně je spuštěno samotné testování.
+
+Po tomto všem následně vytvořím testovací plán. Do nastavení testovacího plánu přidám již vytvořené pipeline. Do tohoto plánu následně budou přidány všechny testy. 
+
+\subsection{Registrování testů}
+Vytvořené testy skrz framework MSTest lze registrovat v Azure Test Plans. Nejdříve je potřeba vytvořit testovací případ (neboli v angličtině tzv. \uv{Test Case}) na serveru. Po jeho vytvoření se testu přiřadí unikátní číselný identifikátor. Test následně přidám do dříve vytvořeného testovacího plánu.
+
+Po vytvoření testovacího případu je potřeba vytvořit asociaci mezi testovacím případem na serveru Azure DevOps a testem v testovacím projektu. To lze udělat za pomocí IDE Visual Studio 2019. Po vytvoření připojení mezi Azure DevOps serverem a IDE Visual Studio lze z průzkumníku testů vytvořit asociaci mezi testovacím případem a testovací metodou. Pravým kliknutím na test vyberu \uv{Přidružit k testovacímu případu} a do otevřeného okna následně vložím identifikátor testovacího případu a potvrdím přidružení. Testovací případ je následně nastaven do stavu \uv{Automatizovaný}.
+
+\section{Spuštění testů}
+Po všech předchozích konfiguracích je následně možné spouštět registrované testy a následně testovací plán, který se skládá z registrovaných testů. Způsob spuštění testů je pak již pouze na nastavení. Testy lze například spustit:
+
+\begin{itemize}
+    \item manuálně
+    \item automaticky při přidání změn do projektu
+    \item automaticky dle časového plánu
+\end{itemize}
+
+Server Azure DevOps následně obdrží výsledky o testování. Jeden z možných způsobů zobrazení výsledků můžeme vidět na obrázku \ref{fig:azure}.
+
+\begin{figure}[htbp]
+    \centering 
+    \includegraphics[width=\textwidth]{assets/img/azure.png}
+    \caption{Snímek ze serveru Azure DevOps s výsledky testů}
+    \source{Azure DevOps Server \cite{azure_devops_software}}
+    \label{fig:azure}
+\end{figure}
+
+
+
+\begin{listing}[p]
     \centering
     \begin{cminted}[breaklines,stripnl=false]{text}
 
@@ -29,19 +115,35 @@ COPY "$(ProjectDir)config.xml"  "$(TargetDir)"
 \label{listing:postbuild}
 \end{listing}
 
-V tento moment je zároveň vhodné vytvořit soubor, ve kterém budou uloženy jednotlivé identifikátory testů. K tomu využiji soubor \inlinecode{TestEnumTemplate.cs.txt} ve složce \inlinecode{resources}. Jeho kopii přesunu mimo složku resources a odstraním příponu \inlinecode{.txt} ze jména. 
+\begin{listing}[p]
+    \centering
+    \begin{minted}[breaklines]{csharp}
+[TestClass]
+public class Modbus
+{
+    [TestMethod]
+    public void TestModdAddConf()
+    {
+        API.Run(TestCaseE.MODD_ADD_CFG);
+    }
+    
+    [TestMethod]
+    public void TestModdReadData()
+    {
+        for (int x = 0; x < 8; x++)
+            API.AddTestPartner(new TestLib.Client.TestPartner(new TestModdReadData()));
+    
+        API.Run(TestCaseE.MODD_READ_DATA);
+    }
+    
+}
+    \end{minted}
+\caption{Ukázka testu v testovacím projektu}
+\label{listing:testcase_service}
+\end{listing}
 
-\section{Vytvoření testu}
-Jednotlivé testy je potřeba implementovat pro všechny zařízení, které se účastní testování. Pro demonstraci funkcionality vytvořím test, který bude obsahovat testované zařízení a 8 testovacích partnerů. Partneři budou číst z testovaného zařízení za pomoci protokolu ModbusTCP z registrů a následně kontrolovat správnost obdržených dat. Tento test bude označen enumerátorem \inlinecode{TestCaseE} hodnotou \inlinecode{TEST\_MODD\_READ\_DATA}.
 
-
-\subsection{Testované zařízení}
-Implementaci testu lze vidět na výpisu \ref{listing:testcase_device}. Test v první fázi inicializuje protokol ModbusTCP a do výstupních registrů zapíše data. Jeden registr má velikost dva bajty. Během testovací fáze zařízení neprovádí žádné úkony. Zařízení nakonec vrací v poslední fázi testu do původního stavu před testováním.
-
-Vytvořený test následně přidáme do metody \inlinecode{getTest} v rozhraní pro testované zařízení. Test přidáme do metody tak, že když metoda obdrží v argumentu číselnou reprezentaci enumerátoru \inlinecode{TEST\_MODD\_READ\_DATA}, tak poté metoda vrátí instanci testu.
-
-
-\begin{listing}[htbp]
+\begin{listing}[p]
     \centering
     \begin{minted}[breaklines,autogobble, fontsize=\footnotesize]{cpp}
 class TestModdReadData : public ITestCase {
@@ -95,40 +197,7 @@ public:
 \end{listing}
 
 
-\subsection{Testovací partner}
-Implementace testu, kterou můžeme vidět na výpisu \ref{listing:testcase_partner} pro testovacího partnera je velmi obdobná implementaci pro testované zařízení. Implementace používá knihovnu EasyModbusTCP k vytvoření připojení s testovaným zařízením. 
-Testovací partner v testovací fázi vytvoří připojení s testovaným zařízením a následně čte data z testovaného zařízení, které následně kontroluje s očekávanými daty. Tato implementace je součástí testovacího projektu.
-
-
-\subsection{Testovací služba}
-
-K registraci testů pro testovací službu použiji standardní metodiku vytváření testů dle frameworku MSTest, kterou můžeme vidět na výpisu \ref{listing:testcase_service}. Na výpisu lze vidět testovací třídu \inlinecode{Modbus}, která obsahuje jednu testovací metodu \inlinecode{TestModdReadData}. Třída i metoda jsou označeny atributy, definovanými frameworkem MSTest. 
-
-Uvnitř testovací metody můžeme vidět cyklus, který přidá 8 testovacích partnerů. V argumentu direktivy můžeme vidět vytváření instance testovacího partnera, která ve svém argumentu obdrží instanci testu \inlinecode{TestModdReadData}. Následně můžeme vidět direktivu k započnutí testu, který je předán testovací službě. Tato direktiva obdrží v argumentu enumerátor reprezentující test.
-
-Takto vytvořený test lze následně vidět v IDE Visual Studio v průzkumníku testů. Z tohoto průzkumníku můžeme testy spouštět a tak otestovat jejich funkčnost.  
-
-\begin{listing}[htbp]
-    \centering
-    \begin{minted}[breaklines]{csharp}
-[TestClass]
-public class Modbus
-{
-    [TestMethod]
-    public void TestModdReadData()
-    {
-        for (int x = 0; x < 8; x++)
-            API.AddTestPartner(new TestLib.Client.TestPartner(new TestModdReadData()));
-        API.Run(TestCaseE.TEST_MODD_READ_DATA);
-    }
-}
-    \end{minted}
-\caption{Ukázka testu v testovacím projektu}
-\label{listing:testcase_service}
-\end{listing}
-
-
-\begin{listing}[htbp]
+\begin{listing}[p]
     \centering
     \begin{minted}[breaklines,autogobble, fontsize=\small]{csharp}
 class TestModdReadData : ITestCase
@@ -180,41 +249,3 @@ class TestModdReadData : ITestCase
 \caption{Implementace testu pro testovacího partnera}
 \label{listing:testcase_partner}
 \end{listing}
-
-
-\section{Propojení s Azure DevOps serverem}
-Propojení s Azure DevOps serverem funguje v závislosti na kooperaci několika služeb tohoto serveru. Jejich propojení je možné vytvořit díky tomu, že všechny části jsou uloženy v Azure Repos. 
-
-\subsection{Příprava}
-K tomu aby server Azure DevOps mohl samostatně spouštět testy, tak je potřeba vytvořit v Azure Pipelines seznam pravidel, který zkompiluje testovací projekt, neboli tzv. \uv{pipeline}. Tato pipeline je nastavena tak, aby na začátku stáhnula z Azure Repos testovací projekt. Tento seznam pravidel obsahuje tyto pravidla:
-
-\begin{enumerate}
-    \item Obnovení NuGet balíčků 
-    \item Kompilaci testovacího projektu
-    \item Nahrání artefaktů kompilace 
-\end{enumerate}
-
-Bližší přiblížení si zaslouží nahrání artefaktů kompilace. Za artefakty se v tomto případě považují výstupní soubory kompilace. Tedy kompilace je provedena do pracovní složky, která je následně nahrána pro další použití. 
-
-Následně vytvořím tzv. \uv{Release pipeline}. Ta využije artefakty, vytvořené v předchozí fázi.
-Zároveň využije artefakty, které vznikli z kompilace zdrojového kódu testovaného zařízení. Tato kompilace je prováděna automaticky po nahrání jakékoliv změny kódu.
-
-Do nově vytvořené pipeline přidám fázi, ve které spustíme testování. Fáze je nastavena tak, aby se spouštěla na správném zařízení, které obsahuje potřebné propojení s dalším hardwarem, potřebným k spuštění testovaného zařízení. Do této fáze je též potřeba přidat pravidlo, které před spuštěním testování nahraje aktuální verzi zdrojového kódu na testované zařízení a zároveň ho spustí. Následně je spuštěno samotné testování.
-
-Po tomto všem následně vytvořím testovací plán. Do nastavení testovacího plánu přidám již vytvořené pipeline. Do tohoto plánu následně budou přidány všechny testy. 
-
-\subsection{Registrování testů}
-Vytvořené testy skrz framework MSTest lze registrovat v Azure Test Plans. Nejdříve je potřeba vytvořit testovací případ (neboli v angličtině tzv. \uv{Test Case}) na serveru. Po jeho vytvoření se testu přiřadí unikátní číselný identifikátor. Test následně přidám do dříve vytvořeného testovacího plánu.
-
-Po vytvoření testovacího případu je potřeba vytvořit asociaci mezi testovacím případem na serveru Azure DevOps a testem v testovacím projektu. To lze udělat za pomocí IDE Visual Studio. Po vytvoření připojení mezi Azure DevOps serverem a IDE Visual Studio lze z průzkumníku testů vytvořit asociaci mezi testovacím případem a testovací metodou. Pravým kliknutím na test vyberu \uv{Přidružit k testovacímu případu} a do otevřeného okna následně vložím identifikátor testovacího případu a potvrdím přidružení. Testovací případ je následně nastaven do stavu \uv{Automatizovaný}.
-
-\subsection{Spuštění testů}
-Po všech předchozích konfiguracích je následně možné spouštět registrované testy a následně testovací plán, který se skládá z registrovaných testů. Způsob spuštění testů je pak již pouze na nastavení. Testy lze například spustit:
-
-\begin{itemize}
-    \item manuálně
-    \item automaticky při přidání změn do projektu
-    \item automaticky dle časového plánu
-\end{itemize}
-
-
