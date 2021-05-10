@@ -537,11 +537,11 @@ sp\^ osobom, ktor\'y nezni\v zuje hodnotu Diela (vr\'atane komer\v cn\'eho vyu\v
 	\renewcommand{\listingscaption}{Výpis}
 	\renewcommand{\listoflistingscaption}{Seznam výpisů}
 
-	\listoflistings
-	\clearpage
 	\listoffigures*
 	\clearpage
 	\listoftablescond
+	\clearpage
+	\listoflistings
 	\cleardoublepage
 
 	\pagestyle{ruled}
