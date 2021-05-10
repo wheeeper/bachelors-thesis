@@ -19,12 +19,12 @@ Součástí knihovny zároveň bude také tzv. testovací partner. Tento účast
 
 Testovací služba bude očekávat připojení minimálně jednoho testovaného zařízení. Následně maximální počet připojených zařízení ke službě se bude odvíjet od limitací protokolu TCP/IP a jeho implementace v jazyku \csharp{}. Tento limit se ale pohybuje ve stovkách, v kontrastu očekávaný počet zároveň připojených zařízení se bude pohybovat v desítkách. Tedy tento limit knihovnu nijak neomezuje.
 
-Účastníky testování a jejich propojení můžeme vidět znázorněné na obrázku \ref{fig:devicemodel}. Na tomto obrázku můžeme vidět agenta, resp. zařízení na kterém poběží testovací služba a případní testovací partneři, primární testované zařízení SIMATIC ET 200SP a PLC. PLC zařízení značí jakékoliv zařízení, které není simulováno knihovnou.
+Účastníky testování a jejich možné propojení můžeme vidět znázorněné na obrázku \ref{fig:devicemodel}. Na tomto obrázku můžeme vidět agenta, resp. zařízení na kterém poběží testovací služba a případní testovací partneři, primární testované zařízení SIMATIC ET 200SP a PLC. PLC zařízení značí jakékoliv zařízení, které není simulováno knihovnou.
 
 \begin{figure}[htbp]
     \centering 
     \includegraphics[width=0.7\textwidth]{assets/img/devicemodel.pdf}
-    \caption{Propojení účastníků testování}
+    \caption{Ukázka možného propojení účastníků testování}
     \label{fig:devicemodel}
 \end{figure}
 
@@ -71,18 +71,18 @@ Ukázku komunikace můžeme vidět znázorněnou na sekvenčním diagramu, kter�
 \begin{figure}[htbp]
     \centering 
     \includegraphics[width=0.95\textwidth]{assets/img/sequencediagram.pdf}
-    \caption{Sekvenční diagram znázorňující běh služby}
+    \caption{Sekvenční diagram ukázky komunikace mezi účastníky testování}
     \label{fig:seqdiag}
 \end{figure}
 
 \section{Testovací služba}
-Jak jsem již zmínil v sekci \ref{sec:participants}, testovací služba bude jádrem celého testování. Tato služba bude řídit celý testovací běh a předávat všem účastníkům testování pokyny. Zároveň bude synchronizovat testovací běh mezi všemi účastníky testování. Běh služby můžeme vidět znázorněný na stavovém diagramu, které je znázorněn na obrázku \ref{fig:statediag}. Jednotlivé stavy jsou vysvětleny v následujících sekcích. 
+Jak jsem již zmínil v sekci \ref{sec:participants}, testovací služba bude jádrem celého testování. Tato služba bude řídit celý testovací běh a předávat všem účastníkům testování pokyny. Zároveň bude synchronizovat testovací běh mezi všemi účastníky testování. Běh služby můžeme vidět znázorněný na diagramu aktivit, které je znázorněn na obrázku \ref{fig:activitydiagramservice}. Jednotlivé aktivity jsou vysvětleny v následujících sekcích. 
 
 \begin{figure}[htbp]
     \centering 
-    \includegraphics[width=0.75\textwidth]{assets/img/servicestatediagram.pdf}
-    \caption{Stavový diagram služby}
-    \label{fig:statediag}
+    \includegraphics[width=0.8\textwidth]{assets/img/activitydiagramservice.pdf}
+    \caption{Diagram aktivit testovací služby}
+    \label{fig:activitydiagramservice}
 \end{figure}
 
 \subsection{Inicializace služby}
@@ -202,7 +202,7 @@ ITestClient
     bool getMacAddress(macAddr)
 }
     \end{cminted}
-\caption{Ukázka definice rozhraní}
+\caption{Návrh rozhraní pro testované zařízení}
 \label{listing:dev_if_abstract}
 \end{listing}
 
