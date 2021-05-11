@@ -4,9 +4,9 @@ V této kapitole se věnuji přiblížení teoretického kontextu této práce.
 
 \section{Testování}
 
-Testování je podstatnou součástí vývoje produktu a jeho softwaru. Cílem testování není pouze odhalení chyb v softwaru, ale také verifikace a validace softwaru. Validací softwaru kontrolujeme, zda software odpovídá specifikacím a je tím, co zákazník chtěl. Verifikací kontrolujeme správnost softwaru, tedy kontrolujeme, že systém ve vytvořených situacích se chová dle očekávání a specifikace. \cite{singh2012software}
+Testování je podstatnou součástí vývoje produktu a jeho softwaru. Cílem testování není pouze odhalení chyb v softwaru, ale také verifikace a~validace softwaru. Validací softwaru kontrolujeme, zda software odpovídá specifikacím a~je tím, co zákazník chtěl. Verifikací kontrolujeme správnost softwaru, tedy kontrolujeme, že systém ve vytvořených situacích se chová dle očekávání a~specifikace. \cite{singh2012software}
 
-Testování softwaru je zároveň dovednost. Při testování musí tester vybrat z nekonečného množství možných testů nějaký konečný počet, který nejlépe reprezentuje danou problematiku a pokrývá co největší možnou množinu všech možných případů. Zároveň musí vzít v potaz náročnost na vytvoření testu a na rigidnost vytvořeného testu proti změnám v softwaru. Tyto faktory poté ovlivňují i náklady na testování. \cite{fewster1999software}
+Testování softwaru je zároveň dovednost. Při testování musí tester vybrat z nekonečného množství možných testů nějaký konečný počet, který nejlépe reprezentuje danou problematiku a pokrývá co největší možnou množinu všech možných případů. Zároveň musí vzít v potaz náročnost na vytvoření testu a~na rigidnost vytvořeného testu proti změnám v softwaru. Tyto faktory poté ovlivňují i náklady na testování. \cite{fewster1999software}
 
 Od testování softwaru lze rovněž odvodit i jeho kvalitu. Ta se dá určit tím, jak moc vytvořený software odpovídá zadaným specifikacím~\cite{software_quality}. Tyto informace jsou poté velmi důležité pro management. Díky nim může vyhodnocovat současný stav vývoje a upravovat plán na vývoj. 
 
@@ -34,7 +34,7 @@ Testování podle částí vývoje se přibližuje vývojovému cyklu. Do těcht
     \item[Testování jednotlivých částí] Více známé pod anglickým pojmem \uv{Unit testing}. Je to nejnižší úroveň testování. Testuje jednotlivé komponenty systému samostatně.
     \item[Integrační testování] Testování dvou a více komponent, které spolu vytváří nějaký větší celek softwaru. Často také využíván při testování částí, které nelze samostatně testovat.
     \item[Systémové testování] Testování softwaru jako celku. Zaměřuje se na testování funkčních požadavků. Zároveň je možno vyhodnocovat další požadavky na systém, jako spolehlivost, bezpečnost, atd.
-    \item[Akceptační testování] U toho testování se systém dostane do rukou zákazníkovi/uživatelům. Cílem je otestování produktu u uživatelů softwaru a získání jejich zpětné vazby. 
+    \item[Akceptační testování] U toho testování se systém dostane do rukou zákazníkovi/uživatelům. Cílem je otestování produktu u uživatelů softwaru a~získání jejich zpětné vazby. 
 \end{description}
 
 Propojení testů a vývojového cyklu je dobře znázorněno na tzv. V-modelu, který můžeme vidět na obrázku \ref{fig:vmodel}. Na tomto modelu, nazývaném podle svého tvaru, můžeme vidět jednotlivé typy stádia vývoje a jejich korespondující ověřování v závislosti na čase.
@@ -80,7 +80,7 @@ Azure DevOps server využívá při delegování úkolů tzv. agenty. Agent je v
 
 Framework MSTest je výchozí testovací framework, který je integrován do IDE Visual Studio. Díky tomu je také často nazýván jako \uv{Visual Studio Unit Testing Framework}. Framework započal jako nástroj spouštěný z příkazové řádky, který následně prováděl testování. Díky implementaci do IDE Visual Studio je tento framework často preferován vývojáři, kteří používají toto IDE pro vývoj. 
 
-MSTest framework přináší nástroje, které jsou potřeba k verifikaci a validaci softwaru. V dnešní době framework MSTest V2 je open-source projekt, který je stále rozvíjen. Mezi jeho výhody patří podpora napříč platformami a rozšiřitelnost. \cite{mstest_descr}
+MSTest framework přináší nástroje, které jsou potřeba k verifikaci a~validaci softwaru. V dnešní době framework MSTest V2 je open-source projekt, který je stále rozvíjen. Mezi jeho výhody patří podpora napříč platformami a~rozšiřitelnost. \cite{mstest_descr}
 
 
 \section{Průmyslová komunikace}\label{sec:fieldbus}
@@ -103,11 +103,11 @@ Protokol definuje strukturu zprávy (tzv. PDU -- Protocol Data Unit) nezávisle 
     \label{fig:modbus_frame}
 \end{figure}
 
-Podporované služby jsou definovány funkčními kódy, které jsou součástí požadavku. Kód funkce je uložen v jednom bajtu a tedy rozsah možných kódů je 1-255 (0 je nevalidní), kde rozsah 128-255 je rezervován pro chybové zprávy. Data zprávy poté slouží k upřesnění operace definované funkčním kódem. V určitých situacích muže postačovat v provedení operace funkční kód, data zprávy poté mají nulovou délku.
+Podporované služby jsou definovány funkčními kódy, které jsou součástí požadavku. Kód funkce je uložen v jednom bajtu a tedy rozsah možných kódů je 1-255 (0 je nevalidní), kde rozsah 128-255 je rezervován pro chybové zprávy. Data zprávy poté slouží k upřesnění operace definované funkčním kódem. V~určitých situacích muže postačovat v provedení operace funkční kód, data zprávy poté mají nulovou délku.
 
 Modbus používá komunikaci požadavek-odpověď. Na požadavek klienta server odpovídá zprávou, kterou značí úspěch či neúspěch operace. V případě úspěchu server odesílá zpět zprávu se stejným funkčním kódem, jako byl požadavek. V opačném případě odesílá zpět zprávu, která obsahuje stejný kód funkce, jako byl kód funkce požadavku, ale tento kód má zároveň nastavený nejvýznamnější bit na 1. Zpráva v obou případech může poté obsahovat data, v závislosti na operacích. \cite{modbus}
 
-V této práci se budu zaměřovat na použití protokolu ModbusTCP. Jak již z názvu vyplývá, ModbusTCP používá k přenosu zpráv protokol TCP/IP a Ethernet připojení. Zároveň používá stejnou komunikaci definovanou protokolem Modbus.
+V této práci se budu zaměřovat na použití protokolu ModbusTCP. Jak již z názvu vyplývá, ModbusTCP používá k přenosu zpráv protokol TCP/IP a~Ethernet připojení. Zároveň používá stejnou komunikaci definovanou protokolem Modbus.
 
 \subsection{Protokol EtherNet/IP}
 Protokol EtherNet/IP (EtherNet/Industrial Protocol) je dalším, dnes již široce používaným průmyslovým protokolem. Jak již z názvu vyplývá, protokol používá Ethernetový standard k propojení průmyslových zařízení. Ke komunikaci následně používá standardně používané protokoly TCP a UDP. Tento protokol byl poprvé představen v roce 2001 a od roku 2005 je standardizován. 
@@ -122,7 +122,7 @@ Přenos v síti EtherNet/IP se odvíjí dle využitého protokolu pro přenos. P
 
 \section{Testovaný produkt}
 
-Hlavním cílem této práce je vytvoření testovací knihovny pro řadu zařízení SIMATIC ET 200, vyvíjený společností Siemens,~s.\,{}r.\,{}o., se zaměřením na zařízení SIMATIC ET 200SP. Řada produktů SIMATIC ET 200 přináší jednu z nejširších nabídek I/O zařízení. Produkty této řady můžeme vidět znázorněné na obrázku \ref{fig:et200}. Jak je z obrázku patrné, každé zařízení obsahuje jiný stupeň ochrany v závislosti na jejich plánovaném umístění. \cite{et200} 
+Hlavním cílem této práce je vytvoření testovací knihovny pro řadu zařízení SIMATIC ET 200, vyvíjený společností Siemens,~s.\,{}r.\,{}o., se zaměřením na zařízení SIMATIC ET 200SP. Řada produktů SIMATIC ET 200 přináší jednu z~nejširších nabídek I/O zařízení. Produkty této řady můžeme vidět znázorněné na obrázku \ref{fig:et200}. Jak je z~obrázku patrné, každé zařízení obsahuje jiný stupeň ochrany v závislosti na jejich plánovaném umístění. \cite{et200} 
 
 \begin{figure}[htbp]
     \centering 
