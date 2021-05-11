@@ -151,12 +151,12 @@ Metoda během běhu vyhodnocuje, zda se účastník testování nedostal do chyb
 
 Po dokončení celého testovacího běhu je zavolána metoda \inlinecode{Stop()}. Ta odešle všem stále připojeným účastníkům direktivu k ukončení testování a ukončí spojení. Služba se snaží v případě chyby ukončit co nejvíce zařízení skrze stanovený protokol.
 
-\subsubsection{Pomocné funkce a třídy}
+\subsubsection{Pomocné metody a třídy}
 Třída \inlinecode{TestService} obsahuje navíc pomocnou metodu:
 
 \begin{itemize}
     \item \inlinecode{bool GetParticipantIp(PhysicalAddress macAddr,out IPAddress \\addr)}\\
-    Metoda obdrží v argumentu funkce MAC adresu účastníka. Pokud je účastník s touto MAC adresu připojen, metoda vrací ve výstupním argumentu jeho aktuální IP adresu a vrácí úspěch. V opačném případě vrací neúspěch a jako IP adresu hodnotu \inlinecode{null}.
+    Metoda k získání IP adresy testovaného zařízení na základě znalosti MAC adresy zařízení. Pokud je zařízení s danou MAC adresou připojeno, metoda úkládá do výstupního argumentu \inlinecode{addr} jeho IP adresu a vrací úspěch. V opačném případě vrací neúspěch a jako IP adresu hodnotu \inlinecode{null}
 \end{itemize}
 
 Třída také využívá při svém běhu dvě pomocné třídy, jejichž diagram můžeme vidět na obrázku \ref{fig:utility}. První třídou je třída \inlinecode{Logger}. Tato třída realizuje zapisování protokolu do souboru během běhu. Zároveň může zapisovat maximálně jedno vlákno současně. Třída je taktéž obsažena ve třídě \inlinecode{GlobalVar}, která simuluje globální proměnnou. Inicializaci instance třídy \inlinecode{Logger} lze provést odkudkoliv, avšak stejně jako u konfigurace pouze jen jednou. Třída \inlinecode{GlobalVar} obsahuje vlastnost \inlinecode{isLogEnabled}, která obsahuje informaci o tom, zdali je zapisování inicializováno.  
@@ -177,6 +177,8 @@ Tato třída ve svém konstruktoru inicializuje konfiguraci služby a zjistí, z
     \item \inlinecode{bool AddTestPartner(TestPartner participant)} \\ Metoda spouští testovacího partnera předaného v argumentu a předává informaci o očekávání jeho připojení  instanci třídy \inlinecode{TestService}. Instanci partnera následně uloží do seznamu partnerů.
     \item \inlinecode{void TestCleanup()} \\ Metoda je volána po dokončení jednotlivého testu, předá instanci třídy \inlinecode{TestService} direktivu k odpojení testovacích partnerů. Následně zkontroluje, zda se partneři ukončili a pokud ne, tak je ukončí.
     \item \inlinecode{void Stop()} \\ Metoda předá informaci o ukončení testovacího běhu.
+    \item \inlinecode{bool GetParticipantIp(PhysicalAddress macAddr,out IPAddress \\addr)} \\
+    Zpřístupnění stejnojmenné metody z třídy \inlinecode{TestService}.
 \end{itemize}
 
 \begin{figure}[p!]
@@ -307,6 +309,15 @@ Framework MSTest registruje testy nezávisle na testovací knihovně. Jednotliv�
 Pro spuštění testu je použita metoda \inlinecode{Run} z třídy \inlinecode{API}. Tato metoda přijímá stejné argumenty jako metoda \inlinecode{RunTest} třídy \inlinecode{ServiceRunner}. Metoda zkontroluje, že argument identifikující test je typem enumerátor a obsahuje atribut \inlinecode{TestEnum}. V případě, že se testovací služba nenachází v chybném stavu, předá metoda testovací službě direktivu k započetí testu. Následně vyhodnotí jeho úspěšnost. Je-li služba je v chybném stavu, metoda vyhodnotí test jako bezvýsledný.
 
 Zároveň lze před započetím testu přidat testovací partnery. Toto je možné za pomocí metody \inlinecode{AddTestPartner} z třídy \inlinecode{API}. Metoda v argumentu obdrží instanci testovacího partnera a následně se postará o jeho běh.
+
+\subsection{Pomocné metody}
+Jedním z návrhových cílů třídy \inlinecode{API} je, aby všechny uživatelsky podporované operace šli provést skrz tuto třídu. Třída proto obsahuje tyto pomocné metody:
+\begin{itemize}
+    \item \inlinecode{static void EnableLog(string fileName = "log.txt")}\\
+    Metoda inicializuje zápis běhu testovací knihovny, který je realizovaný třídou \inlinecode{Logger}. Název výstupního souboru je předán v argumentu, případně je použit defaultní název.
+    \item \inlinecode{static bool GetParticipantIp(PhysicalAddress macAddr, out \\ IPAddress addr)} \\
+    Zpřístupnění stejnojmenné metody z třídy \inlinecode{ServiceRunner}.
+\end{itemize}
 
 
 \section{Vytvoření balíčku NuGeT a distribuce knihovny}\label{sec:distrbution}
