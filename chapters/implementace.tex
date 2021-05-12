@@ -153,6 +153,8 @@ Metoda během běhu vyhodnocuje, zda se účastník testování nedostal do chyb
 
 Po dokončení celého testovacího běhu je zavolána metoda \inlinecode{Stop()}. Ta odešle všem stále připojeným účastníkům direktivu k ukončení testování a ukončí spojení. Služba se snaží v případě chyby ukončit co nejvíce zařízení skrze stanovený protokol.
 
+\clearpage
+
 \subsubsection{Pomocné metody a třídy}
 Třída \inlinecode{TestService} obsahuje navíc pomocnou metodu:
 
@@ -161,7 +163,9 @@ Třída \inlinecode{TestService} obsahuje navíc pomocnou metodu:
     Metoda k získání IP adresy testovaného zařízení na základě znalosti MAC adresy zařízení. Pokud je zařízení s danou MAC adresou připojeno, metoda úkládá do výstupního argumentu \inlinecode{addr} jeho IP adresu a vrací úspěch. V opačném případě vrací neúspěch a jako IP adresu hodnotu \inlinecode{null}
 \end{itemize}
 
-Třída také využívá při svém běhu dvě pomocné třídy, jejichž diagram můžeme vidět na obrázku \ref{fig:utility}. První třídou je třída \inlinecode{Logger}. Tato třída realizuje zapisování protokolu do souboru během běhu. Zároveň může zapisovat maximálně jedno vlákno současně. Třída je taktéž obsažena ve třídě \inlinecode{GlobalVar}, která simuluje globální proměnnou. Inicializaci instance třídy \inlinecode{Logger} lze provést odkudkoliv, avšak stejně jako u konfigurace pouze jen jednou. Třída \inlinecode{GlobalVar} obsahuje vlastnost \inlinecode{isLogEnabled}, která obsahuje informaci o tom, zdali je zapisování inicializováno.  
+Třída také využívá při svém běhu dvě pomocné třídy, jejichž diagram můžeme vidět na obrázku \ref{fig:utility}. První třídou je třída \inlinecode{Logger}. Tato třída realizuje zapisování protokolu průběhu testovacího běhu do souboru. Zároveň je konstruována tak, že může zapisovat maximálně jedno vlákno současně. 
+
+Třída je taktéž obsažena ve třídě \inlinecode{GlobalVar}, která simuluje globální proměnnou. Inicializaci instance třídy \inlinecode{Logger} lze provést odkudkoliv, avšak stejně jako u konfigurace pouze jen jednou. Třída \inlinecode{GlobalVar} obsahuje vlastnost \inlinecode{isLogEnabled}, která obsahuje informaci o tom, zdali je zapisování inicializováno.  
 
 Třída \inlinecode{TestService} obsahuje ve svých metodách kontrolu, zdali je instance třídy \inlinecode{Logger} inicializována a v případě kladného vyhodnocení zapisuje průběh svého běhu. Instance třídy \inlinecode{Logger} by teda měla být vytvořena ještě před započnutím běhu služby.
 
@@ -185,7 +189,7 @@ Tato třída ve svém konstruktoru inicializuje konfiguraci služby a zjistí, z
 
 \begin{figure}[H]
     \centering 
-    \includegraphics[width=\textwidth]{assets/img/class_diagram/utility.pdf}
+    \includegraphics[width=0.95\textwidth]{assets/img/class_diagram/utility.pdf}
     \caption{Diagram tříd, které zajišťují pomocné služby}
     \label{fig:utility}
 \end{figure}
