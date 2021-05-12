@@ -39,6 +39,7 @@
     output-decimal-marker={,}% just uncomment if you want to use comma as the decimal marker!
 }
 
+%\overfullrule=5pt
 
 \usepackage{xpatch,letltxmacro}
 \LetLtxMacro{\cminted}{\minted}
@@ -58,7 +59,7 @@
 \authorWithDegrees{Martin Štěpánek} %jméno autora včetně současných akademických titulů
 \author{Martin Štěpánek} %jméno autora bez akademických titulů
 \supervisor{Ing.\,{}Miroslav Dušek}
-\acknowledgements{Doplňte, máte-li komu a za co děkovat. V~opačném případě úplně odstraňte tento příkaz.}
+\acknowledgements{Chtěl bych poděkovat Ing.\,{}Miroslavu Duškovi za vedení práce a všechny rady. Zároveň bych chtěl poděkovat ostatním kolegům ve firmě Siemens,~s.\,{}r.\,{}o., především Ing.\,{}Borisu Bulánkovi, za cené rady během vývoje testovací knihovny. Rovněž bych chtěl poděkovat rodině za podporu při studiu.}
 
 \abstractCS{Tato bakalářská práce se zabývá návrhem a implementací knihovny pro automatizaci testů verifikace průmyslové komunikace. Vytvořená knihovna funguje jako doplněk do testovacího frameworku MSTest, za pomocí nehož je knihovna následně propojena se serverem Azure DevOps. Ten následně může jednotlivé testy registrovat a automaticky spouštět. Práce také ukazuje open-source knihovny pro průmyslové protokoly ModbusTCP a EtherNet/IP, které jsou vhodné k využití současně s testovací knihovnou, a za pomocí jedné z těchto knihoven následně demonstruje funčknost vytvořeného řešení. Na závěr práce zhodnocuje vytvořené řešení a jeho přínos.} 
 
