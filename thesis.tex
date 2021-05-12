@@ -39,13 +39,11 @@
     output-decimal-marker={,}% just uncomment if you want to use comma as the decimal marker!
 }
 
-\def\UrlBreaks{\do\/\do\-\do\_}
 
 \usepackage{xpatch,letltxmacro}
 \LetLtxMacro{\cminted}{\minted}
 \let\endcminted\endminted
 \xpretocmd{\cminted}{\RecustomVerbatimEnvironment{Verbatim}{BVerbatim}{}}{}{}
-
 
 \input{macros/custom_macros.tex}
 
@@ -79,6 +77,7 @@
 
 {
     \setlength{\emergencystretch}{3em} 
+    \def\UrlBreaks{\do\/\do\-\do\_}
     \printbibliography
 }
 
