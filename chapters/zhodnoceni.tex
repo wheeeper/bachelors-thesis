@@ -51,8 +51,8 @@ Uvedená ukázka možných úspor poukazuje pouze na jednu investici do projektu
 \begin{table}[htbp]
     \centering
     \resizebox{\textwidth}{!}{
-    \begin{tabular}{|C{3cm}|C{3,5cm}|C{1.8cm}|C{2.3cm}|C{2.3cm}|}\hline
-        \textbf{Výrobce} & \textbf{Model} & \textbf{Množství} & \textbf{Cena za kus bez DPH} & \textbf{Celková cena bez DPH} \\\hline
+    \begin{tabular}{?{1.5pt}C{3cm}|C{3,5cm}|C{1.8cm}|C{2.7cm}|C{2.7cm}?{1.5pt}}\noalign{\hrule height 1.5pt}
+        \textbf{Výrobce} & \textbf{Model} & \textbf{Množství} & \textbf{Cena za kus bez DPH} & \textbf{Celková cena bez DPH} \\\noalign{\hrule height 1.5pt}
         Beckhoff & CX2030-0125 & 2 & \koruna{66650.44} & \koruna{133300.88} \\\hline
         Beckhoff & CX2100-0004 & 2 & \koruna{8663.21} & \koruna{17326.42} \\\hline
         Schneider Electric & BMXP342020 340-20 & 1 & \koruna{30536.8} & \koruna{30536.80}  \\\hline
@@ -61,7 +61,7 @@ Uvedená ukázka možných úspor poukazuje pouze na jednu investici do projektu
         Schneider Electric & M251MESC & 2 & \koruna{8192.46} & \koruna{16384.92}  \\\hline
         Schneider Electric & TM262L20MESE8T & 1 & \koruna{36636.86}  & \koruna{36636.86}  \\\hline
         Rockwell Automation & 1769-L24ER-QB1B & 2 & \koruna{38526.54} & \koruna{77053.08} \\\hline
-        Rockwell Automation & 1783-BMS20CGN & 2 & \koruna{64480.27} & \koruna{128960.54} \\ \hline
+        Rockwell Automation & 1783-BMS20CGN & 2 & \koruna{64480.27} & \koruna{128960.54} \\ \noalign{\hrule height 1.5pt}
     \end{tabular}
     }
     \caption{Seznam nakoupených zařízení do projektu}
@@ -71,15 +71,17 @@ Uvedená ukázka možných úspor poukazuje pouze na jednu investici do projektu
 
 \begin{table}[htbp]
     \centering
+    \renewcommand{\arraystretch}{2}
     \resizebox{\textwidth}{!}{
-    \begin{tabular}{|C{4.5cm}|C{1.8cm}|C{2.7cm}|C{2.7cm}|}\hline
-        \textbf{Produkt} & \textbf{Množství} & \textbf{Cena za kus bez DPH} & \textbf{Celková cena bez DPH} \\\hline
+    \begin{tabular}{?{1.5pt}C{6.8cm}|C{1.8cm}|C{2.7cm}|C{2.7cm}?{1.5pt}}\noalign{\hrule height 1.5pt}
+        \textbf{Produkt} & \textbf{Množství} & \textbf{Cena za kus bez DPH} & \textbf{Celková cena bez DPH} \\\noalign{\hrule height 1.5pt}
         Schneider Electric Machine Expert & 2 & \koruna{23987.18} & \koruna{47974.36}  \\\hline
         Schneider Electric SO Machine & 2 & \koruna{26907.28} & \koruna{53814.56}  \\\hline
         Rockwell Automation Studio 5000 & 2 & \koruna{79140.18} & \koruna{158280.36}  \\\hline
-        Schneider Electric Unity Pro & 1 & \koruna{102299.92} & \koruna{102299.92}  \\\hline
+        Schneider Electric Unity Pro & 1 & \koruna{102299.92} & \koruna{102299.92}  \\\noalign{\hrule height 1.5pt}
     \end{tabular}
     }
     \caption{Seznam licencí potřebných k ovládání nakoupených zařízení}
     \label{tab:device_licenses}
+    \renewcommand{\arraystretch}{1}
 \end{table}
