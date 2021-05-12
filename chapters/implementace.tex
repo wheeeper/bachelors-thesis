@@ -16,19 +16,21 @@ Při odesílání a přijímání zpráv skrze protokol TCP/IP je podstatné, ab
 
 Následná komunikace skrze protokol TCP/IP je implementována v závislosti na zařízení za pomocí těchto metod. Jednotlivé implementace třídy \inlinecode{Message} mají minimální rozdíly, které jsou primárně kvůli odlišnostem jazyků \csharp{} a \cpp{}.
 
-\begin{figure}[H]
+\begin{figure}[p!]
     \centering 
     \includegraphics[width=\textwidth]{assets/img/class_diagram/message.pdf}
     \caption{Diagram třídy Message}
     \label{fig:message_class}
 \end{figure}
 
+\clearpage
+
 \section{Testovací služba}
 Testovací služba je v implementaci rozdělena na dvě hlavní třídy. Třída \inlinecode{TestService} obstarává jednotlivé úkony služby, následně třída \inlinecode{ServiceRunner} propojuje třídu \inlinecode{TestService} s ostatními komponentami, které jsou potřebné pro testování. Tyto třídy můžeme vidět znázorněné na obrázku \ref{fig:test_service}.
 
 \begin{figure}[H]
     \centering 
-    \includegraphics[width=0.90\textwidth]{assets/img/class_diagram/service.pdf}
+    \includegraphics[width=0.75\textwidth]{assets/img/class_diagram/service.pdf}
     \caption{Diagram tříd zajištující testovací službu}
     \label{fig:test_service}
 \end{figure}
@@ -181,14 +183,12 @@ Tato třída ve svém konstruktoru inicializuje konfiguraci služby a zjistí, z
     Zpřístupnění stejnojmenné metody z třídy \inlinecode{TestService}.
 \end{itemize}
 
-\begin{figure}[p!]
+\begin{figure}[H]
     \centering 
     \includegraphics[width=\textwidth]{assets/img/class_diagram/utility.pdf}
     \caption{Diagram tříd, které zajišťují pomocné služby}
     \label{fig:utility}
 \end{figure}
-
-\clearpage
 
 
 \section{Rozhraní pro testovaná zařízení}\label{sec:testrunner}
@@ -246,24 +246,33 @@ Třída následně vytvoří instanci implementovaného rozhraní pro zařízen�
 
 Třída rovněž obsahuje metodu \inlinecode{Stop}, která po zavolání kontroluje ukončení testovacího partnera v daném časovém limitu. Po vypršení časového limitu funkce ukončuje vlákno, na kterém instance třídy \inlinecode{TestRunner} běží.
 
-\begin{figure}[H]
+\begin{figure}[p!]
     \centering 
     \includegraphics[width=\textwidth]{assets/img/class_diagram/client-cpp.pdf}
     \caption{Diagram tříd implementace účastníka testování v jazyce \protect\cpp{}}
     \label{fig:test_client_cpp}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[p!]
     \centering 
     \includegraphics[width=\textwidth]{assets/img/class_diagram/client-csharp.pdf}
     \caption{Diagram tříd implementace účastníka testování v jazyce \protect\csharp{}}
     \label{fig:test_client_csharp}
 \end{figure}
 
+\clearpage
+
 
 \section{Propojení s frameworkem MSTest}
 
-Podstatnou součástí implementace je propojení služby s testovacím frameworkem MSTest. O toto se stará třída \inlinecode{API}. Jako jediná využívá nástroje tohoto frameworku. Je koncipována jako statická třída, i když je závislá na jím vytvořené instanci třídy \inlinecode{ServiceRunner}. Toto je utvořeno kvůli kompatibilitě s frameworkem MSTest. 
+Podstatnou součástí implementace je propojení služby s testovacím frameworkem MSTest. O toto se stará třída \inlinecode{API}, jejíž diagram můžeme vidět na obrázku \ref{fig:api}. Jako jediná využívá nástroje tohoto frameworku. Je koncipována jako statická třída, i když je závislá na jím vytvořené instanci třídy \inlinecode{ServiceRunner}. Toto je utvořeno kvůli kompatibilitě s frameworkem MSTest. 
+
+\begin{figure}[H]
+    \centering 
+    \includegraphics[width=0.6\textwidth]{assets/img/class_diagram/api.pdf}
+    \caption{Diagram třídy API}
+    \label{fig:api}
+\end{figure}
 
 
 \subsection{Použití frameworku}
