@@ -83,7 +83,7 @@ Bližší přiblížení si zaslouží nahrání artefaktů kompilace. Za artefa
 Následně vytvořím tzv. \uv{Release pipeline}. Ta využije artefakty vytvořené v předchozí fázi.
 Zároveň využije artefakty, které vznikly z kompilace zdrojového kódu testovaného zařízení. Kompilace je prováděna automaticky po nahrání jakékoliv změny kódu.
 
-Do nově vytvořené pipeline přidám fázi, ve které spustíme testování. Fáze je nastavena tak, aby se spouštěla na správném zařízení, které obsahuje potřebné propojení s dalším hardwarem potřebným ke spuštění testovaného zařízení. Do této fáze je též potřeba přidat pravidlo, které před spuštěním testování nahraje aktuální verzi zdrojového kódu na testované zařízení a zároveň ho spustí. Následně je spuštěno samotné testování.
+Do nově vytvořené pipeline přidám fázi, ve které spustíme testování. Fáze je nastavena tak, aby se spouštěla na správném zařízení, které obsahuje potřebné propojení s dalším hardwarem potřebným ke spuštění testovaného zařízení. Do této fáze je též potřeba přidat pravidlo, které před spuštěním testování nahraje aktuální verzi zdrojového kódu na testované zařízení a zároveň ho spustí. Rovněž lze přidat pravidlo, které upravuje nastavení testovací služby dle potřeby. Po dokončení konfigurace je spuštěno samotné testování.
 
 Poté vytvořím testovací plán. Do nastavení testovacího plánu přidám již vytvořené pipeline a následně budou přidány i všechny testy. 
 
@@ -101,7 +101,7 @@ Po všech předchozích konfiguracích je následně možné spouštět registro
     \item automaticky dle časového plánu.
 \end{itemize}
 
-Server Azure DevOps následně obdrží výsledky o testování. Jeden z možných způsobů zobrazení výsledků můžeme vidět na obrázku \ref{fig:azure}.
+Server Azure DevOps následně obdrží výsledky o testování. Jeden z možných způsobů zobrazení výsledků můžeme vidět na obrázku \ref{fig:azure}. 
 
 \begin{figure}[htbp]
     \centering 
@@ -111,37 +111,7 @@ Server Azure DevOps následně obdrží výsledky o testování. Jeden z možný
     \label{fig:azure}
 \end{figure}
 
-
-
-
-
-\begin{listing}[p]
-    \centering
-    \begin{minted}[breaklines]{csharp}
-[TestClass]
-public class Modbus
-{
-    [TestMethod]
-    public void TestModdAddConf()
-    {
-        API.Run(TestCaseE.MODD_ADD_CFG);
-    }
-    
-    [TestMethod]
-    public void TestModdReadData()
-    {
-        for (int x = 0; x < 8; x++)
-            API.AddTestPartner(new TestLib.Client.TestPartner(new TestModdReadData()));
-    
-        API.Run(TestCaseE.MODD_READ_DATA);
-    }
-    
-}
-    \end{minted}
-\caption{Implementace testů v testovacím projektu}
-\label{listing:testcase_service}
-\end{listing}
-
+Po dokončení testu můžeme zobrazit i protokol běhu testovací služby. Protokol je vytvořen v kořenové složce zkompilovaného testovacího projektu, tedy ve složce, ze které je testování spouštěno. Nejjednodušším způsobem, jak tento soubor zobrazit, je vypsáním jeho obsahu skrz příkazovou řádku. Zároveň lze vytvořit pravidlo, aby byl tento protokol vypisován pouze v případě neúspěchu nějakého z testů. Výpis protokolu z demonstrativního testovacího běhu můžeme vidět na výpisu \ref{listing:run_log}.
 
 \begin{listing}[p]
     \centering
@@ -199,7 +169,7 @@ public:
 
 \begin{listing}[p]
     \centering
-    \begin{minted}[breaklines,autogobble, fontsize=\small]{csharp}
+    \begin{minted}[breaklines,autogobble, fontsize=\footnotesize]{csharp}
 class TestModdReadData : ITestCase
 {
     public bool StartUp()
@@ -211,7 +181,8 @@ class TestModdReadData : ITestCase
     {
         // Get IP address of test device
         IPAddress devkit;
-        API.getParticipantIp(PhysicalAddress.Parse( "080006020110"), out devkit);
+        if (!API.GetParticipantIp(PhysicalAddress.Parse("080006020110"), out devkit))
+            return false;
 
         // Create ModbusTCP connection
         client = new ModbusClient(devkit.ToString(), 502);
@@ -248,4 +219,65 @@ class TestModdReadData : ITestCase
     \end{minted}
 \caption{Implementace testu pro testovacího partnera}
 \label{listing:testcase_partner}
+\end{listing}
+
+\begin{listing}[p]
+    \centering
+    \begin{minted}[breaklines,fontsize=\footnotesize]{csharp}
+[TestClass]
+public class Modbus
+{
+    [TestMethod]
+    public void TestModdAddConf()
+    {
+        API.Run(TestCaseE.MODD_ADD_CFG);
+    }
+    
+    [TestMethod]
+    public void TestModdReadData()
+    {
+        for (int x = 0; x < 8; x++)
+            API.AddTestPartner(new TestLib.Client.TestPartner(new TestModdReadData()));
+    
+        API.Run(TestCaseE.MODD_READ_DATA);
+    }
+    
+}
+    \end{minted}
+\caption{Implementace testů v testovacím projektu}
+\label{listing:testcase_service}
+\end{listing}
+
+
+\begin{listing}[p]
+    \centering
+    \begin{minted}[breaklines,fontsize=\footnotesize]{text}
+[4.5.21 - 14:55:26] Server ready on 192.168.0.15:1337
+[4.5.21 - 14:55:26] Expected physical participants: 1
+[4.5.21 - 14:55:35] Device with MAC address 080006020110 connected
+[4.5.21 - 14:55:35] All devices connected, starting tests
+[4.5.21 - 14:55:35] Running test: MODD_ADD_CFG
+[4.5.21 - 14:55:35] Test successful
+[4.5.21 - 14:55:35] Test partner connected
+[4.5.21 - 14:55:36] Test partner connected
+[4.5.21 - 14:55:36] Test partner connected
+[4.5.21 - 14:55:36] Test partner connected
+[4.5.21 - 14:55:36] Test partner connected
+[4.5.21 - 14:55:36] Test partner connected
+[4.5.21 - 14:55:36] Test partner connected
+[4.5.21 - 14:55:36] Test partner connected
+[4.5.21 - 14:55:36] Running test: MODD_READ_DATA
+[4.5.21 - 14:55:38] Test successful
+[4.5.21 - 14:55:38] Test partner disconnected
+[4.5.21 - 14:55:38] Test partner disconnected
+[4.5.21 - 14:55:38] Test partner disconnected
+[4.5.21 - 14:55:38] Test partner disconnected
+[4.5.21 - 14:55:38] Test partner disconnected
+[4.5.21 - 14:55:38] Test partner disconnected
+[4.5.21 - 14:55:38] Test partner disconnected
+[4.5.21 - 14:55:38] Test partner disconnected
+[4.5.21 - 14:55:38] Run finnished, all tests finnished successfully
+    \end{minted}
+    \caption{Záznam provedeného testovací běhu}
+    \label{listing:run_log}
 \end{listing}
