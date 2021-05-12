@@ -70,7 +70,7 @@ Ukázka komunikace je znázorněna na sekvenčním diagramu, viz obrázek \ref{f
 
 \begin{figure}[htbp]
     \centering 
-    \includegraphics[width=0.95\textwidth]{assets/img/sequencediagram.pdf}
+    \includegraphics[width=\textwidth]{assets/img/sequencediagram.pdf}
     \caption{Sekvenční diagram ukázky komunikace mezi účastníky testování}
     \label{fig:seqdiag}
 \end{figure}
@@ -80,13 +80,13 @@ Jak jsem již zmínil v sekci \ref{sec:participants}, testovací služba bude j�
 
 \begin{figure}[htbp]
     \centering 
-    \includegraphics[width=0.8\textwidth]{assets/img/activitydiagramservice.pdf}
+    \includegraphics[width=\textwidth]{assets/img/activitydiagramservice.pdf}
     \caption{Diagram aktivit testovací služby}
     \label{fig:activitydiagramservice}
 \end{figure}
 
 \subsection{Inicializace služby}
-Testovací služba započíná běh inicializační fází. Služba v inicializační fázi vytvoří připojení se všemi testovanými zařízeními dle nadefinované komunikace. Z konfigurace bude služba vědět, kolik testovaných zařízení má očekávat. Inicializační fáze zároveň bude mít definovaný časový limit, který ve výchozí konfiguraci bude 60 sekund. Zároveň ale bude nastavitelný uživatelem. Testovací služba vyhodnotí inicializační fázi jako úspěšnou, pokud se úspěšně připojí definovaný počet testovaných zařízení. Služba vyhodnocuje neúspěch inicializační fáze v případě, že nastanou tyto situace:
+Testovací služba začíná běh inicializační fází. Služba v inicializační fázi vytvoří připojení se všemi testovanými zařízeními dle nadefinované komunikace. Z konfigurace bude služba vědět, kolik testovaných zařízení má očekávat. Inicializační fáze zároveň bude mít definovaný časový limit, který ve výchozí konfiguraci bude 60 sekund. Zároveň ale bude nastavitelný uživatelem. Testovací služba vyhodnotí inicializační fázi jako úspěšnou, pokud se úspěšně připojí definovaný počet testovaných zařízení. Služba vyhodnocuje neúspěch inicializační fáze v případě, že nastanou tyto situace:
 
 \begin{itemize}
     \item vypršení časového limitu na inicializační fázi,
