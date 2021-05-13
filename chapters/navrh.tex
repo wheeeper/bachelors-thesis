@@ -35,7 +35,7 @@ Jednotlivé zprávy vyměňované mezi testovací službou a všemi účastníky
 
 \begin{figure}[htbp]
     \centering 
-    \includegraphics{assets/img/message.pdf}
+    \includegraphics[width=0.6\textwidth]{assets/img/message.pdf}
     \caption{Diagram struktury jedné zprávy}
     \label{fig:message}
 \end{figure}
@@ -66,7 +66,7 @@ Pro započetí testování a spuštění jednotlivých stádií testování slu�
 
 Služba následně čeká na odpověď od všech účastníků testování. Účastnící odesílají testovací službě po skončení testovacího stádia zprávu bez dat, s~typem 1 v případě úspěchu a s~typem 2 v případě neúspěchu. Po skončení testování služba odesílá všem účastníkům testování zprávu s~typem 4, bez žádných dat. 
 
-Ukázka komunikace je znázorněna na sekvenčním diagramu, viz obrázek \ref{fig:seqdiag}. Na tomto sekvenčním diagramu můžeme vidět výměnu zpráv mezi testovací službou a dvěma účastníky testování během spuštění jednoho testu. Direktiva \inlinecode{Message} znázorňuje jednu zprávu, kde v závorkách můžeme vidět nejdříve typ zprávy a následně data zprávy (pokud zpráva nějaká data obsahuje). Rovněž lze v diagramu spatřit využití testovacího partnera.
+Ukázka komunikace je znázorněna na sekvenčním diagramu, viz obrázek \ref{fig:seqdiag}. Na tomto sekvenčním diagramu můžeme vidět výměnu zpráv mezi testovací službou a dvěma účastníky testování během spuštění jednoho úspěšného testu. Direktiva \inlinecode{Message} znázorňuje jednu zprávu, kde v závorkách můžeme vidět nejdříve typ zprávy a následně data zprávy (pokud zpráva nějaká data obsahuje). Rovněž lze v diagramu spatřit využití testovacího partnera.
 
 \begin{figure}[htbp]
     \centering 
@@ -210,7 +210,7 @@ ITestClient
 
 O samotný běh jednotlivého testovaného zařízení se bude starat samostatná komponenta, která bude nezávislá na jakémkoliv zařízení. Tato komponenta se bude nazývat v knihovně tzv. \inlinecode{TestRunner}.
 
-Komponenta bude obsahovat veškerou logiku testovacího běhu pro jednotlivé testované zařízení. Při zahájení testování komponenta za pomocí rozhraní vytvoří propojení s testovací službou a odešle zprávu o úspěchu, kde v datech zprávy uvede svoji MAC adresu. Po obdržení zprávy o úspěchu od testovací služby komponenta přechází do metody, která bude obsluhovat příchozí zprávy. 
+Komponenta bude obsahovat veškerou logiku testovacího běhu pro jednotlivé testované zařízení. Při zahájení testování komponenta za pomocí rozhraní vytvoří propojení s testovací službou a odešle zprávu o úspěchu, kde v datech zprávy uvede MAC adresu testovaného zařízení. Po obdržení zprávy o úspěchu od testovací služby komponenta přechází do metody, která bude obsluhovat příchozí zprávy. 
 
 Komponenta bude očekávat dva typy zpráv - direktivu ke spuštění testu a~direktivu k ukončení testování. Po obdržení direktivy k započetí testu, komponenta ze zprávy zjistí identifikátor testu a testovací fázi. Následně z rozhraní získá instanci testu, který si po dobu běhu testu drží. Poté dle instrukcí spouští jednotlivé fáze testování. Po konci každé testovací fáze komponenta odesílá zprávu o úspěchu/neúspěchu testovací službě.
 
@@ -255,7 +255,7 @@ Registrování testů ve frameworku MSTest a testovací službě bude na sobě n
 
 Tím, že testovací služba může přijmout jakýkoliv enumerátor, může vzniknout kolize mezi jednotlivými typy enumerátorů. V inicializační fázi proto bude API kontrolovat, zda enumerátory s atributem \inlinecode{TestEnum} mezi sebou neobsahují kolizi a v případě jejího vzniku vyhodí výjimku a nepokračuje v~testování.
 
-Jednotlivé testy frameworku MSTest následně budou registrovány na serveru Azure DevOps. Na tomto serveru tester vytvoří tzv. Test Case, který následně asociuje odpovídající testovací metodě frameworku MSTest. Vytvoření této asociace je nativně podporované v IDE Visual Studio 2019, v němž je celá knihovna vyvíjena. 
+Jednotlivé testy frameworku MSTest následně budou registrovány na serveru Azure DevOps. Na tomto serveru tester vytvoří tzv. Test Case, který následně asociuje odpovídající testovací metodě frameworku MSTest. Vytvoření této asociace je nativně podporované v IDE Visual Studio 2019 \cite{visualstudio19}, v němž bude celá knihovna vyvíjena. 
 
 
 \subsection{Testování}
@@ -318,7 +318,7 @@ Nejlépe opět vyšla knihovna od firmy Rossmann Engineering, neboť jako jedin�
 
 \begin{table}[p!]\centering
     \resizebox{\textwidth}{!}{
-        \begin{tabular}{?{1.5pt}C{3cm}|C{2.6cm}|C{2.1cm}|C{2cm}|C{2.6cm}|C{4cm}?{1.5pt}}\noalign{\hrule height 1.5pt}
+        \begin{tabular}{?{1.5pt}C{3cm}|C{2.6cm}|C{2.1cm}|C{2cm}|C{2.6cm}|C{4.1cm}?{1.5pt}}\noalign{\hrule height 1.5pt}
             \textbf{Název} & \textbf{Autor} & \textbf{Hodnocení aktivity} & \textbf{Náročnost využití} & \textbf{Hodnocení dokumentace} &  \textbf{Dostupné na adrese} \\\noalign{\hrule height 1.5pt}
             EasyModbusTCP & Rossmann Engineering & 6 & 1 & 5 & \url{www.easymodbustcp.net}\\\hline
             FluentModbus & Apollo3zehn & 7 & 1 & 6 & \url{www.github.com/Apollo3zehn/FluentModbus} \\\hline 
@@ -332,7 +332,7 @@ Nejlépe opět vyšla knihovna od firmy Rossmann Engineering, neboť jako jedin�
 
 \begin{table}[p!]\centering
     \resizebox{\textwidth}{!}{
-        \begin{tabular}{?{1.5pt}C{3cm}|C{2.6cm}|C{2.1cm}|C{2cm}|C{2.6cm}|C{4cm}?{1.5pt}}\noalign{\hrule height 1.5pt}
+        \begin{tabular}{?{1.5pt}C{3cm}|C{2.6cm}|C{2.1cm}|C{2cm}|C{2.6cm}|C{4.1cm}?{1.5pt}}\noalign{\hrule height 1.5pt}
             \textbf{Název} & \textbf{Autor} & \textbf{Hodnocení aktivity} & \textbf{Náročnost využití} & \textbf{Hodnocení dokumentace} &  \textbf{Dostupné na adrese} \\\noalign{\hrule height 1.5pt}
             EEIP & Rossmann Engineering & 5 & 1 & 5 & \url{www.eeip-library.de/}\\\hline
             EthernetIP & SecondShiftEngineer & 	2 & 4 & 0 & \url{www.nuget.org/packages/EthernetIP/} \\\hline

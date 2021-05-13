@@ -46,7 +46,7 @@ Implementace testu \inlinecode{MODD\_ADD\_CONF} v první fázi nic neprovádí. 
 
 Implementaci testu \inlinecode{MODD\_READ\_DATA} lze vidět na výpisu \ref{listing:testcase_device}. Test v první fázi inicializuje protokol ModbusTCP a do výstupních registrů zapíše data. Jeden registr má velikost dva bajty. Během testovací fáze zařízení neprovádí žádné úkony. Zařízení nakonec vrací v poslední fázi testu do původního stavu před testováním.
 
-Vytvořené testy jsou následně přidány do metody \inlinecode{getTest} v rozhraní pro testované zařízení. Metoda getTest musí po obdržení číselného identifikátoru jednotlivých testů vrátit instanci těchto testů.
+Vytvořené testy jsou následně přidány do metody \inlinecode{getTest} v rozhraní pro testované zařízení. Metoda \inlinecode{getTest} musí po obdržení číselného identifikátoru jednotlivých testů vrátit instanci těchto testů.
 
 
 \subsection{Testovací partner}
@@ -59,7 +59,7 @@ Testovací partner v testovací fázi vytvoří připojení s testovaným zaří
 
 K registraci testů pro testovací službu je použita standardní metodika vytváření testů dle frameworku MSTest, kterou můžeme vidět na výpisu \ref{listing:testcase_service}, kde lze vidět testovací třídu \inlinecode{Modbus} obsahující testovací metody \inlinecode{TestModdAddConf} a \inlinecode{TestModdReadData}. Třída i metody jsou označeny atributy definovanými frameworkem MSTest. 
 
-Uvnitř testovací metody \inlinecode{TestModdAddConf} můžeme vidět direktivu k započetí testu definovanou testovací knihovnou, která spouští test \inlinecode{MODD\_ADD\_CFG}. Tato direktiva obdrží v argumentu enumerátor reprezentující test. Tento test nevyužívá testovacích partnerů. 
+Uvnitř testovací metody \inlinecode{TestModdAddConf} můžeme vidět direktivu k započetí testu definovanou testovací knihovnou, která spouští test \inlinecode{MODD\_ADD\_\allowbreak{}CFG}. Tato direktiva obdrží v argumentu enumerátor reprezentující test. Tento test nevyužívá testovacích partnerů. 
 
 V testovací metodě \inlinecode{TestModdReadData} můžeme vidět cyklus, který přidá osm testovacích partnerů, v argumentu direktivy vytváření instance testovacího partnera, který ve svém argumentu obdrží instanci testu \inlinecode{TestModdReadData}. Nakonec je v metodě direktiva k započetí testu, která je předána testovací službě.
 

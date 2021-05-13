@@ -107,7 +107,7 @@ Podporované služby jsou definovány funkčními kódy, které jsou součástí
 
 Modbus používá komunikaci požadavek-odpověď. Na požadavek klienta server odpovídá zprávou, kterou značí úspěch či neúspěch operace. V případě úspěchu server odesílá zpět zprávu se stejným funkčním kódem, jako byl požadavek. V opačném případě odesílá zpět zprávu, která obsahuje stejný kód funkce, jako byl kód funkce požadavku, ale tento kód má zároveň nastavený nejvýznamnější bit na 1. Zpráva v obou případech může poté obsahovat data, v závislosti na operacích. \cite{modbus}
 
-V této práci se budu zaměřovat na použití protokolu ModbusTCP. Jak již z názvu vyplývá, ModbusTCP používá k přenosu zpráv protokol TCP/IP a~Ethernet připojení. Zároveň používá stejnou komunikaci definovanou protokolem Modbus.
+Tato práce se bude zaměřovat na použití protokolu ModbusTCP. Jak již z názvu vyplývá, ModbusTCP používá k přenosu zpráv protokol TCP/IP a~Ethernet připojení. Zároveň používá stejnou komunikaci definovanou protokolem Modbus.
 
 \subsection{Protokol EtherNet/IP}
 Protokol EtherNet/IP (EtherNet/Industrial Protocol) je dalším, dnes již široce používaným průmyslovým protokolem. Jak již z názvu vyplývá, protokol používá Ethernetový standard k propojení průmyslových zařízení. Ke komunikaci následně používá standardně používané protokoly TCP a UDP. Tento protokol byl poprvé představen v roce 2001 a od roku 2005 je standardizován. 
@@ -134,7 +134,7 @@ Hlavním cílem této práce je vytvoření testovací knihovny pro řadu zaří
 
 Zařízení SIMATIC ET 200SP, které můžeme vidět na obrázku \ref{fig:et200sp}, je určeno k umístění do kompaktních řídících kabinetů. Díky modulárnosti systému se systém může vysoce přizpůsobit potřebám jednotlivých průmyslů. Mezi tyto moduly patří standardní I/O moduly, komunikační moduly, technologické moduly nebo moduly ke startování motorů. Zároveň je velikou výhodou celkový kompaktní design. Jednotlivé moduly zároveň mohou být vyměňovány za chodu. \cite{et200sp}
 
-SIMATIC ET 200SP využívá tzv. Multifieldbus technologii. Tato technologie umožňuje zařízení komunikovat na základě několika průmyslových protokolů. V rámci této práce se zaměříme na protokoly ModbusTCP a EtherNet/IP, které byly popsány již dříve.
+SIMATIC ET 200SP využívá tzv. \textit{Multifieldbus technologii}. Tato technologie umožňuje zařízení komunikovat na základě několika průmyslových protokolů. V rámci této práce se zaměříme na protokoly ModbusTCP a EtherNet/IP, které byly popsány již dříve.
 
 \begin{figure}[htbp]
     \centering 

@@ -11,7 +11,7 @@
 % English thesis in English language
 % hide links remove color boxes around hyperlinks
 
-\documentclass[thesis=B,czech]{template/FITthesis}[2019/12/23]
+\documentclass[thesis=B,czech,hidelinks]{template/FITthesis}[2019/12/23]
 
 \usepackage[utf8]{inputenc} % LaTeX source encoded as UTF-8
 \usepackage{dirtree} %directory tree visualization
@@ -39,7 +39,6 @@
     output-decimal-marker={,}% just uncomment if you want to use comma as the decimal marker!
 }
 
-%\overfullrule=5pt
 
 \usepackage{xpatch,letltxmacro}
 \LetLtxMacro{\cminted}{\minted}
@@ -59,12 +58,12 @@
 \authorWithDegrees{Martin Štěpánek} %jméno autora včetně současných akademických titulů
 \author{Martin Štěpánek} %jméno autora bez akademických titulů
 \supervisor{Ing.\,{}Miroslav Dušek}
-\acknowledgements{Chtěl bych poděkovat Ing.\,{}Miroslavu Duškovi za vedení práce a všechny rady. Zároveň bych chtěl poděkovat ostatním kolegům ve firmě Siemens,~s.\,{}r.\,{}o., především Ing.\,{}Borisu Bulánkovi, za cené rady během vývoje testovací knihovny. Rovněž bych chtěl poděkovat rodině za podporu při studiu.}
+\acknowledgements{Rád bych poděkoval Ing.\,{}Miroslavu Duškovi za vedení práce a veškerou pomoc. Zároveň bych chtěl poděkovat ostatním kolegům ve firmě Siemens,~s.\,{}r.\,{}o., především Ing.\,{}Borisi Bulánkovi, za cené rady během vývoje testovací knihovny. Rovněž bych chtěl poděkovat rodině a přátelům za podporu během studia.}
 
-\abstractCS{Tato bakalářská práce se zabývá návrhem a implementací knihovny pro automatizaci testů verifikace průmyslové komunikace. Vytvořená knihovna funguje jako doplněk do testovacího frameworku MSTest, za pomocí nehož je knihovna následně propojena se serverem Azure DevOps. Ten následně může jednotlivé testy registrovat a automaticky spouštět. Práce také ukazuje open-source knihovny pro průmyslové protokoly ModbusTCP a EtherNet/IP, které jsou vhodné k využití současně s testovací knihovnou, a za pomocí jedné z těchto knihoven následně demonstruje funčknost vytvořeného řešení. Na závěr práce zhodnocuje vytvořené řešení a jeho přínos.} 
+\abstractCS{Tato bakalářská práce se zabývá návrhem a implementací knihovny pro automatizaci testů verifikace průmyslové komunikace. Vytvořená knihovna funguje jako doplněk do testovacího frameworku MSTest, za pomocí něhož je knihovna následně propojena se serverem Azure DevOps. Ten následně může jednotlivé testy registrovat a automaticky spouštět. Práce také ukazuje open-source knihovny pro průmyslové protokoly ModbusTCP a EtherNet/IP, které jsou vhodné k využití současně s testovací knihovnou, a za pomocí jedné z těchto knihoven následně demonstruje funčknost vytvořeného řešení. Na závěr práce zhodnocuje vytvořené řešení a jeho přínos.} 
 
 
-\abstractEN{This bachelor's thesis is focused on design and implementation of test automation library for verification of industry fieldbus communication. This library works as add-in to testing framework MSTest, which enables connection with Azure DevOps. Azure DevOps then can register each of the tests and automatically execute them. This thesis also shows open-source libraries for fieldbuses ModbusTCP and EtherNet/IP, which are suitable for use together with the created test library. Thesis also demonstrates the funcionality of the created test library, with the help of one of the open-source library for fieldbus. Lastly the thesis evalutes the created solution and its contribution.}
+\abstractEN{This bachelor's thesis is focused on design and implementation of test automation library for verification of industry fieldbus communication. This library works as add-in to testing framework MSTest, which enables connection with Azure DevOps server. Azure DevOps server is then able to register each of the tests and automatically execute them. This thesis also shows open-source libraries for fieldbuses ModbusTCP and EtherNet/IP, which are suitable for use together with the created test library. Thesis also demonstrates the funcionality of the created test library, with the help of one of the open-source library for fieldbus. Lastly the thesis evalutes the created solution and its contribution.}
 
 \placeForDeclarationOfAuthenticity{V~Praze}
 \declarationOfAuthenticityOption{1} %volba Prohlášení (číslo 1-6)

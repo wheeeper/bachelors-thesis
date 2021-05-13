@@ -14,7 +14,7 @@ Při odesílání a přijímání zpráv skrze protokol TCP/IP je podstatné, ab
     \item \inlinecode{GetMessageFromStream} -- Statická metoda, která v argumentu obdrží bajtové pole a vrátí instanci třídy \inlinecode{Message}.
 \end{itemize}
 
-Následná komunikace skrze protokol TCP/IP je implementována v závislosti na zařízení za pomocí těchto metod. Jednotlivé implementace třídy \inlinecode{Message} mají minimální rozdíly, které jsou primárně kvůli odlišnostem jazyků \csharp{} a \cpp{}.
+Následná komunikace skrze protokol TCP/IP je implementována v závislosti na zařízení za pomocí těchto metod. Jednotlivé implementace třídy \inlinecode{Message} mají mezi sebou minimální rozdíly, které jsou primárně kvůli odlišnostem jazyků \csharp{} a \cpp{}.
 
 \begin{figure}[p!]
     \centering 
@@ -153,17 +153,11 @@ Metoda během běhu vyhodnocuje, zda se účastník testování nedostal do chyb
 
 Po dokončení celého testovacího běhu je zavolána metoda \inlinecode{Stop()}. Ta odešle všem stále připojeným účastníkům direktivu k ukončení testování a ukončí spojení. Služba se snaží v případě chyby ukončit co nejvíce zařízení skrze stanovený protokol.
 
-\clearpage
 
 \subsubsection{Pomocné metody a třídy}
-Třída \inlinecode{TestService} obsahuje navíc pomocnou metodu:
+Třída \inlinecode{TestService} obsahuje navíc pomocnou metodu \inlinecode{GetParticipantIp}. Tato metoda slouží k získání IP adresy testovaného zařízení na základě znalosti MAC adresy zařízení. Pokud je zařízení s MAC adresou, kterou metoda obdrží v argumentu funkce, připojeno, tak poté metoda úkládá do výstupního argumentu jeho IP adresu a vrací úspěch. V opačném případě vrací neúspěch a jako IP adresu ukládá hodnotu \inlinecode{null}.
 
-\begin{itemize}
-    \item \inlinecode{bool GetParticipantIp(PhysicalAddress macAddr,out IPAddress \\addr)}\\
-    Metoda k získání IP adresy testovaného zařízení na základě znalosti MAC adresy zařízení. Pokud je zařízení s danou MAC adresou připojeno, metoda úkládá do výstupního argumentu \inlinecode{addr} jeho IP adresu a vrací úspěch. V opačném případě vrací neúspěch a jako IP adresu hodnotu \inlinecode{null}
-\end{itemize}
-
-Třída také využívá při svém běhu dvě pomocné třídy, jejichž diagram můžeme vidět na obrázku \ref{fig:utility}. První třídou je třída \inlinecode{Logger}. Tato třída realizuje zapisování protokolu průběhu testovacího běhu do souboru. Zároveň je konstruována tak, že může zapisovat maximálně jedno vlákno současně. 
+Třída také využívá při svém běhu dvě pomocné třídy, jejichž diagram můžeme vidět na obrázku \ref{fig:utility}. První třídou je třída \inlinecode{Logger}. Tato třída realizuje zapisování protokolu průběhu testovacího běhu do souboru. Zároveň je konstruována tak, že může zapisovat maximálně jedno vlákno programu současně. 
 
 Třída je taktéž obsažena ve třídě \inlinecode{GlobalVar}, která simuluje globální proměnnou. Inicializaci instance třídy \inlinecode{Logger} lze provést odkudkoliv, avšak stejně jako u konfigurace pouze jen jednou. Třída \inlinecode{GlobalVar} obsahuje vlastnost \inlinecode{isLogEnabled}, která obsahuje informaci o tom, zdali je zapisování inicializováno.  
 
@@ -216,17 +210,14 @@ Implementace v \cpp{} tedy definuje seznam funkcí, které jsou potřeba impleme
 
 \begin{listing}[H]
     \centering
-    \begin{minted}[breaklines]{cpp}
-/*  Allocation of memory on heap 
- */
-void* TESTLIB_ALLOC_MEM( const uint32_t length );
+    \begin{minted}[breaklines, fontsize=\small]{cpp}
+/*  Allocation of memory on heap */
+void* TESTLIB_ALLOC_MEM(const uint32_t length);
 
-/* Free of allocated memory 
- */
+/* Free of allocated memory */
 bool TESTLIB_FREE_MEM(void* ptr);
 
-/* Copy of memory 
- */
+/* Copy of memory */
 void* TESTLIB_MEMCPY(void* const lpDst, const void* const lpSrc, int dwNb);
     \end{minted}
     \caption{Seznam funkcí k implementaci na zařízení v jazyce \protect\cpp{}}
